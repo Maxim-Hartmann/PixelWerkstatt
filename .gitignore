@@ -1,0 +1,6 @@
+# Virtuelle Umgebung
+venv/
+
+# Logs und temporäre Dateien
+*.log
+*.tmp
