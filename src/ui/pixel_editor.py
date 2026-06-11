@@ -1,22 +1,27 @@
-import sys
-import numpy as np
-from PySide6.QtWidgets import QApplication, QWidget
-from PySide6.QtGui import QPainter, QColor
-from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QWidget
+from PySide6.QtGui import QPainter
+
 
 class PixelEditor(QWidget):
-    # Editor wird initialisiert mit der Rastergröße (x, y) und der Pixelgröße
-    def __init__(self, grid_size, pixel_size):
+    def __init__(self):
         super().__init__()
-        # Reihen
-        self.rows = grid_size[0]
-        # Spalten
-        self.cols = grid_size[1]
+
+        # Reihen und Spalten iniziieren
+        self.rows = 9
+        self.cols = 12
         # Pixelgröße
-        self.pixel_size = pixel_size
-        # Bearbeitbares Originalbild.
-        # 3D-Array wird erstellt und mit Nullen gefüllt.
-        # Reihen, Spalten und RGB-Farb-Tripel werden gespeichert, als 8-Bit-Integer (0-255).
-        self.original = np.zeros((self.rows, self.cols, 3), dtype = np.uint8)
-        # Größe wird erstellt
-        self.setFixedSize(self.cols * self.pixel_size, self.rows * self.pixel_size)
+        self.pixel_size = 30
+        # Fenstergröße passend zum Raster setzen
+        #self.setFixedSize(self.cols * self.pixel_size, self.rows * self.pixel_size)
+        self.setMinimumSize(self.cols * self.pixel_size, self.rows * self.pixel_size)
+
+    # wird aufgerufen um das Widget zu zeichnen
+    def paintEvent(self, event):
+        # QPainter Objekt erstellen, um auf dem Widget zu zeichnen
+        painter = QPainter(self)
+        # Raster zeichnen
+        for row in range(self.rows):
+            for col in range(self.cols):
+                x = col * self.pixel_size
+                y = row * self.pixel_size
+                painter.drawRect(x, y, self.pixel_size, self.pixel_size)

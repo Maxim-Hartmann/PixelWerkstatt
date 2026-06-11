@@ -1,12 +1,13 @@
 import sys
-import numpy as np
-from PySide6.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QVBoxLayout, QHBoxLayout
-from app.main_window import MainWindow
+from PySide6.QtWidgets import QApplication
+from ui.main_window import MainWindow
 
-# QApplication initialisieren
+# Jede PySide6 Anwendung braucht genau eine QApplication Instanz.
 app = QApplication(sys.argv)
-# Hauptfenster erzeugen
+# Hauptfenster erzeugen und sichtbar machen.
 window = MainWindow()
 window.show()
-# Event Loop starten, Fenster bleibt geöffnet
+# Fenstergröße
+window.showMaximized()
+# Event Loop starten, Fenster bleibt geöffnet und kann sauber geschlossen werden.
 sys.exit(app.exec())
