@@ -1,5 +1,13 @@
 # Virtuelle Umgebung
-venv/
+.venv/
+
+# IDE
+.vscode/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
 
 # Logs und temporäre Dateien
 *.log
