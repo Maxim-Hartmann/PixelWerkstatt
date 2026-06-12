@@ -26,8 +26,8 @@ class MainWindow(QWidget):
 
         # Layout für linke Seite
         self.left_layout = QVBoxLayout()
-        self.left_layout.setContentsMargins(10, 10, 10, 10)
-        self.left_layout.setSpacing(10)
+        self.left_layout.setContentsMargins(0, 0, 0, 0)
+        self.left_layout.setSpacing(0)
         self.left_layout.setAlignment(Qt.AlignHCenter)
 
         # Layout für rechte Seite
@@ -53,7 +53,6 @@ class MainWindow(QWidget):
         #-----------------------------------------
 
         self.pixel_editor = PixelEditor()
-        self.komp = PixelEditor()
 
         #-----------------------------------------
         # Widgets dem Layout hinzufügen
@@ -61,8 +60,6 @@ class MainWindow(QWidget):
 
         self.left_layout.addStretch(1)
         self.left_layout.addWidget(self.pixel_editor)
-        self.left_layout.addStretch(1)
-        self.left_layout.addWidget(self.komp)
         self.left_layout.addStretch(1)
         self.right_layout.addWidget(self.button_rle)
         self.right_layout.addWidget(self.button_farb)
@@ -77,6 +74,6 @@ class MainWindow(QWidget):
         # Layout dem Fenster zuweisen
         #-----------------------------------------
 
-        self.main_layout.addLayout(self.left_layout, 1)
+        self.main_layout.addLayout(self.left_layout, 2)
         self.main_layout.addLayout(self.right_layout, 1)
         self.setLayout(self.main_layout)
