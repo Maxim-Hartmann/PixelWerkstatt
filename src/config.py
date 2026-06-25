@@ -1,5 +1,9 @@
 from PySide6.QtGui import QColor
 
+#----------------------------------------
+# color_picker config
+#----------------------------------------
+
 # weiß (0),    rot (3),  gelb (6),    braun (9)
 # grau (1),    blau (4), cyan (7),    hellblau (19)
 # schwarz (2), grün (5), magenta (8), lila (11)
@@ -13,5 +17,15 @@ colors = {
 colors_rows = 3
 colors_cols = 4
 
-# Größen des Pixelrasters
-grid_size = {"s": {"rows": 6, "cols": 8, "pixel_size": 90}, "l": {"rows": 9, "cols": 12, "pixel_size": 60}}
+# Pixelgröße der Farbkacheln
+pixel_size_picker = 40
+# Pixelabstand der Farbkacheln
+pixel_gap_picker = 10
+
+#----------------------------------------
+# pixel_editor config
+#----------------------------------------
+
+# Größen des Pixelrasters: Reihen, Spalten, Pixelgröße, Pixelabstand
+grid_size = {"s": {"rows": 6, "cols": 8, "pixel_size": 90, "pixel_gap": 2},
+             "l": {"rows": 9, "cols": 12, "pixel_size": 60, "pixel_gap": 2}}

@@ -10,17 +10,17 @@ class MainWindow(QWidget):
         # Konstruktor der Elternklasse aufruft um das Fenster zu initialisieren.
         super().__init__()
 
-        #-----------------------------------------
+        #----------------------------------------
         # Fenstereinstellungen
-        #-----------------------------------------
+        #----------------------------------------
 
         # Fenstername
         self.setWindowTitle("Komprimierung Tool")
         # self.setStyleSheet("background-color: rgb(100, 100, 100);")
 
-        #-----------------------------------------
+        #----------------------------------------
         # Layouts
-        #-----------------------------------------
+        #----------------------------------------
 
         # Haupt-Layout
         self.main_layout = QHBoxLayout()
@@ -57,9 +57,9 @@ class MainWindow(QWidget):
         self.right_down_layout.setSpacing(10)
         self.right_down_layout.setAlignment(Qt.AlignCenter)
 
-        #-----------------------------------------
+        #----------------------------------------
         # Buttons
-        #-----------------------------------------
+        #----------------------------------------
 
         self.button_rle = QPushButton("Lauflaenge")
         self.button_clr = QPushButton("Code-Effizienz")
@@ -68,31 +68,31 @@ class MainWindow(QWidget):
         self.button_new = QPushButton("Neu")
         self.button_save = QPushButton("Speichern")
 
-        #-----------------------------------------
-        # Button-Aufrufe
-        #-----------------------------------------
+        #----------------------------------------
+        # Button-Aufruf
+        #----------------------------------------
 
         self.button_new.clicked.connect(self.new_image)
         self.button_s.clicked.connect(self.set_small)
         self.button_l.clicked.connect(self.set_large)
 
-        #-----------------------------------------
+        #----------------------------------------
         # Labels
-        #-----------------------------------------
+        #----------------------------------------
 
         self.label_data = QLabel("(Datenanzeige)")
         self.label_data.setFont(QFont("Arial", 20))
 
-        #-----------------------------------------
+        #----------------------------------------
         # Widgets
-        #-----------------------------------------
+        #----------------------------------------
 
         self.pixel_editor = PixelEditor()
         self.color_picker = ColorPicker()
 
-        #-----------------------------------------
+        #----------------------------------------
         # Widgets dem Layout hinzufügen
-        #-----------------------------------------
+        #----------------------------------------
 
         self.left_up_layout.addWidget(self.pixel_editor)
         self.left_down_layout.addWidget(self.button_clr)
@@ -104,9 +104,9 @@ class MainWindow(QWidget):
         self.right_down_layout.addWidget(self.label_data)
         self.right_up_layout.addWidget(self.color_picker)
 
-        #-----------------------------------------
+        #----------------------------------------
         # Layout dem Fenster zuweisen
-        #-----------------------------------------
+        #----------------------------------------
 
         self.left_layout.addLayout(self.left_up_layout, 9)
         self.left_layout.addLayout(self.left_down_layout, 1)
@@ -116,9 +116,9 @@ class MainWindow(QWidget):
         self.main_layout.addLayout(self.right_layout, 1)
         self.setLayout(self.main_layout)
 
-        #-----------------------------------------
+        #----------------------------------------
         # Stylesheet
-        #-----------------------------------------
+        #----------------------------------------
 
         self.setStyleSheet("""
 
@@ -139,9 +139,9 @@ class MainWindow(QWidget):
 
         """)
 
-    #---------------------------------------------
+    #----------------------------------------
     # Funktionen für Button-Aufrufe
-    #---------------------------------------------
+    #----------------------------------------
 
     def new_image(self):
         if self.pixel_editor.preset == "s":
