@@ -1,9 +1,17 @@
 from PySide6.QtGui import QColor
 
-colors = [
-    [ QColor(255, 255, 255), QColor(140, 0, 0),     QColor(0, 100, 0),     QColor(0, 0, 128),     QColor(100, 50, 0),    QColor(150, 150, 0),   QColor(50, 0, 100)],
-    [ QColor(125, 125, 125), QColor(255, 0, 0),     QColor(0, 255, 0),     QColor(0, 0, 255),     QColor(255, 120, 0),   QColor(255, 255, 0),   QColor(120, 0, 255)],
-    [ QColor(0, 0, 0),       QColor(255, 120, 120), QColor(120, 255, 120), QColor(150, 200, 255), QColor(255, 200, 150), QColor(255, 255, 150), QColor(255, 100, 255)]
-]
+# weiß (0),    rot (3),  gelb (6),    braun (9)
+# grau (1),    blau (4), cyan (7),    hellblau (19)
+# schwarz (2), grün (5), magenta (8), lila (11)
+colors = {
+    0: QColor(255, 255, 255), 1: QColor(255, 0, 0), 2: QColor(255, 255, 0), 3: QColor(100, 70, 30),
+    4: QColor(120, 120, 120), 5: QColor(0, 255, 0), 6: QColor(0, 255, 255), 7: QColor(130, 200, 230),
+    8: QColor(0, 0, 0),       9: QColor(0, 0, 255), 10: QColor(255, 0, 255), 11: QColor(90, 40, 120)
+}
 
-size = {"s": {"rows": 6, "cols": 8, "pixel_size": 90}, "l": {"rows": 9, "cols": 12, "pixel_size": 60}}
+# Reihen und Spalten der Farbpalette
+colors_rows = 3
+colors_cols = 4
+
+# Größen des Pixelrasters
+grid_size = {"s": {"rows": 6, "cols": 8, "pixel_size": 90}, "l": {"rows": 9, "cols": 12, "pixel_size": 60}}
