@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import QWidget
-from PySide6.QtGui import QPainter, QPen, QBrush, QColor
+from PySide6.QtGui import QPainter
 import numpy as np
-from config import grid_size
+from config import grid_size, standard_color, color_codes
 
 
 class PixelEditor(QWidget):
@@ -11,6 +11,9 @@ class PixelEditor(QWidget):
         # Voreinstellungen für das Raster setzen
         self.set_preset(preset)
 
+        # aktuelle Farbe
+        self.current_color = standard_color
+
     # wird aufgerufen um das Widget zu zeichnen
     def paintEvent(self, event):
         # QPainter Objekt erstellen, um auf dem Widget zu zeichnen
@@ -18,7 +21,9 @@ class PixelEditor(QWidget):
         # Quadrat-Raster wird gezeichnet
         for row in range(self.rows):
             for col in range(self.cols):
-                painter.fillRect(col * (self.pixel_size + self.gap), row * (self.pixel_size + self.gap), self.pixel_size, self.pixel_size, QColor(255, 255, 255))
+                code = self.pixel_data[row][col]
+                color = color_codes[code]
+                painter.fillRect(col * (self.pixel_size + self.gap), row * (self.pixel_size + self.gap), self.pixel_size, self.pixel_size, color)
 
     # Voreinstellungen für das Raster setzen
     def set_preset(self, preset):
@@ -35,4 +40,14 @@ class PixelEditor(QWidget):
         self.pixel_data = np.zeros((self.rows, self.cols), dtype = int)
         # Widgetgröße passend zum Raster setzen
         self.setFixedSize(self.cols * (self.pixel_size + self.gap) - self.gap, self.rows * (self.pixel_size + self.gap) - self.gap)
+        self.update()
+
+    def mousePressEvent(self, event):
+        pos = event.position().toPoint()
+        # print("x: " + str(pos.x()) + ", y: " + str(pos.y()))
+        row = pos.y() // (self.pixel_size + self.gap)
+        col = pos.x() // (self.pixel_size + self.gap)
+        # print("row: " + str(row) + ", col: " + str(col))
+        self.pixel_data[row][col] = self.current_color
+        # print(self.pixel_data)
         self.update()

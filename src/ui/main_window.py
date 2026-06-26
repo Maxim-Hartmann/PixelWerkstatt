@@ -16,7 +16,6 @@ class MainWindow(QWidget):
 
         # Fenstername
         self.setWindowTitle("Komprimierung Tool")
-        # self.setStyleSheet("background-color: rgb(100, 100, 100);")
 
         #----------------------------------------
         # Layouts
@@ -34,24 +33,28 @@ class MainWindow(QWidget):
 
         self.left_up_layout = QVBoxLayout()
         self.left_up_layout.setContentsMargins(0, 0, 0, 0)
-        self.left_up_layout.setSpacing(0)
+        self.left_up_layout.setSpacing(10)
         self.left_up_layout.setAlignment(Qt.AlignCenter)
+
+        self.left_middle_layout = QVBoxLayout()
+        self.left_middle_layout.setContentsMargins(10, 10, 10, 10)
+        self.left_middle_layout.setSpacing(0)
+        self.left_middle_layout.setAlignment(Qt.AlignCenter)
 
         self.left_down_layout = QHBoxLayout()
         self.left_down_layout.setContentsMargins(0, 0, 0, 0)
-        self.left_down_layout.setSpacing(0)
+        self.left_down_layout.setSpacing(10)
         self.left_down_layout.setAlignment(Qt.AlignCenter)
-
-        # Layout für Mitte
-        self.middle_layout = QVBoxLayout()
-        self.middle_layout.setContentsMargins(10, 10, 10, 10)
-        self.middle_layout.setSpacing(10)
-        self.middle_layout.setAlignment(Qt.AlignCenter)
 
         # Layout für rechte Seite
         self.right_layout = QVBoxLayout()
         self.right_layout.setContentsMargins(0, 0, 0, 0)
-        self.right_layout.setSpacing(0)    
+        self.right_layout.setSpacing(0) 
+
+        self.right_up_layout = QVBoxLayout()
+        self.right_up_layout.setContentsMargins(10, 10, 10, 10)
+        self.right_up_layout.setSpacing(10)
+        self.right_up_layout.setAlignment(Qt.AlignCenter)  
 
         self.right_down_layout = QVBoxLayout()
         self.right_down_layout.setContentsMargins(10, 10, 10, 10)
@@ -62,6 +65,7 @@ class MainWindow(QWidget):
         # Buttons
         #----------------------------------------
 
+        self.button_rgb = QPushButton("RGB-Codierung")
         self.button_rle = QPushButton("Lauflaenge")
         self.button_clr = QPushButton("Code-Effizienz")
         self.button_s = QPushButton("6:8")
@@ -83,6 +87,8 @@ class MainWindow(QWidget):
 
         self.label_data = QLabel("(Datenanzeige)")
         self.label_data.setFont(QFont("Arial", 20))
+        self.label_sim = QLabel("(Simulation)")
+        self.label_sim.setFont(QFont("Arial", 20))
 
         #----------------------------------------
         # Widgets
@@ -96,13 +102,15 @@ class MainWindow(QWidget):
         #----------------------------------------
 
         self.left_up_layout.addWidget(self.pixel_editor)
+        self.left_middle_layout.addWidget(self.color_picker)
+        self.left_down_layout.addWidget(self.button_rgb)
         self.left_down_layout.addWidget(self.button_clr)
         self.left_down_layout.addWidget(self.button_rle)
         self.left_down_layout.addWidget(self.button_s)
         self.left_down_layout.addWidget(self.button_l)
         self.left_down_layout.addWidget(self.button_new)
         self.left_down_layout.addWidget(self.button_save)
-        self.middle_layout.addWidget(self.color_picker)
+        self.right_up_layout.addWidget(self.label_sim)
         self.right_down_layout.addWidget(self.label_data)
 
         #----------------------------------------
@@ -110,11 +118,12 @@ class MainWindow(QWidget):
         #----------------------------------------
 
         self.left_layout.addLayout(self.left_up_layout, 9)
+        self.left_layout.addLayout(self.left_middle_layout, 1)
         self.left_layout.addLayout(self.left_down_layout, 1)
-        self.right_layout.addLayout(self.right_down_layout)
-        self.main_layout.addLayout(self.left_layout, 4)
-        self.main_layout.addLayout(self.middle_layout,1)
-        self.main_layout.addLayout(self.right_layout, 4)
+        self.right_layout.addLayout(self.right_up_layout, 1)
+        self.right_layout.addLayout(self.right_down_layout, 1)
+        self.main_layout.addLayout(self.left_layout, 2)
+        self.main_layout.addLayout(self.right_layout, 1)
         self.setLayout(self.main_layout)
 
         #----------------------------------------
@@ -140,6 +149,12 @@ class MainWindow(QWidget):
 
         """)
 
+        #----------------------------------------
+        # UI-Vermittlung
+        #----------------------------------------        
+        
+        self.color_picker.new_color.connect(self.change_color)
+
     #----------------------------------------
     # Funktionen für Button-Aufrufe
     #----------------------------------------
@@ -155,3 +170,10 @@ class MainWindow(QWidget):
 
     def set_large(self):
         self.pixel_editor.set_preset("l")
+
+    #----------------------------------------
+    # Funktionen für UI-Vermittlung
+    #----------------------------------------
+
+    def change_color(self, color):
+        self.pixel_editor.current_color = color
