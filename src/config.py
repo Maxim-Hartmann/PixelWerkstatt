@@ -4,23 +4,51 @@ from PySide6.QtGui import QColor
 # color_picker config
 #----------------------------------------
 
-# weiß (0),    rot (3),  gelb (6),    braun (9)
-# grau (1),    blau (4), cyan (7),    hellblau (19)
-# schwarz (2), grün (5), magenta (8), lila (11)
-colors = {
-    0: QColor(255, 255, 255), 1: QColor(255, 0, 0), 2: QColor(255, 255, 0), 3: QColor(100, 70, 30),
-    4: QColor(120, 120, 120), 5: QColor(0, 255, 0), 6: QColor(0, 255, 255), 7: QColor(130, 200, 230),
-    8: QColor(0, 0, 0),       9: QColor(0, 0, 255), 10: QColor(255, 0, 255), 11: QColor(90, 40, 120)
-}
+# Mit einem x * y Block aus Farben initialisieren
+colors = [
+    [
+        QColor(255, 255, 255),
+        QColor(220, 220, 220),
+        QColor(180, 180, 180),
+        QColor(140, 140, 140),
+        QColor(100, 100, 100),
+        QColor(60, 60, 60),
+        QColor(10, 10, 10),
+        QColor(0, 0, 0),
+    ],
+    
+    [
+        QColor(255, 0, 0),
+        QColor(255, 165, 0),
+        QColor(255, 255, 0),
+        QColor(0, 255, 0),
+        QColor(0, 255, 255),
+        QColor(0, 0, 255),
+        QColor(128, 0, 255),
+        QColor(255, 0, 255),
+    ]
+]
 
 # Reihen und Spalten der Farbpalette
-colors_rows = 3
-colors_cols = 4
+colors_cols = len(colors)
+colors_rows = len(colors[0])
 
 # Pixelgröße der Farbkacheln
 pixel_size_picker = 40
 # Pixelabstand der Farbkacheln
 pixel_gap_picker = 10
+
+# befüllt color_codes mit colors
+def fill_codes():
+    codes = {}
+    i = 0
+    for col in range(colors_cols):
+        for row in range(colors_rows):
+            codes[i] = colors[col][row]
+            i += 1
+    return codes
+
+color_codes = fill_codes()
 
 #----------------------------------------
 # pixel_editor config

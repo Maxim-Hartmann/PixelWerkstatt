@@ -42,15 +42,16 @@ class MainWindow(QWidget):
         self.left_down_layout.setSpacing(0)
         self.left_down_layout.setAlignment(Qt.AlignCenter)
 
+        # Layout für Mitte
+        self.middle_layout = QVBoxLayout()
+        self.middle_layout.setContentsMargins(10, 10, 10, 10)
+        self.middle_layout.setSpacing(10)
+        self.middle_layout.setAlignment(Qt.AlignCenter)
+
         # Layout für rechte Seite
         self.right_layout = QVBoxLayout()
         self.right_layout.setContentsMargins(0, 0, 0, 0)
-        self.right_layout.setSpacing(0)
-
-        self.right_up_layout = QVBoxLayout()
-        self.right_up_layout.setContentsMargins(10, 10, 10, 10)
-        self.right_up_layout.setSpacing(10)
-        self.right_up_layout.setAlignment(Qt.AlignCenter)
+        self.right_layout.setSpacing(0)    
 
         self.right_down_layout = QVBoxLayout()
         self.right_down_layout.setContentsMargins(10, 10, 10, 10)
@@ -101,8 +102,8 @@ class MainWindow(QWidget):
         self.left_down_layout.addWidget(self.button_l)
         self.left_down_layout.addWidget(self.button_new)
         self.left_down_layout.addWidget(self.button_save)
+        self.middle_layout.addWidget(self.color_picker)
         self.right_down_layout.addWidget(self.label_data)
-        self.right_up_layout.addWidget(self.color_picker)
 
         #----------------------------------------
         # Layout dem Fenster zuweisen
@@ -110,10 +111,10 @@ class MainWindow(QWidget):
 
         self.left_layout.addLayout(self.left_up_layout, 9)
         self.left_layout.addLayout(self.left_down_layout, 1)
-        self.right_layout.addLayout(self.right_up_layout, 1)
-        self.right_layout.addLayout(self.right_down_layout, 1)
-        self.main_layout.addLayout(self.left_layout, 2)
-        self.main_layout.addLayout(self.right_layout, 1)
+        self.right_layout.addLayout(self.right_down_layout)
+        self.main_layout.addLayout(self.left_layout, 4)
+        self.main_layout.addLayout(self.middle_layout,1)
+        self.main_layout.addLayout(self.right_layout, 4)
         self.setLayout(self.main_layout)
 
         #----------------------------------------

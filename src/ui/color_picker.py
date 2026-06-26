@@ -7,22 +7,18 @@ class ColorPicker(QWidget):
         super().__init__()
 
         # Widgetgröße passend zum Raster setzen
-        self.setFixedSize(colors_cols * (pixel_size_picker + pixel_gap_picker), colors_rows * (pixel_size_picker + pixel_gap_picker))
+        self.setFixedSize(colors_cols * (pixel_size_picker + pixel_gap_picker) - pixel_gap_picker, colors_rows * (pixel_size_picker + pixel_gap_picker) - pixel_gap_picker)
 
     def paintEvent(self, event):
         painter = QPainter(self)
-        # Zähler für colors
-        i = 0
-        for row in range(colors_rows):
-            for col in range(colors_cols):
-                color = colors[i]
+        for col in range(colors_cols):
+            for row in range(colors_rows):
+                color = colors[col][row]
                 painter.fillRect(col * (pixel_size_picker + pixel_gap_picker), row * (pixel_size_picker + pixel_gap_picker), pixel_size_picker, pixel_size_picker, color)
-                i += 1
 
     def mousePressEvent(self, event):
-        print("\"klick\"")
         pos = event.position().toPoint()
         print("x: " + str(pos.x()) + ", y: " + str(pos.y()))
-        col = pos.x() // 50
         row = pos.y() // 50
-        
+        col = pos.x() // 50
+        print(colors[col][row])
