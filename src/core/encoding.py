@@ -3,7 +3,6 @@ def encode_rgb(pixel_data, color_index):
     """
     Konvertiert die Integer von pixel_data in einen String mit RGB-Codes um.
     """
-
     rgb_text = ""
     for row in pixel_data:
         for index in row:

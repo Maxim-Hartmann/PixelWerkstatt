@@ -7,8 +7,12 @@ from core.encoding import encode_rgb, encode_rle, encode_clr
 
 # Hauptfenster
 class MainWindow(QWidget):
+    """
+    Hauptfenster der Anwendung.
+
+    Koordiniert die UI-Komponenten und steuert die aktive Codierung sowie Benutzerinteraktion.
+    """
     def __init__(self):
-        # Konstruktor der Elternklasse aufruft um das Fenster zu initialisieren.
         super().__init__()
 
         # aktive Codierung
@@ -18,7 +22,6 @@ class MainWindow(QWidget):
         # Fenstereinstellungen
         #----------------------------------------
 
-        # Fenstername
         self.setWindowTitle("Komprimierung Tool")
 
         #----------------------------------------
@@ -69,11 +72,8 @@ class MainWindow(QWidget):
         # Buttons
         #----------------------------------------
 
-        # rgb <- red, green, blue
         self.button_rgb = QPushButton("RGB")
-        # rle <- run-length-encoding
         self.button_rle = QPushButton("Lauflaenge")
-        # clr <- indexed color
         self.button_clr = QPushButton("Indizierte Farbe")
         self.button_s = QPushButton("6:8")
         self.button_l = QPushButton("9:12")
@@ -92,17 +92,17 @@ class MainWindow(QWidget):
         self.button_clr.clicked.connect(self.clr_clicked)
 
         #----------------------------------------
-        # Labels
+        # Textfelder und Labels
         #----------------------------------------
 
-        self.label_data = QLabel("Datenanzeige")
-        self.label_data.setFont(QFont("Cascadia Code, Consolas, monospace", 20, 1000))
-        self.text_sim = QPlainTextEdit("Zeichne ein Bild ╰(*°▽°*)╯")
+        self.text_sim = QPlainTextEdit("Zeichne ein Bild 🖌️")
         self.text_sim.setFont(QFont("Cascadia Code, Consolas, monospace", 20))
         self.text_sim.setReadOnly(True)
+        self.label_data = QLabel("Datenanzeige")
+        self.label_data.setFont(QFont("Cascadia Code, Consolas, monospace", 20, 1000))
 
         #----------------------------------------
-        # Widgets
+        # UI-Elemente
         #----------------------------------------
 
         self.pixel_editor = PixelEditor()
@@ -127,7 +127,7 @@ class MainWindow(QWidget):
         self.right_down_layout.addWidget(self.label_data)
 
         #----------------------------------------
-        # Layout dem Fenster zuweisen
+        # Layouts zuweisen
         #----------------------------------------
 
         self.left_layout.addLayout(self.left_up_layout, 9)
@@ -173,28 +173,46 @@ class MainWindow(QWidget):
     #----------------------------------------
 
     def new_image(self):
+        """
+        Stellt ein weißes Bild im ausgewähltem Format her.
+        """
         if self.pixel_editor.preset == "s":
             self.pixel_editor.set_preset("s")
         else:
             self.pixel_editor.set_preset("l")
 
     def set_small(self):
+        """
+        setzt das Format auf "s".
+        """
         self.pixel_editor.set_preset("s")
 
     def set_large(self):
+        """
+        setzt das Format auf "l".
+        """
         self.pixel_editor.set_preset("l")
 
     def rgb_clicked(self):
+        """
+        zeigt die RGB-Codierung an.
+        """
         self.active_encode = "rgb"
         rgb_text = encode_rgb(self.pixel_editor.pixel_data, self.pixel_editor.color_index)
         self.text_sim.setFont(QFont("Cascadia Code, Consolas, monospace", 7))
         self.text_sim.setPlainText(rgb_text)
 
     def rle_clicked(self):
+        """
+        zeigt die Lauflängen-Codierungan an.
+        """
         self.active_encode = "rle"
         encode_rle(self.pixel_editor.pixel_data)
 
     def clr_clicked(self):
+        """
+        zeigt die Indizierten-Farben-Codierung an.
+        """
         self.active_encode = "clr"
         encode_clr(self.pixel_editor.pixel_data)
 
@@ -203,4 +221,7 @@ class MainWindow(QWidget):
     #----------------------------------------
 
     def change_color(self, color):
+        """
+        wechselt zur neu ausgewählten Farbe.
+        """
         self.pixel_editor.current_color = color

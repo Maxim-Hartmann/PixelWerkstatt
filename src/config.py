@@ -1,56 +1,49 @@
 from PySide6.QtGui import QColor
 
 #----------------------------------------
-# color_picker config
+# color_picker configuration
 #----------------------------------------
 
-# Mit Liste aus Farben initialisieren
+# Im System verfügbare Farben.
+# "colors" kann mit einer Liste von Farben initialisiert werden.
+# Diese werden im Anschluss im dictionary "color_index" gespeichert.
 colors = [
 
-    QColor(255, 255, 255),  # weiß
-    QColor(0, 0, 0),        # schwarz
-    QColor(140, 140, 140),  # grau
-    QColor(190, 20, 30),    # rot
-    QColor(130, 50, 10),    # braun
-    QColor(220, 110, 50),   # orange
-    QColor(210, 160, 130),  # hellbraun
-    QColor(230, 220, 0),    # gelb
-    QColor(0, 160, 0),      # grün
-    QColor(0, 100, 50),     # dunkelgrün
-    QColor(0, 180, 210),    # hellblau
-    QColor(0, 60, 150),     # blau
-    QColor(80, 40, 110),    # lila
-    QColor(200, 0, 200),    # pink
-    QColor(200, 90, 140),   # magenta
-    QColor(150, 140, 190),  # lavendel
+    QColor(255, 255, 255),  # weiß (0)
+    QColor(0, 0, 0),        # schwarz (1)
+    QColor(140, 140, 140),  # grau (2)
+    QColor(190, 20, 30),    # rot (3)
+    QColor(130, 50, 10),    # braun (4)
+    QColor(220, 110, 50),   # orange (5)
+    QColor(210, 160, 130),  # hellbraun (6)
+    QColor(230, 220, 0),    # gelb (7)
+    QColor(0, 160, 0),      # grün (8)
+    QColor(0, 100, 50),     # dunkelgrün (9)
+    QColor(0, 180, 210),    # hellblau (10)
+    QColor(0, 60, 150),     # blau (11)
+    QColor(80, 40, 110),    # lila (12)
+    QColor(200, 0, 200),    # pink (13)
+    QColor(200, 90, 140),   # magenta (14)
+    QColor(150, 140, 190),  # lavendel (15)
     
 ]
-
-# Anzahl der Farben
-colors_cnt = len(colors)
 
 # Pixelgröße der Farbkacheln
 pixel_size_picker = 40
 # Pixelabstand der Farbkacheln
 pixel_gap_picker = 6
 
-# befüllt color_codes mit colors
-def fill_codes():
-    codes = {}
-    i = 0
-    for color in range(colors_cnt):
-        codes[i] = colors[color]
-        i += 1
-    return codes
-
-color_index = fill_codes()
+# Mapping: Farbindex → QColor
+# Wird verwendet, um aus "pixel_data" (2D-Array, dtype = int) echte Farben zu machen.
+color_index = dict(enumerate(colors))
 
 #----------------------------------------
-# pixel_editor config
+# pixel_editor configuration
 #----------------------------------------
 
 # Größen des Pixelrasters: Reihen, Spalten, Pixelgröße, Pixelabstand
 grid_size = {"s": {"rows": 6, "cols": 8, "pixel_size": 90, "pixel_gap": 2},
              "l": {"rows": 9, "cols": 12, "pixel_size": 60, "pixel_gap": 2}}
 
-standard_color = 0 # erste Farbe (weiß)
+# Standardfarbe, wenn noch keine Farbe gewählt wurde
+standard_color = 0
