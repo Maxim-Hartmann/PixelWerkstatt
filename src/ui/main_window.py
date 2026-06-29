@@ -1,14 +1,18 @@
-from PySide6.QtWidgets import QHBoxLayout, QPushButton, QVBoxLayout, QWidget, QLabel
+from PySide6.QtWidgets import QHBoxLayout, QPushButton, QVBoxLayout, QWidget, QLabel, QPlainTextEdit
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QFont
 from ui.color_picker import ColorPicker
 from ui.pixel_editor import PixelEditor
+from core.encoding import encode_rgb, encode_rle, encode_clr
 
 # Hauptfenster
 class MainWindow(QWidget):
     def __init__(self):
         # Konstruktor der Elternklasse aufruft um das Fenster zu initialisieren.
         super().__init__()
+
+        # aktive Codierung
+        self.active_encode = None
 
         #----------------------------------------
         # Fenstereinstellungen
@@ -65,30 +69,37 @@ class MainWindow(QWidget):
         # Buttons
         #----------------------------------------
 
-        self.button_rgb = QPushButton("RGB-Codierung")
+        # rgb <- red, green, blue
+        self.button_rgb = QPushButton("RGB")
+        # rle <- run-length-encoding
         self.button_rle = QPushButton("Lauflaenge")
-        self.button_clr = QPushButton("Code-Effizienz")
+        # clr <- indexed color
+        self.button_clr = QPushButton("Indizierte Farbe")
         self.button_s = QPushButton("6:8")
         self.button_l = QPushButton("9:12")
         self.button_new = QPushButton("Neu")
         self.button_save = QPushButton("Speichern")
 
         #----------------------------------------
-        # Button-Aufruf
+        # Button-Aufrufe
         #----------------------------------------
 
         self.button_new.clicked.connect(self.new_image)
         self.button_s.clicked.connect(self.set_small)
         self.button_l.clicked.connect(self.set_large)
+        self.button_rgb.clicked.connect(self.rgb_clicked)
+        self.button_rle.clicked.connect(self.rle_clicked)
+        self.button_clr.clicked.connect(self.clr_clicked)
 
         #----------------------------------------
         # Labels
         #----------------------------------------
 
-        self.label_data = QLabel("(Datenanzeige)")
-        self.label_data.setFont(QFont("Arial", 20))
-        self.label_sim = QLabel("(Simulation)")
-        self.label_sim.setFont(QFont("Arial", 20))
+        self.label_data = QLabel("Datenanzeige")
+        self.label_data.setFont(QFont("Cascadia Code, Consolas, monospace", 20, 1000))
+        self.text_sim = QPlainTextEdit("Zeichne ein Bild ╰(*°▽°*)╯")
+        self.text_sim.setFont(QFont("Cascadia Code, Consolas, monospace", 20))
+        self.text_sim.setReadOnly(True)
 
         #----------------------------------------
         # Widgets
@@ -104,13 +115,15 @@ class MainWindow(QWidget):
         self.left_up_layout.addWidget(self.pixel_editor)
         self.left_middle_layout.addWidget(self.color_picker)
         self.left_down_layout.addWidget(self.button_rgb)
-        self.left_down_layout.addWidget(self.button_clr)
         self.left_down_layout.addWidget(self.button_rle)
+        self.left_down_layout.addWidget(self.button_clr)
+        self.left_down_layout.addSpacing(30)
         self.left_down_layout.addWidget(self.button_s)
         self.left_down_layout.addWidget(self.button_l)
+        self.left_down_layout.addSpacing(30)
         self.left_down_layout.addWidget(self.button_new)
         self.left_down_layout.addWidget(self.button_save)
-        self.right_up_layout.addWidget(self.label_sim)
+        self.right_up_layout.addWidget(self.text_sim)
         self.right_down_layout.addWidget(self.label_data)
 
         #----------------------------------------
@@ -122,7 +135,7 @@ class MainWindow(QWidget):
         self.left_layout.addLayout(self.left_down_layout, 1)
         self.right_layout.addLayout(self.right_up_layout, 1)
         self.right_layout.addLayout(self.right_down_layout, 1)
-        self.main_layout.addLayout(self.left_layout, 2)
+        self.main_layout.addLayout(self.left_layout, 1)
         self.main_layout.addLayout(self.right_layout, 1)
         self.setLayout(self.main_layout)
 
@@ -135,7 +148,7 @@ class MainWindow(QWidget):
             QPushButton {
             background-color: rgb(60, 60, 60);
             color: white;
-            padding: 6px;
+            padding: 5px;
             border: 1px solid black;
             }
                  
@@ -170,6 +183,20 @@ class MainWindow(QWidget):
 
     def set_large(self):
         self.pixel_editor.set_preset("l")
+
+    def rgb_clicked(self):
+        self.active_encode = "rgb"
+        rgb_text = encode_rgb(self.pixel_editor.pixel_data, self.pixel_editor.color_index)
+        self.text_sim.setFont(QFont("Cascadia Code, Consolas, monospace", 7))
+        self.text_sim.setPlainText(rgb_text)
+
+    def rle_clicked(self):
+        self.active_encode = "rle"
+        encode_rle(self.pixel_editor.pixel_data)
+
+    def clr_clicked(self):
+        self.active_encode = "clr"
+        encode_clr(self.pixel_editor.pixel_data)
 
     #----------------------------------------
     # Funktionen für UI-Vermittlung

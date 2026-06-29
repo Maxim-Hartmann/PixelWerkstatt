@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import QWidget
 from PySide6.QtGui import QPainter
 import numpy as np
-from config import grid_size, standard_color, color_codes
+from config import grid_size, standard_color, color_index
 
 
 class PixelEditor(QWidget):
@@ -14,6 +14,9 @@ class PixelEditor(QWidget):
         # aktuelle Farbe
         self.current_color = standard_color
 
+        # Farbcodes
+        self.color_index = color_index
+
     # wird aufgerufen um das Widget zu zeichnen
     def paintEvent(self, event):
         # QPainter Objekt erstellen, um auf dem Widget zu zeichnen
@@ -21,8 +24,8 @@ class PixelEditor(QWidget):
         # Quadrat-Raster wird gezeichnet
         for row in range(self.rows):
             for col in range(self.cols):
-                code = self.pixel_data[row][col]
-                color = color_codes[code]
+                index = self.pixel_data[row][col]
+                color = self.color_index[index]
                 painter.fillRect(col * (self.pixel_size + self.gap), row * (self.pixel_size + self.gap), self.pixel_size, self.pixel_size, color)
 
     # Voreinstellungen für das Raster setzen

@@ -43,7 +43,7 @@ def fill_codes():
         i += 1
     return codes
 
-color_codes = fill_codes()
+color_index = fill_codes()
 
 #----------------------------------------
 # pixel_editor config
