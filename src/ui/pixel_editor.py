@@ -26,7 +26,7 @@ class PixelEditor(QWidget):
     def paintEvent(self, event):
         """
         Zeichnet/Updatet den Pixel-Editor.
-        Das Raster wird durch die Informationen in "pixel_data" gezeichnet.
+        Das Raster wird durch die Informationen in pixel_data gezeichnet.
         """
         painter = QPainter(self)
         for row in range(self.rows):

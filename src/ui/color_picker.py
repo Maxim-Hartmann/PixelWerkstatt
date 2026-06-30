@@ -30,7 +30,7 @@ class ColorPicker(QWidget):
 
     def mousePressEvent(self, event):
         """
-        Ermittelt die angeklickte Farbe und gibt diese an "main_window" weiter
+        Ermittelt die angeklickte Farbe und gibt diese an main_window weiter
         """
         pos = event.position().toPoint()
         color_pos = pos.x() // (pixel_size_picker + pixel_gap_picker)

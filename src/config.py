@@ -5,8 +5,8 @@ from PySide6.QtGui import QColor
 #----------------------------------------
 
 # Im System verfügbare Farben.
-# "colors" kann mit einer Liste von Farben initialisiert werden.
-# Diese werden im Anschluss im dictionary "color_index" gespeichert.
+# colors kann mit einer Liste von Farben initialisiert werden.
+# Diese werden im Anschluss im dictionary color_index gespeichert.
 colors = [
 
     QColor(255, 255, 255),  # weiß (0)
@@ -24,7 +24,7 @@ colors = [
     QColor(80, 40, 110),    # lila (12)
     QColor(200, 0, 200),    # pink (13)
     QColor(200, 90, 140),   # magenta (14)
-    QColor(150, 140, 190),  # lavendel (15)
+    QColor(150, 140, 190)   # lavendel (15)
     
 ]
 
@@ -34,7 +34,7 @@ pixel_size_picker = 40
 pixel_gap_picker = 6
 
 # Mapping: Farbindex → QColor
-# Wird verwendet, um aus "pixel_data" (2D-Array, dtype = int) echte Farben zu machen.
+# Wird verwendet, um aus pixel_data (2D-Array, dtype = int) echte Farben zu machen.
 color_index = dict(enumerate(colors))
 
 #----------------------------------------
