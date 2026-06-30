@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QHBoxLayout, QPushButton, QVBoxLayout, QWidget, QLabel, QPlainTextEdit
+from PySide6.QtWidgets import QFileDialog, QHBoxLayout, QPushButton, QVBoxLayout, QWidget, QLabel, QPlainTextEdit
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QFont
 from ui.color_picker import ColorPicker
@@ -88,6 +88,7 @@ class MainWindow(QWidget):
         self.button_new.clicked.connect(self.new_image)
         self.button_s.clicked.connect(self.set_small)
         self.button_l.clicked.connect(self.set_large)
+        self.button_save.clicked.connect(self.save_image)
         self.button_rgb.clicked.connect(self.rgb_clicked)
         self.button_rle.clicked.connect(self.rle_clicked)
         self.button_clr.clicked.connect(self.clr_clicked)
@@ -193,6 +194,15 @@ class MainWindow(QWidget):
         setzt das Format auf "l".
         """
         self.pixel_editor.set_preset("l")
+
+    def save_image(self):
+        path, _ = QFileDialog.getSaveFileName(self,
+        "Pixel-Bild speichern",
+        "Mein_Bild",
+        "PNG (*.png);;JPEG (*.jpg);;Alle Dateien (*)")
+        if path:
+            image = self.pixel_editor.grab()
+            image.save(path)
 
     def rgb_clicked(self):
         """
