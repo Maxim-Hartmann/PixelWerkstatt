@@ -3,7 +3,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import QFont
 from ui.color_picker import ColorPicker
 from ui.pixel_editor import PixelEditor
-from core.encoding import encode_rgb, encode_rle, encode_clr
+from core.encoding import *
 
 # Hauptfenster
 class MainWindow(QWidget):
@@ -196,6 +196,9 @@ class MainWindow(QWidget):
         self.pixel_editor.set_preset("l")
 
     def save_image(self):
+        """
+        Speichert das Pixel-Bild als Screenshot.
+        """
         path, _ = QFileDialog.getSaveFileName(self,
         "Pixel-Bild speichern",
         "Mein_Bild",
@@ -209,7 +212,8 @@ class MainWindow(QWidget):
         zeigt die RGB-Codierung an.
         """
         # self.active_encode = "rgb"
-        rgb_text = encode_rgb(self.pixel_editor.pixel_data, self.pixel_editor.color_index)
+        # rgb_analysis = ...
+        rgb_text = rgb_to_string(self.pixel_editor.pixel_data, self.pixel_editor.color_index)
         self.text_sim.setFont(QFont("Cascadia Code, Consolas, monospace", 12))
         self.text_sim.setPlainText(rgb_text)
 
@@ -219,7 +223,9 @@ class MainWindow(QWidget):
         """
         # self.active_encode = "rle"
         rle_text = f"Höhe: {self.pixel_editor.rows}, Breite: {self.pixel_editor.cols}\n"
-        rle_text += encode_rle(self.pixel_editor.pixel_data, self.pixel_editor.color_index)
+        rle_data = encode_rle(self.pixel_editor.pixel_data)
+        # rle_analysis = ...
+        rle_text += rle_to_string(rle_data, self.pixel_editor.color_index)
         self.text_sim.setFont(QFont("Cascadia Code, Consolas, monospace", 12))
         self.text_sim.setPlainText(rle_text)
 
@@ -228,7 +234,11 @@ class MainWindow(QWidget):
         zeigt die Indizierten-Farben-Codierung an.
         """
         # self.active_encode = "clr"
-        clr_text = encode_clr(self.pixel_editor.pixel_data, self.pixel_editor.color_index)
+        clr_data_and_codes = encode_clr(self.pixel_editor.pixel_data)
+        clr_data = clr_data_and_codes[0]
+        clr_codes = clr_data_and_codes[1]
+        # clr_analysis = ...
+        clr_text = clr_to_string(clr_data, clr_codes)
         self.text_sim.setFont(QFont("Cascadia Code, Consolas, monospace", 12))
         self.text_sim.setPlainText(clr_text)
 
