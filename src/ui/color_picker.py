@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import QWidget
 from PySide6.QtGui import QPainter
 from PySide6.QtCore import Signal
-from config import colors, pixel_size_picker, pixel_gap_picker
+from config import colors, picker_grid_size
 
 class ColorPicker(QWidget):
     """
@@ -17,7 +17,10 @@ class ColorPicker(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.setFixedSize(len(colors) * (pixel_size_picker + pixel_gap_picker) - pixel_gap_picker, pixel_size_picker)
+        self.pixel_size = picker_grid_size["pixel_size"]
+        self.pixel_gap = picker_grid_size["pixel_gap"]
+
+        self.setFixedSize(len(colors) * (self.pixel_size + self.pixel_gap) - self.pixel_gap, self.pixel_size)
 
     def paintEvent(self, event):
         """
@@ -25,13 +28,13 @@ class ColorPicker(QWidget):
         Farben werden als eine Reihe von farbigen Kacheln dargestellt.
         """
         painter = QPainter(self)
-        for i, color in enumerate(colors):
-            painter.fillRect(i * (pixel_size_picker + pixel_gap_picker), 0, pixel_size_picker, pixel_size_picker, color)
+        for i, (color, _) in enumerate(colors):
+            painter.fillRect(i * (self.pixel_size + self.pixel_gap), 0, self.pixel_size, self.pixel_size, color)
 
     def mousePressEvent(self, event):
         """
         Ermittelt die angeklickte Farbe und gibt diese an main_window weiter
         """
         pos = event.position().toPoint()
-        color_pos = pos.x() // (pixel_size_picker + pixel_gap_picker)
+        color_pos = pos.x() // (self.pixel_size + self.pixel_gap)
         self.new_color.emit(color_pos)

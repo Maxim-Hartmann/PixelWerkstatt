@@ -1,9 +1,10 @@
-from PySide6.QtWidgets import QFileDialog, QHBoxLayout, QPushButton, QVBoxLayout, QWidget, QLabel, QPlainTextEdit
+from PySide6.QtWidgets import QFileDialog, QHBoxLayout, QPushButton, QVBoxLayout, QWidget, QLabel, QTextEdit
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QFont
 from ui.color_picker import ColorPicker
 from ui.pixel_editor import PixelEditor
 from core.encoding import *
+from config import text_style
 
 # Hauptfenster
 class MainWindow(QWidget):
@@ -97,7 +98,7 @@ class MainWindow(QWidget):
         # Textfelder und Labels
         #----------------------------------------
 
-        self.text_sim = QPlainTextEdit("Zeichne ein Bild 🖌️")
+        self.text_sim = QTextEdit("Zeichne ein Bild 🖌️")
         self.text_sim.setFont(QFont("Cascadia Code, Consolas, monospace", 20))
         self.text_sim.setReadOnly(True)
         self.label_data = QLabel("Datenanzeige")
@@ -137,8 +138,8 @@ class MainWindow(QWidget):
         self.left_layout.addLayout(self.left_down_layout, 1)
         self.right_layout.addLayout(self.right_up_layout, 1)
         self.right_layout.addLayout(self.right_down_layout, 1)
-        self.main_layout.addLayout(self.left_layout, 2)
-        self.main_layout.addLayout(self.right_layout, 1)
+        self.main_layout.addLayout(self.left_layout, 3)
+        self.main_layout.addLayout(self.right_layout, 2)
         self.setLayout(self.main_layout)
 
         #----------------------------------------
@@ -213,21 +214,20 @@ class MainWindow(QWidget):
         """
         # self.active_encode = "rgb"
         # rgb_analysis = ...
-        rgb_text = rgb_to_string(self.pixel_editor.pixel_data, self.pixel_editor.color_index)
-        self.text_sim.setFont(QFont("Cascadia Code, Consolas, monospace", 12))
-        self.text_sim.setPlainText(rgb_text)
+        rgb_text = f"{self.pixel_editor.rows} <span style='color:gray'>#Höhe</span>, {self.pixel_editor.cols} <span style='color:gray'>#Breite</span><br><br>"
+        rgb_text += rgb_to_string(self.pixel_editor.pixel_data, self.pixel_editor.color_index)
+        self.text_sim.setHtml(f"<span style ={text_style}>{rgb_text}</span>")
 
     def rle_clicked(self):
         """
         zeigt die Lauflängen-Codierungan an.
         """
         # self.active_encode = "rle"
-        rle_text = f"Höhe: {self.pixel_editor.rows}, Breite: {self.pixel_editor.cols}\n"
+        rle_text = f"{self.pixel_editor.rows} <span style='color:gray'>#Höhe</span>, {self.pixel_editor.cols} <span style='color:gray'>#Breite</span><br><br>"
         rle_data = encode_rle(self.pixel_editor.pixel_data)
         # rle_analysis = ...
         rle_text += rle_to_string(rle_data, self.pixel_editor.color_index)
-        self.text_sim.setFont(QFont("Cascadia Code, Consolas, monospace", 12))
-        self.text_sim.setPlainText(rle_text)
+        self.text_sim.setHtml(f"<span style ={text_style}>{rle_text}</span>")
 
     def clr_clicked(self):
         """
@@ -238,9 +238,9 @@ class MainWindow(QWidget):
         clr_data = clr_data_and_codes[0]
         clr_codes = clr_data_and_codes[1]
         # clr_analysis = ...
-        clr_text = clr_to_string(clr_data, clr_codes)
-        self.text_sim.setFont(QFont("Cascadia Code, Consolas, monospace", 12))
-        self.text_sim.setPlainText(clr_text)
+        clr_text = f"{self.pixel_editor.rows} <span style='color:gray'>#Höhe</span>, {self.pixel_editor.cols} <span style='color:gray'>#Breite</span><br><br>"
+        clr_text += clr_to_string(clr_data, clr_codes, self.pixel_editor.color_index)
+        self.text_sim.setHtml(f"<span style ={text_style}>{clr_text}</span>")
 
     #----------------------------------------
     # Funktionen für UI-Vermittlung

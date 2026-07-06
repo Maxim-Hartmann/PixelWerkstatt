@@ -97,8 +97,9 @@ def rgb_to_string(rgb_data, color_index):
     rgb_text = ""
     for row in rgb_data:
         for index in row:
-            color = color_index[index]
-            rgb_text += f"[{color.red():3}, {color.green():3}, {color.blue():3}]\n"
+            rgb_color = color_index[index][0]
+            str_color = color_index[index][1]
+            rgb_text += f"[{rgb_color.red():3}, {rgb_color.green():3}, {rgb_color.blue():3}] <span style='color:gray'>#{str_color}</span><br>"
         # rgb_text += "\n" # Raster Form beibehalten
     return rgb_text
 
@@ -108,17 +109,22 @@ def rle_to_string(rle_data, color_index):
     """
     rle_text = ""
     for i, index in rle_data:
-        color = color_index[index]
-        rle_text += f"{i}: [{color.red():3}, {color.green():3}, {color.blue():3}]\n"
+        rgb_color = color_index[index][0]
+        str_color = color_index[index][1]
+        rle_text += f"{i}: [{rgb_color.red():3}, {rgb_color.green():3}, {rgb_color.blue():3}] <span style='color:gray'>#{str_color}</span><br>"
     return rle_text
 
-def clr_to_string(clr_data, color_codes):
+def clr_to_string(clr_data, color_codes, color_index):
     """
     Konvertiert clr_data in einen String.
     """
-    clr_text = ""
+    clr_text = "<span style='color:gray'>#Code | #Farbe<br>---------------------------<br></span>"
+    for index, code in color_codes.items():
+        rgb_color = color_index[index][0]
+        str_color = color_index[index][1]
+        clr_text += f"{code:>5} <span style='color:gray'>|</span> [{rgb_color.red():3}, {rgb_color.green():3}, {rgb_color.blue():3}] <span style='color:gray'>#{str_color}</span><br>"
     for row in clr_data:
         for code in row:
-            clr_text += f"{code}\n"
+            clr_text += f"<br>{code}"
         # clr_text += "\n" # Raster Form beibehalten
     return clr_text

@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import QWidget
 from PySide6.QtGui import QPainter
 import numpy as np
-from config import grid_size, standard_color, color_index
+from config import editor_grid_size, standard_color, color_index
 
 
 class PixelEditor(QWidget):
@@ -32,7 +32,7 @@ class PixelEditor(QWidget):
         for row in range(self.rows):
             for col in range(self.cols):
                 index = self.pixel_data[row][col]
-                color = self.color_index[index]
+                color = self.color_index[index][0]
                 painter.fillRect(col * (self.pixel_size + self.gap), row * (self.pixel_size + self.gap), self.pixel_size, self.pixel_size, color)
 
     def set_preset(self, preset):
@@ -40,10 +40,10 @@ class PixelEditor(QWidget):
         Setzt die Voreinstellungen für das Raster
         """
         self.preset = preset
-        self.rows = grid_size[preset]["rows"]
-        self.cols = grid_size[preset]["cols"]
-        self.gap = grid_size[preset]["pixel_gap"]
-        self.pixel_size = grid_size[preset]["pixel_size"]
+        self.rows = editor_grid_size[preset]["rows"]
+        self.cols = editor_grid_size[preset]["cols"]
+        self.gap = editor_grid_size[preset]["pixel_gap"]
+        self.pixel_size = editor_grid_size[preset]["pixel_size"]
         # Pixel-Datenliste erstellen und mit 0en füllen
         self.pixel_data = np.zeros((self.rows, self.cols), dtype = int)
         self.setFixedSize(self.cols * (self.pixel_size + self.gap) - self.gap, self.rows * (self.pixel_size + self.gap) - self.gap)
