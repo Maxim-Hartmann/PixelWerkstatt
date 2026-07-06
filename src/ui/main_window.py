@@ -98,11 +98,9 @@ class MainWindow(QWidget):
         # Textfelder und Labels
         #----------------------------------------
 
-        self.text_sim = QTextEdit("Zeichne ein Bild 🖌️")
-        self.text_sim.setFont(QFont("Cascadia Code, Consolas, monospace", 20))
+        self.text_sim = QTextEdit(f"<span style ={text_style}>Male etwas ...</span>")
         self.text_sim.setReadOnly(True)
         self.label_data = QLabel("Datenanzeige")
-        self.label_data.setFont(QFont("Cascadia Code, Consolas, monospace", 20, 1000))
 
         #----------------------------------------
         # UI-Elemente
@@ -214,7 +212,7 @@ class MainWindow(QWidget):
         """
         # self.active_encode = "rgb"
         # rgb_analysis = ...
-        rgb_text = f"{self.pixel_editor.rows} <span style='color:gray'>#Höhe</span>, {self.pixel_editor.cols} <span style='color:gray'>#Breite</span><br><br>"
+        rgb_text = f"{self.pixel_editor.rows:08b} <span style='color:gray'>#Höhe</span>, {self.pixel_editor.cols:08b} <span style='color:gray'>#Breite</span><br>"
         rgb_text += rgb_to_string(self.pixel_editor.pixel_data, self.pixel_editor.color_index)
         self.text_sim.setHtml(f"<span style ={text_style}>{rgb_text}</span>")
 
@@ -223,7 +221,7 @@ class MainWindow(QWidget):
         zeigt die Lauflängen-Codierungan an.
         """
         # self.active_encode = "rle"
-        rle_text = f"{self.pixel_editor.rows} <span style='color:gray'>#Höhe</span>, {self.pixel_editor.cols} <span style='color:gray'>#Breite</span><br><br>"
+        rle_text = f"{self.pixel_editor.rows:08b} <span style='color:gray'>#Höhe</span>, {self.pixel_editor.cols:08b} <span style='color:gray'>#Breite</span><br>"
         rle_data = encode_rle(self.pixel_editor.pixel_data)
         # rle_analysis = ...
         rle_text += rle_to_string(rle_data, self.pixel_editor.color_index)
@@ -238,7 +236,7 @@ class MainWindow(QWidget):
         clr_data = clr_data_and_codes[0]
         clr_codes = clr_data_and_codes[1]
         # clr_analysis = ...
-        clr_text = f"{self.pixel_editor.rows} <span style='color:gray'>#Höhe</span>, {self.pixel_editor.cols} <span style='color:gray'>#Breite</span><br><br>"
+        clr_text = f"{self.pixel_editor.rows:08b} <span style='color:gray'>#Höhe</span>, {self.pixel_editor.cols:08b} <span style='color:gray'>#Breite</span>, {len(clr_codes):08b} <span style='color:gray'>#Farb-Anzahl</span><br><br>"
         clr_text += clr_to_string(clr_data, clr_codes, self.pixel_editor.color_index)
         self.text_sim.setHtml(f"<span style ={text_style}>{clr_text}</span>")
 

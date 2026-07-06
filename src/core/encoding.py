@@ -99,7 +99,10 @@ def rgb_to_string(rgb_data, color_index):
         for index in row:
             rgb_color = color_index[index][0]
             str_color = color_index[index][1]
-            rgb_text += f"[{rgb_color.red():3}, {rgb_color.green():3}, {rgb_color.blue():3}] <span style='color:gray'>#{str_color}</span><br>"
+            r = rgb_color.red()
+            g = rgb_color.green()
+            b = rgb_color.blue()
+            rgb_text += f"<br>{r:08b} {g:08b} {b:08b}<span style='color:gray'> #{r:3} {g:3} {b:3}; {str_color}</span>"
         # rgb_text += "\n" # Raster Form beibehalten
     return rgb_text
 
@@ -111,20 +114,33 @@ def rle_to_string(rle_data, color_index):
     for i, index in rle_data:
         rgb_color = color_index[index][0]
         str_color = color_index[index][1]
-        rle_text += f"{i}: [{rgb_color.red():3}, {rgb_color.green():3}, {rgb_color.blue():3}] <span style='color:gray'>#{str_color}</span><br>"
+        r = rgb_color.red()
+        g = rgb_color.green()
+        b = rgb_color.blue()
+        rle_text += f"<br>{i:08b} <span style='color:gray'>#{i:<2}</span> {r:08b} {g:08b} {b:08b} <span style='color:gray'>#{r:3} {g:3} {b:3}; {str_color}</span>"
     return rle_text
 
 def clr_to_string(clr_data, color_codes, color_index):
     """
     Konvertiert clr_data in einen String.
     """
-    clr_text = "<span style='color:gray'>#Code | #Farbe<br>---------------------------<br></span>"
+    rgb_codes = {}
+    clr_text = "<span style='color:gray'>#Code | #Farbe<br>----------------------------------<br></span>"
     for index, code in color_codes.items():
         rgb_color = color_index[index][0]
         str_color = color_index[index][1]
-        clr_text += f"{code:>5} <span style='color:gray'>|</span> [{rgb_color.red():3}, {rgb_color.green():3}, {rgb_color.blue():3}] <span style='color:gray'>#{str_color}</span><br>"
+        rgb_codes[code] = (rgb_color, str_color)
+        r = rgb_color.red()
+        g = rgb_color.green()
+        b = rgb_color.blue()
+        clr_text += f"{code:>5} <span style='color:gray'>|</span> {r:08b} {g:08b} {b:08b} <span style='color:gray'>#{r:3} {g:3} {b:3}; {str_color}</span><br>"
     for row in clr_data:
         for code in row:
-            clr_text += f"<br>{code}"
+            rgb_color = rgb_codes[code][0]
+            str_color = rgb_codes[code][1]
+            r = rgb_color.red()
+            g = rgb_color.green()
+            b = rgb_color.blue()
+            clr_text += f"<br>{code} <span style='color:gray'>#{r:3} {g:3} {b:3}; {str_color}</span>"
         # clr_text += "\n" # Raster Form beibehalten
     return clr_text

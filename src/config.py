@@ -52,6 +52,6 @@ text_style = """
 \"
 font-family: Cascadia Code, Consolas, monospace;
 white-space: pre;
-font-size: 12pt;
+font-size: 11pt;
 \"
 """
