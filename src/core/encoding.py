@@ -1,9 +1,10 @@
 from collections import Counter
 import math
 
-#----------------------------------------
+# ----------------------------------------
 # Codierungen
-#----------------------------------------
+# ----------------------------------------
+
 
 def encode_rle(pixel_data):
     """
@@ -13,9 +14,9 @@ def encode_rle(pixel_data):
 
     rle_data = []
 
-    #--------------------
+    # --------------------
     # 2D-Struktur
-    #--------------------
+    # --------------------
 
     # for row in pixel_data:
     #     count = 1
@@ -30,9 +31,9 @@ def encode_rle(pixel_data):
     #             prev_pixel = pixel
     #     rle_data.append((count, prev_pixel))
 
-    #--------------------
+    # --------------------
     # 1D-Struktur
-    #--------------------
+    # --------------------
 
     pixel_data_list = array_to_list(pixel_data)
     count = 1
@@ -48,12 +49,6 @@ def encode_rle(pixel_data):
     rle_data.append((count, prev_pixel))
     return rle_data
 
-def encode_clr_bits(clr_count):
-    """
-    Erstellt effiziente Farbcodes.
-    erstellt eien Liste von Tupeln (Bit-Code, Farbindex)
-    """
-    
 
 def encode_clr(pixel_data):
     """
@@ -66,7 +61,7 @@ def encode_clr(pixel_data):
     # Farben und ihre Codes
     clr_codes = {}
     clr_count = len(clr_frequencies)
-    bits = math.ceil(math.log2(clr_count))
+    bits = max(1, math.ceil(math.log2(clr_count)))
     for i, (color, _) in enumerate(clr_frequencies):
         bit_code = f"{i:0{bits}b}"
         # bit_code = f"{i:b}" # keine führenden nullen
@@ -77,7 +72,8 @@ def encode_clr(pixel_data):
         for color in row:
             new_row.append(clr_codes[color])
         clr_data.append(new_row)
-    return clr_data, clr_codes
+    return clr_data, clr_codes, bits
+
 
 def array_to_list(array):
     list = []
@@ -86,9 +82,11 @@ def array_to_list(array):
             list.append(i)
     return list
 
-#----------------------------------------
+
+# ----------------------------------------
 # to String
-#----------------------------------------
+# ----------------------------------------
+
 
 def rgb_to_string(rgb_data, color_index):
     """
@@ -106,6 +104,7 @@ def rgb_to_string(rgb_data, color_index):
         # rgb_text += "\n" # Raster Form beibehalten
     return rgb_text
 
+
 def rle_to_string(rle_data, color_index):
     """
     Konvertiert rle_data in einen String.
@@ -119,6 +118,7 @@ def rle_to_string(rle_data, color_index):
         b = rgb_color.blue()
         rle_text += f"<br>{i:08b} <span style='color:gray'>#{i:<2}</span> {r:08b} {g:08b} {b:08b} <span style='color:gray'>#{r:3} {g:3} {b:3}; {str_color}</span>"
     return rle_text
+
 
 def clr_to_string(clr_data, color_codes, color_index):
     """

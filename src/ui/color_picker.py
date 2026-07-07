@@ -3,6 +3,7 @@ from PySide6.QtGui import QPainter
 from PySide6.QtCore import Signal
 from config import colors, picker_grid_size
 
+
 class ColorPicker(QWidget):
     """
     Widget zur Auswahl von Farben.
@@ -10,7 +11,7 @@ class ColorPicker(QWidget):
     Zeigt ein vorgefärtigtes Raster an Farben, welche angeklickt werden können.
     Die ausgewählte Farbe wird an das System weitergegeben.
     """
-    
+
     # Farbwechsel-Signal
     new_color = Signal(int)
 
@@ -20,7 +21,10 @@ class ColorPicker(QWidget):
         self.pixel_size = picker_grid_size["pixel_size"]
         self.pixel_gap = picker_grid_size["pixel_gap"]
 
-        self.setFixedSize(len(colors) * (self.pixel_size + self.pixel_gap) - self.pixel_gap, self.pixel_size)
+        self.setFixedSize(
+            len(colors) * (self.pixel_size + self.pixel_gap) - self.pixel_gap,
+            self.pixel_size,
+        )
 
     def paintEvent(self, event):
         """
@@ -29,7 +33,13 @@ class ColorPicker(QWidget):
         """
         painter = QPainter(self)
         for i, (color, _) in enumerate(colors):
-            painter.fillRect(i * (self.pixel_size + self.pixel_gap), 0, self.pixel_size, self.pixel_size, color)
+            painter.fillRect(
+                i * (self.pixel_size + self.pixel_gap),
+                0,
+                self.pixel_size,
+                self.pixel_size,
+                color,
+            )
 
     def mousePressEvent(self, event):
         """

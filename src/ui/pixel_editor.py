@@ -11,8 +11,8 @@ class PixelEditor(QWidget):
     Zeigt ein vorgefärtigtes Raster mit Kacheln die angeklickt werden können.
     Beim klicken ändert sich die Farbe des Rasters.
     """
-    
-    def __init__(self,  preset="s"):
+
+    def __init__(self, preset="s"):
         super().__init__()
 
         # Voreinstellungen für das Raster setzen
@@ -33,7 +33,13 @@ class PixelEditor(QWidget):
             for col in range(self.cols):
                 index = self.pixel_data[row][col]
                 color = self.color_index[index][0]
-                painter.fillRect(col * (self.pixel_size + self.gap), row * (self.pixel_size + self.gap), self.pixel_size, self.pixel_size, color)
+                painter.fillRect(
+                    col * (self.pixel_size + self.gap),
+                    row * (self.pixel_size + self.gap),
+                    self.pixel_size,
+                    self.pixel_size,
+                    color,
+                )
 
     def set_preset(self, preset):
         """
@@ -44,9 +50,15 @@ class PixelEditor(QWidget):
         self.cols = editor_grid_size[preset]["cols"]
         self.gap = editor_grid_size[preset]["pixel_gap"]
         self.pixel_size = editor_grid_size[preset]["pixel_size"]
+        # Meta-Daten werden als jeweils ein Byte gespeichert (Höhe und Breite)
+        # (Höhe + Breite) + (Reihen * Spalten * 8 Bit * 3 RGB)
+        self.image_bits = (2 * 8) + (self.rows * self.cols * 8 * 3)
         # Pixel-Datenliste erstellen und mit 0en füllen
-        self.pixel_data = np.zeros((self.rows, self.cols), dtype = int)
-        self.setFixedSize(self.cols * (self.pixel_size + self.gap) - self.gap, self.rows * (self.pixel_size + self.gap) - self.gap)
+        self.pixel_data = np.zeros((self.rows, self.cols), dtype=int)
+        self.setFixedSize(
+            self.cols * (self.pixel_size + self.gap) - self.gap,
+            self.rows * (self.pixel_size + self.gap) - self.gap,
+        )
         self.update()
 
     def mousePressEvent(self, event):

@@ -1,10 +1,19 @@
-from PySide6.QtWidgets import QFileDialog, QHBoxLayout, QPushButton, QVBoxLayout, QWidget, QLabel, QTextEdit
+from PySide6.QtWidgets import (
+    QFileDialog,
+    QHBoxLayout,
+    QPushButton,
+    QVBoxLayout,
+    QWidget,
+    QLabel,
+    QTextEdit,
+)
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QFont
 from ui.color_picker import ColorPicker
 from ui.pixel_editor import PixelEditor
 from core.encoding import *
+from core.bit_analysis import *
 from config import text_style
+
 
 # Hauptfenster
 class MainWindow(QWidget):
@@ -18,17 +27,17 @@ class MainWindow(QWidget):
         super().__init__()
 
         # aktive Codierung
-        self.active_encode = None
+        # self.active_encode = None
 
-        #----------------------------------------
+        # ----------------------------------------
         # Fenstereinstellungen
-        #----------------------------------------
+        # ----------------------------------------
 
         self.setWindowTitle("Komprimierung Tool")
 
-        #----------------------------------------
+        # ----------------------------------------
         # Layouts
-        #----------------------------------------
+        # ----------------------------------------
 
         # Haupt-Layout
         self.main_layout = QHBoxLayout()
@@ -58,33 +67,36 @@ class MainWindow(QWidget):
         # Layout für rechte Seite
         self.right_layout = QVBoxLayout()
         self.right_layout.setContentsMargins(0, 0, 0, 0)
-        self.right_layout.setSpacing(0) 
+        self.right_layout.setSpacing(0)
 
         self.right_up_layout = QVBoxLayout()
         self.right_up_layout.setContentsMargins(10, 10, 10, 10)
         self.right_up_layout.setSpacing(10)
-        self.right_up_layout.setAlignment(Qt.AlignCenter)  
+        self.right_up_layout.setAlignment(Qt.AlignCenter)
 
         self.right_down_layout = QVBoxLayout()
         self.right_down_layout.setContentsMargins(10, 10, 10, 10)
         self.right_down_layout.setSpacing(10)
         self.right_down_layout.setAlignment(Qt.AlignCenter)
 
-        #----------------------------------------
+        # ----------------------------------------
         # Buttons
-        #----------------------------------------
+        # ----------------------------------------
 
-        self.button_rgb = QPushButton("RGB")
-        self.button_rle = QPushButton("Lauflaenge")
-        self.button_clr = QPushButton("Indizierte Farbe")
+        self.button_rgb = QPushButton(".rgb")
+        self.button_rgb.setToolTip("RGB-Codierung")
+        self.button_rle = QPushButton(".rle")
+        self.button_rle.setToolTip("Lauflängen-Codierung")
+        self.button_clr = QPushButton(".clr")
+        self.button_clr.setToolTip("Indizierte-Farben-Codierung")
         self.button_s = QPushButton("6:8")
         self.button_l = QPushButton("9:12")
         self.button_new = QPushButton("Neu")
         self.button_save = QPushButton("Speichern")
 
-        #----------------------------------------
+        # ----------------------------------------
         # Button-Aufrufe
-        #----------------------------------------
+        # ----------------------------------------
 
         self.button_new.clicked.connect(self.new_image)
         self.button_s.clicked.connect(self.set_small)
@@ -94,24 +106,31 @@ class MainWindow(QWidget):
         self.button_rle.clicked.connect(self.rle_clicked)
         self.button_clr.clicked.connect(self.clr_clicked)
 
-        #----------------------------------------
+        # ----------------------------------------
         # Textfelder und Labels
-        #----------------------------------------
+        # ----------------------------------------
 
         self.text_sim = QTextEdit(f"<span style ={text_style}>Male etwas ...</span>")
         self.text_sim.setReadOnly(True)
-        self.label_data = QLabel("Datenanzeige")
+        self.label_byte_bar = QLabel(
+            "[________________________________________________]"
+        )
+        self.label_byte_percent = QLabel("#Prozentuale Datenersparnis")
+        self.label_byte_comp = QLabel("#Kompressionsverhältnis")
+        self.label_byte_size = QLabel("#Dateigröße")
+        self.label_bits_pixel = QLabel("#Bit pro Pixel")
+        self.label_byte_opt = QLabel()
 
-        #----------------------------------------
+        # ----------------------------------------
         # UI-Elemente
-        #----------------------------------------
+        # ----------------------------------------
 
         self.pixel_editor = PixelEditor()
         self.color_picker = ColorPicker()
 
-        #----------------------------------------
+        # ----------------------------------------
         # Widgets dem Layout hinzufügen
-        #----------------------------------------
+        # ----------------------------------------
 
         self.left_up_layout.addWidget(self.pixel_editor)
         self.left_middle_layout.addWidget(self.color_picker)
@@ -125,53 +144,65 @@ class MainWindow(QWidget):
         self.left_down_layout.addWidget(self.button_new)
         self.left_down_layout.addWidget(self.button_save)
         self.right_up_layout.addWidget(self.text_sim)
-        self.right_down_layout.addWidget(self.label_data)
+        self.right_down_layout.addWidget(self.label_byte_bar)
+        self.right_down_layout.addWidget(self.label_byte_percent)
+        self.right_down_layout.addWidget(self.label_byte_comp)
+        self.right_down_layout.addWidget(self.label_byte_size)
+        self.right_down_layout.addWidget(self.label_bits_pixel)
+        self.right_down_layout.addWidget(self.label_byte_opt)
 
-        #----------------------------------------
+        # ----------------------------------------
         # Layouts zuweisen
-        #----------------------------------------
+        # ----------------------------------------
 
         self.left_layout.addLayout(self.left_up_layout, 9)
         self.left_layout.addLayout(self.left_middle_layout, 1)
         self.left_layout.addLayout(self.left_down_layout, 1)
-        self.right_layout.addLayout(self.right_up_layout, 1)
+        self.right_layout.addLayout(self.right_up_layout, 2)
         self.right_layout.addLayout(self.right_down_layout, 1)
         self.main_layout.addLayout(self.left_layout, 3)
         self.main_layout.addLayout(self.right_layout, 2)
         self.setLayout(self.main_layout)
 
-        #----------------------------------------
+        # ----------------------------------------
         # Stylesheet
-        #----------------------------------------
+        # ----------------------------------------
 
         self.setStyleSheet("""
-
-            QPushButton {
-            background-color: rgb(60, 60, 60);
-            color: white;
-            padding: 5px;
-            border: 1px solid black;
-            }
-                 
-            QPushButton:hover {
-                background-color: rgb(0, 0, 0);
-            }
                            
-            QPushButton:pressed {
-                background-color: rgb(30, 30, 30);
-            }
+                           QPushButton {
+                           background-color: rgb(60, 60, 60);
+                           color: white;
+                           padding: 5px;
+                           border: 1px solid black;
+                           }
 
-        """)
+                           QPushButton:hover {
+                               background-color: rgb(0, 0, 0);
+                           }
 
-        #----------------------------------------
+                           QPushButton:pressed {
+                               background-color: rgb(30, 30, 30);
+                           }
+
+                           QLabel {
+                           color: gray;
+                           font-size: 11pt;
+                           font-family: Cascadia Code, Consolas, monospace;
+                           padding: 5px;
+                           }
+                           
+                           """)
+
+        # ----------------------------------------
         # UI-Vermittlung
-        #----------------------------------------        
-        
+        # ----------------------------------------
+
         self.color_picker.new_color.connect(self.change_color)
 
-    #----------------------------------------
+    # ----------------------------------------
     # Funktionen für Button-Aufrufe
-    #----------------------------------------
+    # ----------------------------------------
 
     def new_image(self):
         """
@@ -198,10 +229,12 @@ class MainWindow(QWidget):
         """
         Speichert das Pixel-Bild als Screenshot.
         """
-        path, _ = QFileDialog.getSaveFileName(self,
-        "Pixel-Bild speichern",
-        "Mein_Bild",
-        "PNG (*.png);;JPEG (*.jpg);;Alle Dateien (*)")
+        path, _ = QFileDialog.getSaveFileName(
+            self,
+            "Pixel-Bild speichern",
+            "Mein_Bild",
+            "PNG (*.png);;JPEG (*.jpg);;Alle Dateien (*)",
+        )
         if path:
             image = self.pixel_editor.grab()
             image.save(path)
@@ -211,10 +244,13 @@ class MainWindow(QWidget):
         zeigt die RGB-Codierung an.
         """
         # self.active_encode = "rgb"
-        # rgb_analysis = ...
         rgb_text = f"{self.pixel_editor.rows:08b} <span style='color:gray'>#Höhe</span>, {self.pixel_editor.cols:08b} <span style='color:gray'>#Breite</span><br>"
-        rgb_text += rgb_to_string(self.pixel_editor.pixel_data, self.pixel_editor.color_index)
+        rgb_text += rgb_to_string(
+            self.pixel_editor.pixel_data, self.pixel_editor.color_index
+        )
         self.text_sim.setHtml(f"<span style ={text_style}>{rgb_text}</span>")
+        rgb_bit_label = rgb_to_bit(self.pixel_editor.image_bits)
+        self.set_label(rgb_bit_label)
 
     def rle_clicked(self):
         """
@@ -223,26 +259,44 @@ class MainWindow(QWidget):
         # self.active_encode = "rle"
         rle_text = f"{self.pixel_editor.rows:08b} <span style='color:gray'>#Höhe</span>, {self.pixel_editor.cols:08b} <span style='color:gray'>#Breite</span><br>"
         rle_data = encode_rle(self.pixel_editor.pixel_data)
-        # rle_analysis = ...
         rle_text += rle_to_string(rle_data, self.pixel_editor.color_index)
         self.text_sim.setHtml(f"<span style ={text_style}>{rle_text}</span>")
+        run_length_count = len(rle_data)
+        rle_bit_label = rle_to_bit(self.pixel_editor.image_bits, run_length_count)
+        self.set_label(rle_bit_label)
 
     def clr_clicked(self):
         """
         zeigt die Indizierten-Farben-Codierung an.
         """
         # self.active_encode = "clr"
-        clr_data_and_codes = encode_clr(self.pixel_editor.pixel_data)
-        clr_data = clr_data_and_codes[0]
-        clr_codes = clr_data_and_codes[1]
-        # clr_analysis = ...
+        clr_data_codes = encode_clr(self.pixel_editor.pixel_data)
+        clr_data = clr_data_codes[0]
+        clr_codes = clr_data_codes[1]
+        code_length = clr_data_codes[2]
         clr_text = f"{self.pixel_editor.rows:08b} <span style='color:gray'>#Höhe</span>, {self.pixel_editor.cols:08b} <span style='color:gray'>#Breite</span>, {len(clr_codes):08b} <span style='color:gray'>#Farb-Anzahl</span><br><br>"
         clr_text += clr_to_string(clr_data, clr_codes, self.pixel_editor.color_index)
         self.text_sim.setHtml(f"<span style ={text_style}>{clr_text}</span>")
+        color_count = len(clr_codes)
+        clr_bit_label = clr_to_bit(
+            self.pixel_editor.image_bits,
+            color_count,
+            code_length,
+            self.pixel_editor.rows,
+            self.pixel_editor.cols,
+        )
+        self.set_label(clr_bit_label)
 
-    #----------------------------------------
+    def set_label(self, bit_label):
+        self.label_byte_bar.setText(bit_label[0])
+        self.label_byte_percent.setText(bit_label[1])
+        self.label_byte_comp.setText(bit_label[2])
+        self.label_byte_size.setText(bit_label[3])
+        self.label_bits_pixel.setText(bit_label[4])
+
+    # ----------------------------------------
     # Funktionen für UI-Vermittlung
-    #----------------------------------------
+    # ----------------------------------------
 
     def change_color(self, color):
         """

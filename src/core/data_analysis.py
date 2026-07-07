@@ -1,3 +1,0 @@
-# Bit-String Umwandler
-
-# Stringgrößenberechner
