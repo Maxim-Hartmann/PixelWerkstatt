@@ -1,4 +1,5 @@
 from collections import Counter
+from PySide6.QtGui import QColor
 import math
 
 # ----------------------------------------
@@ -6,12 +7,16 @@ import math
 # ----------------------------------------
 
 
-def encode_rle(pixel_data):
+def encode_rle(pixel_data: list[list[int]]) -> list[(int, int)]:
     """
-    Setzt die Lauflängencodierung auf pixel_data an.
-    Erstellt eine Liste von Tupeln (Lauflänge identischer Farben, Farbindex).
-    """
+    Setzt die RLE-Codierung (Lauflängen) auf das Bild an.
 
+    Args:
+        pixel_data: 2D-Array mit Farbindizes.
+
+    Returns:
+        Liste mit Tupeln (Lauflänge, Farbindex).
+    """
     rle_data = []
 
     # --------------------
@@ -51,9 +56,16 @@ def encode_rle(pixel_data):
     return rle_data
 
 
-def encode_clr(pixel_data):
+def encode_clr(pixel_data: list[list[int]]) -> tuple[list[int], dict[int, str], int]:
     """
-    Setzt die indizierte-Farben-Codierung auf pixel_data an.
+    Setzt die CLR-Codierung (indizierte-Farben) auf das Bild an.
+
+    Args:
+        pixel_data: 2D-Array mit Farbindizes.
+
+    Returns:
+        Informationen zur CLR-Codierung:
+        2D-Array mit Farbcodes, Dictionary mit (Farbindex, Farbcode), Anzahl benötigter Bits pro Pixel.
     """
     pixel_data_list = array_to_list(pixel_data)
     pixel_data_count = Counter(pixel_data_list)
@@ -76,7 +88,16 @@ def encode_clr(pixel_data):
     return clr_data, clr_codes, bits
 
 
-def array_to_list(array):
+def array_to_list(array) -> list[int]:
+    """
+    Nimmt ein 2D-Array und strukturiert es in eine Liste
+
+    Args:
+        array: 2D-Array
+
+    Returns:
+        Liste
+    """
     list = []
     for row in array:
         for i in row:
@@ -89,9 +110,18 @@ def array_to_list(array):
 # ----------------------------------------
 
 
-def rgb_to_string(rgb_data, color_index):
+def rgb_to_string(
+    rgb_data: list[list[int]], color_index: dict[int, tuple[QColor, str]]
+) -> str:
     """
     Konvertiert pixel_data in einen String.
+
+    Args:
+        rgb_data: 2D-Array mit Farbindizes (pixel_data).
+        color_index: Mapt Farbindex zu Farbe (Qcolor, Farbname).
+
+    Returns:
+        RGB-Werte (Binär, Dezi) sowie Farbnamen.
     """
     rgb_text = ""
     for row in rgb_data:
@@ -106,9 +136,18 @@ def rgb_to_string(rgb_data, color_index):
     return rgb_text
 
 
-def rle_to_string(rle_data, color_index):
+def rle_to_string(
+    rle_data: list[tuple[int, int]], color_index: dict[int, tuple[QColor, str]]
+) -> str:
     """
     Konvertiert rle_data in einen String.
+
+    Args:
+        rle_data: Liste mit Tupeln (Lauflänge, Farbindex).
+        color_index: Mapt Farbindex zu Farbe (Qcolor, Farbname).
+
+    Returns:
+        Anzahl der Farbwiderholung, RGB-Werte (Binär, Dezi) sowie Farbnamen.
     """
     rle_text = ""
     for i, index in rle_data:
@@ -121,9 +160,23 @@ def rle_to_string(rle_data, color_index):
     return rle_text
 
 
-def clr_to_string(clr_data, color_codes, color_index):
+def clr_to_string(
+    clr_data: list[list[str]],
+    color_codes: dict[int, str],
+    color_index: dict[int, tuple[QColor, str]],
+) -> str:
     """
     Konvertiert clr_data in einen String.
+
+    Args:
+        clr_data: 2D-Array mit Farbcodes.
+        color_codes: Mapt Farbindex zu Farbcode.
+        color_index: Mapt Farbindex zu Farbe (Qcolor, Farbname).
+
+    Returns:
+        String enthält:
+        Tabelle mit Farbcode und RGB-Werten (Binär, Dezi) sowie Farbnamen.
+        Farbcodes, RGB-Werte (Dezi) sowie Farbnamen.
     """
     rgb_codes = {}
     clr_text = "<span style='color:gray'>#Code | #Farbe<br>----------------------------------<br></span>"

@@ -6,9 +6,7 @@
 
 # Python
 __pycache__/
-*.pyc
-*.pyo
+*.py[cod]
 
-# Logs und temporäre Dateien
-*.log
-*.tmp
+# erstellte Sphinx Doc
+docs/build/

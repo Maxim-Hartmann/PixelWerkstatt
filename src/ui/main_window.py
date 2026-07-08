@@ -15,11 +15,9 @@ from core.bit_analysis import *
 from config import text_style
 
 
-# Hauptfenster
 class MainWindow(QWidget):
     """
     Hauptfenster der Anwendung.
-
     Koordiniert die UI-Komponenten und steuert die aktive Codierung sowie Benutzerinteraktion.
     """
 
@@ -27,7 +25,7 @@ class MainWindow(QWidget):
         super().__init__()
 
         # aktive Codierung
-        # self.active_encode = None
+        self.active_encode = 0
 
         # ----------------------------------------
         # Fenstereinstellungen
@@ -215,19 +213,19 @@ class MainWindow(QWidget):
 
     def set_small(self):
         """
-        setzt das Format auf "s".
+        Setzt das Format auf "s".
         """
         self.pixel_editor.set_preset("s")
 
     def set_large(self):
         """
-        setzt das Format auf "l".
+        Setzt das Format auf "l".
         """
         self.pixel_editor.set_preset("l")
 
     def save_image(self):
         """
-        Speichert das Pixel-Bild als Screenshot.
+        Speichert das Bild als Screenshot.
         """
         path, _ = QFileDialog.getSaveFileName(
             self,
@@ -241,9 +239,9 @@ class MainWindow(QWidget):
 
     def rgb_clicked(self):
         """
-        zeigt die RGB-Codierung an.
+        Zeigt die RGB-Codierung an.
         """
-        # self.active_encode = "rgb"
+        self.active_encode = 0  # rgb
         rgb_text = f"{self.pixel_editor.rows:08b} <span style='color:gray'>#Höhe</span>, {self.pixel_editor.cols:08b} <span style='color:gray'>#Breite</span><br>"
         rgb_text += rgb_to_string(
             self.pixel_editor.pixel_data, self.pixel_editor.color_index
@@ -256,9 +254,9 @@ class MainWindow(QWidget):
 
     def rle_clicked(self):
         """
-        zeigt die Lauflängen-Codierungan an.
+        Zeigt die Lauflängen-Codierungan an.
         """
-        # self.active_encode = "rle"
+        self.active_encode = 1  # rle
         rle_text = f"{self.pixel_editor.rows:08b} <span style='color:gray'>#Höhe</span>, {self.pixel_editor.cols:08b} <span style='color:gray'>#Breite</span><br>"
         rle_data = encode_rle(self.pixel_editor.pixel_data)
         rle_text += rle_to_string(rle_data, self.pixel_editor.color_index)
@@ -272,9 +270,9 @@ class MainWindow(QWidget):
 
     def clr_clicked(self):
         """
-        zeigt die Indizierten-Farben-Codierung an.
+        Zeigt die Indizierten-Farben-Codierung an.
         """
-        # self.active_encode = "clr"
+        self.active_encode = 2  # clr
         clr_data_codes = encode_clr(self.pixel_editor.pixel_data)
         clr_data = clr_data_codes[0]
         clr_codes = clr_data_codes[1]
@@ -292,7 +290,13 @@ class MainWindow(QWidget):
         )
         self.set_label(clr_bit_label)
 
-    def set_label(self, bit_label):
+    def set_label(self, bit_label: tuple[str, str, str, str, str, str]):
+        """
+        Setzt die jeweiligen Strings auf die Label der Datenanzeige.
+
+        Args:
+            bit_label: Tupel aller Strings die als Label angezeigt werden sollen.
+        """
         self.label_byte_bar.setText(bit_label[0])
         self.label_byte_percent.setText(bit_label[1])
         self.label_byte_comp.setText(bit_label[2])
@@ -304,8 +308,11 @@ class MainWindow(QWidget):
     # Funktionen für UI-Vermittlung
     # ----------------------------------------
 
-    def change_color(self, color):
+    def change_color(self, color: int):
         """
-        wechselt zur neu ausgewählten Farbe.
+        Wechselt zur neu ausgewählten Farbe.
+
+        Args:
+            color: Farbindex der aktuell ausgewählten Farbe.
         """
         self.pixel_editor.current_color = color
