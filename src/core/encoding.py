@@ -47,6 +47,7 @@ def encode_rle(pixel_data):
             count = 1
             prev_pixel = pixel
     rle_data.append((count, prev_pixel))
+
     return rle_data
 
 

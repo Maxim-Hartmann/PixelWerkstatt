@@ -249,7 +249,9 @@ class MainWindow(QWidget):
             self.pixel_editor.pixel_data, self.pixel_editor.color_index
         )
         self.text_sim.setHtml(f"<span style ={text_style}>{rgb_text}</span>")
-        rgb_bit_label = rgb_to_bit(self.pixel_editor.image_bits)
+        rgb_bit_label = rgb_to_bit(
+            self.pixel_editor.image_bits, self.pixel_editor.rows, self.pixel_editor.cols
+        )
         self.set_label(rgb_bit_label)
 
     def rle_clicked(self):
@@ -262,7 +264,10 @@ class MainWindow(QWidget):
         rle_text += rle_to_string(rle_data, self.pixel_editor.color_index)
         self.text_sim.setHtml(f"<span style ={text_style}>{rle_text}</span>")
         run_length_count = len(rle_data)
-        rle_bit_label = rle_to_bit(self.pixel_editor.image_bits, run_length_count)
+        run_length_length = [count for count, _ in rle_data]
+        rle_bit_label = rle_to_bit(
+            self.pixel_editor.image_bits, run_length_count, run_length_length
+        )
         self.set_label(rle_bit_label)
 
     def clr_clicked(self):
@@ -293,6 +298,7 @@ class MainWindow(QWidget):
         self.label_byte_comp.setText(bit_label[2])
         self.label_byte_size.setText(bit_label[3])
         self.label_bits_pixel.setText(bit_label[4])
+        self.label_byte_opt.setText(bit_label[5])
 
     # ----------------------------------------
     # Funktionen für UI-Vermittlung

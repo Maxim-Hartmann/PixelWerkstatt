@@ -3,7 +3,7 @@
 # ----------------------------------------
 
 
-def rle_to_bit(image_bits, run_length_count):
+def rle_to_bit(image_bits, run_length_count, run_length_length):
     # Meta-Daten werden als jeweils ein Byte gespeichert (Höhe und Breite)
     # (Höhe + Breite) + (Anzahl Lauflängen * 8 Bit * (3 RGB + 1 Lauflängenzähler))
     rle_bits = (2 * 8) + (run_length_count * 8 * 4)
@@ -14,8 +14,9 @@ def rle_to_bit(image_bits, run_length_count):
     byte_comp = bit_to_comp(comp, comp_help)
     byte_percent = bit_to_percent(percent)
     byte_bar = bit_to_bar(percent)
-    bits_pixel = "<span style='color: white;'>27 Bit (3 Byte)</span> #Bit pro Pixel"
-    return byte_bar, byte_percent, byte_comp, byte_size, bits_pixel
+    bits_pixel = "<span style='color: white;'>24 Bit (3 Byte)</span> #Bit pro Pixel"
+    avg_run_length = f"<span style='color: white;'>{round(sum(run_length_length) / run_length_count, 1)}</span> #Durchschnittlische Lauflänge"
+    return byte_bar, byte_percent, byte_comp, byte_size, bits_pixel, avg_run_length
 
 
 def clr_to_bit(image_bits, color_count, code_length, rows, cols):
@@ -30,7 +31,10 @@ def clr_to_bit(image_bits, color_count, code_length, rows, cols):
     byte_percent = bit_to_percent(percent)
     byte_bar = bit_to_bar(percent)
     bits_pixel = bit_to_pixel(code_length)
-    return byte_bar, byte_percent, byte_comp, byte_size, bits_pixel
+    color_count_string = (
+        f"<span style='color: white;'>{color_count}</span> #Anzahl Farben"
+    )
+    return byte_bar, byte_percent, byte_comp, byte_size, bits_pixel, color_count_string
 
 
 # ----------------------------------------
@@ -38,13 +42,14 @@ def clr_to_bit(image_bits, color_count, code_length, rows, cols):
 # ----------------------------------------
 
 
-def rgb_to_bit(image_bits):
+def rgb_to_bit(image_bits, rows, cols):
     byte_bar = "<span style='color: white;'>██████████████████████████████████████████████████</span>"
     byte_percent = "<span style='color: white;'>0%</span> #Prozentuale Datenersparnis"
     byte_comp = "<span style='color: white;'>1:1 (= 1)</span> #Kompressionsverhältnis"
     byte_size = f"<span style='color: white;'>{image_bits} Bit ({image_bits / 8} Byte)</span> #Dateigröße"
-    bits_pixel = "<span style='color: white;'>27 Bit (3 Byte)</span> #Bit pro Pixel"
-    return byte_bar, byte_percent, byte_comp, byte_size, bits_pixel
+    bits_pixel = "<span style='color: white;'>24 Bit (3 Byte)</span> #Bit pro Pixel"
+    resolution = f"<span style='color: white;'>{rows * cols}</span> #Anzahl Pixel"
+    return byte_bar, byte_percent, byte_comp, byte_size, bits_pixel, resolution
 
 
 def bit_to_size(comp_bits):
