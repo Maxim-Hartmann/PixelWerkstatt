@@ -1,3 +1,7 @@
+"""
+Enthält Funktionen zur Berechnung und Darstellung von Bits.
+"""
+
 # ----------------------------------------
 # Bit-Berechnungen
 # ----------------------------------------
@@ -48,14 +52,16 @@ def rle_to_bit(
     # (Höhe + Breite) + (Anzahl Lauflängen * 8 Bit * (3 RGB + 1 Lauflängenzähler))
     rle_bits = (2 * 8) + (run_length_count * 8 * 4)
     comp = rle_bits / image_bits
-    comp_help = image_bits / rle_bits
     percent = (1 - comp) * 100
     byte_size = bit_to_size(rle_bits)
-    byte_comp = bit_to_comp(comp, comp_help)
+    byte_comp = bit_to_comp(comp, image_bits, rle_bits)
     byte_percent = bit_to_percent(percent)
     byte_bar = bit_to_bar(percent)
     bits_pixel = "<span style='color: white;'>24 Bit (3 Byte)</span> #Bit pro Pixel"
-    avg_run_length = f"<span style='color: white;'>{round(sum(run_length_length) / run_length_count, 1)}</span> #Durchschnittlische Lauflänge"
+    avg_int = round(sum(run_length_length) / run_length_count, 1)
+    avg_run_length = (
+        f"<span style='color: white;'>{avg_int}</span> #Durchschnittlische Lauflänge"
+    )
     return byte_bar, byte_percent, byte_comp, byte_size, bits_pixel, avg_run_length
 
 
@@ -81,10 +87,9 @@ def clr_to_bit(
     # (Höhe + Breite + Anzahl Farben) + (Anzahl Farben * 8 Bit * (3 RGB + 1 Farbcode)) + (Bit pro Code * Höhe * Länge)
     clr_bits = (3 * 8) + (color_count * 8 * 4) + (code_length * rows * cols)
     comp = clr_bits / image_bits
-    comp_help = image_bits / clr_bits
     percent = (1 - comp) * 100
     byte_size = bit_to_size(clr_bits)
-    byte_comp = bit_to_comp(comp, comp_help)
+    byte_comp = bit_to_comp(comp, image_bits, clr_bits)
     byte_percent = bit_to_percent(percent)
     byte_bar = bit_to_bar(percent)
     bits_pixel = bit_to_pixel(code_length)
@@ -109,10 +114,15 @@ def bit_to_size(comp_bits: int) -> str:
     Returns:
         Informationen über die Dateigröße.
     """
-    return f"<span style='color: white;'>{comp_bits} Bit ({round(comp_bits / 8, 1)} Byte)</span> #Dateigröße"
+    comp_bytes = round(comp_bits / 8, 1)
+    byte_size = (
+        f"<span style='color: white;'>{comp_bits} Bit "
+        f"({comp_bytes} Byte)</span> #Dateigröße"
+    )
+    return byte_size
 
 
-def bit_to_comp(comp: float, comp_help: float) -> str:
+def bit_to_comp(comp: float, image_bits: int, comp_bits: int) -> str:
     """
     Wandelt Kompressionsverhältnis in einen lesbaren String um.
 
@@ -123,7 +133,13 @@ def bit_to_comp(comp: float, comp_help: float) -> str:
     Returns:
         Informationen über das Kompressionsverhältnis.
     """
-    return f"<span style='color: white;'>1:{round(comp_help, 1)} (= {round(comp, 4)})</span> #Kompressionsverhältnis"
+    comp_help = round(image_bits / comp_bits, 1)
+    comp = round(comp, 4)
+    byte_comp = (
+        f"<span style='color: white;'>1:{comp_help} "
+        f"(= {comp})</span> #Kompressionsverhältnis"
+    )
+    return byte_comp
 
 
 def bit_to_percent(percent: float) -> str:
@@ -136,7 +152,11 @@ def bit_to_percent(percent: float) -> str:
     Returns:
         Informationen über die prozentuale Datenersparnis.
     """
-    return f"<span style='color: white;'>{round(percent, 1)}%</span> #Prozentuale Datenersparnis"
+    percent = round(percent, 1)
+    byte_percent = (
+        f"<span style='color: white;'>{percent}%</span> #Prozentuale Datenersparnis"
+    )
+    return byte_percent
 
 
 def bit_to_bar(percent: float) -> str:
@@ -154,27 +174,31 @@ def bit_to_bar(percent: float) -> str:
     bars = 50 - no_bars
     if bars <= 50:
         inside_bars = "█" * bars
-        data_bar = f"<span style='color: white;'>{inside_bars}</span>"
-        data_bar += "_" * (no_bars - 1)
-        data_bar += "]"
+        byte_bar = f"<span style='color: white;'>{inside_bars}</span>"
+        byte_bar += "_" * (no_bars - 1)
+        byte_bar += "]"
     else:
-        data_bar = "<span style='color: white;'>█████████████████████████████████████████████████</span>]"
+        byte_bar = "<span style='color: white;'>█████████████████████████████████████████████████</span>]"
         if bars < 60:
             extra_bars = "█" * (bars - 50)
-            data_bar += f"<span style='color: red;'>{extra_bars}</span>"
+            byte_bar += f"<span style='color: red;'>{extra_bars}</span>"
         else:
-            data_bar += "<span style='color: red;'>██████...</span>"
-    return data_bar
+            byte_bar += "<span style='color: red;'>██████...</span>"
+    return byte_bar
 
 
-def bit_to_pixel(code_length: int) -> str:
+def bit_to_pixel(bits: int) -> str:
     """
     Wandelt Bit pro Pixel in einen lesbaren String um.
 
     Args:
-        code_length: Bit pro Pixel.
+        bits: Bit pro Pixel.
 
     Returns:
         Informationen über die Bitanzahl pro Pixel.
     """
-    return f"<span style='color: white;'>{code_length} Bit ({round(code_length / 8, 2)} Byte)</span> #Bit pro Pixel"
+    bytes = round(bits / 8, 2)
+    bits_pixel = (
+        f"<span style='color: white;'>{bits} Bit ({bytes} Byte)</span> #Bit pro Pixel"
+    )
+    return bits_pixel

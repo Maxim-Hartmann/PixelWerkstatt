@@ -1,12 +1,16 @@
+"""
+Erstellt das Pixel-Editor-Widget zur Bearbeitung von Bildern.
+"""
+
 from PySide6.QtWidgets import QWidget
-from PySide6.QtGui import QPainter
+from PySide6.QtGui import QPainter, QPaintEvent, QMouseEvent
 import numpy as np
 from config import editor_grid_size, standard_color, color_index
 
 
 class PixelEditor(QWidget):
     """
-    Widget zum erstellen eines Pixelbildes.
+    Widget zum erstellen eines Bildes.
 
     Zeigt ein vorgefärtigtes Raster mit Kacheln die angeklickt werden können.
     Beim klicken ändert sich die Farbe des Rasters.
@@ -17,16 +21,18 @@ class PixelEditor(QWidget):
 
         # Voreinstellungen für das Raster setzen
         self.set_preset(preset)
-
         # aktuelle Farbe
         self.current_color = standard_color
         # Farbindex
         self.color_index = color_index
 
-    def paintEvent(self, event):
+    def paintEvent(self, paint_event: QPaintEvent) -> None:
         """
         Zeichnet/Updatet den Pixel-Editor.
         Das Raster wird durch die Informationen in pixel_data gezeichnet.
+
+        Args:
+            paint_event: Informationen über aktuelles Zeichenereignis.
         """
         painter = QPainter(self)
         for row in range(self.rows):
@@ -41,9 +47,12 @@ class PixelEditor(QWidget):
                     color,
                 )
 
-    def set_preset(self, preset):
+    def set_preset(self, preset: str) -> None:
         """
-        Setzt die Voreinstellungen für das Raster
+        Setzt/Updatet die Voreinstellungen für das Raster.
+
+        Args:
+            preset: Key für die Auswahl der richtigen Voreinstellungen.
         """
         self.preset = preset
         self.rows = editor_grid_size[preset]["rows"]
@@ -61,11 +70,14 @@ class PixelEditor(QWidget):
         )
         self.update()
 
-    def mousePressEvent(self, event):
+    def mousePressEvent(self, mouse_event: QMouseEvent) -> None:
         """
-        Ermittelt das angeklickte Raster und ändert die Farbe zur aktuell ausgewählten
+        Ermittelt das angeklickte Feld und ändert die Farbe zur aktuell ausgewählten.
+
+        Args:
+            mouse_event: Enthält Informationen über den Mausklick.
         """
-        pos = event.position().toPoint()
+        pos = mouse_event.position().toPoint()
         row = pos.y() // (self.pixel_size + self.gap)
         col = pos.x() // (self.pixel_size + self.gap)
         self.pixel_data[row][col] = self.current_color

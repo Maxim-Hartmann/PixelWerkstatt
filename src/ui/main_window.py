@@ -1,3 +1,7 @@
+"""
+Führt alle Widgets im Hauptfenster zusammen.
+"""
+
 from PySide6.QtWidgets import (
     QFileDialog,
     QHBoxLayout,
@@ -18,6 +22,7 @@ from config import text_style
 class MainWindow(QWidget):
     """
     Hauptfenster der Anwendung.
+
     Koordiniert die UI-Komponenten und steuert die aktive Codierung sowie Benutzerinteraktion.
     """
 
@@ -91,6 +96,7 @@ class MainWindow(QWidget):
         self.button_l = QPushButton("9:12")
         self.button_new = QPushButton("Neu")
         self.button_save = QPushButton("Speichern")
+        self.button_detective = QPushButton("Pixeldetektiv")
 
         # ----------------------------------------
         # Button-Aufrufe
@@ -141,6 +147,8 @@ class MainWindow(QWidget):
         self.left_down_layout.addSpacing(30)
         self.left_down_layout.addWidget(self.button_new)
         self.left_down_layout.addWidget(self.button_save)
+        self.left_down_layout.addSpacing(30)
+        self.left_down_layout.addWidget(self.button_detective)
         self.right_up_layout.addWidget(self.text_sim)
         self.right_down_layout.addWidget(self.label_byte_bar)
         self.right_down_layout.addWidget(self.label_byte_percent)
@@ -161,6 +169,12 @@ class MainWindow(QWidget):
         self.main_layout.addLayout(self.left_layout, 3)
         self.main_layout.addLayout(self.right_layout, 2)
         self.setLayout(self.main_layout)
+
+        # ----------------------------------------
+        # UI-Vermittlung
+        # ----------------------------------------
+
+        self.color_picker.new_color.connect(self.change_color)
 
         # ----------------------------------------
         # Stylesheet
@@ -192,17 +206,11 @@ class MainWindow(QWidget):
                            
                            """)
 
-        # ----------------------------------------
-        # UI-Vermittlung
-        # ----------------------------------------
-
-        self.color_picker.new_color.connect(self.change_color)
-
     # ----------------------------------------
     # Funktionen für Button-Aufrufe
     # ----------------------------------------
 
-    def new_image(self):
+    def new_image(self) -> None:
         """
         Stellt ein weißes Bild im ausgewähltem Format her.
         """
@@ -211,19 +219,19 @@ class MainWindow(QWidget):
         else:
             self.pixel_editor.set_preset("l")
 
-    def set_small(self):
+    def set_small(self) -> None:
         """
         Setzt das Format auf "s".
         """
         self.pixel_editor.set_preset("s")
 
-    def set_large(self):
+    def set_large(self) -> None:
         """
         Setzt das Format auf "l".
         """
         self.pixel_editor.set_preset("l")
 
-    def save_image(self):
+    def save_image(self) -> None:
         """
         Speichert das Bild als Screenshot.
         """
@@ -237,12 +245,15 @@ class MainWindow(QWidget):
             image = self.pixel_editor.grab()
             image.save(path)
 
-    def rgb_clicked(self):
+    def rgb_clicked(self) -> None:
         """
         Zeigt die RGB-Codierung an.
         """
         self.active_encode = 0  # rgb
-        rgb_text = f"{self.pixel_editor.rows:08b} <span style='color:gray'>#Höhe</span>, {self.pixel_editor.cols:08b} <span style='color:gray'>#Breite</span><br>"
+        rgb_text = (
+            f"{self.pixel_editor.rows:08b} <span style='color:gray'>#Höhe</span>, "
+            f"{self.pixel_editor.cols:08b} <span style='color:gray'>#Breite</span><br>"
+        )
         rgb_text += rgb_to_string(
             self.pixel_editor.pixel_data, self.pixel_editor.color_index
         )
@@ -252,12 +263,15 @@ class MainWindow(QWidget):
         )
         self.set_label(rgb_bit_label)
 
-    def rle_clicked(self):
+    def rle_clicked(self) -> None:
         """
         Zeigt die Lauflängen-Codierungan an.
         """
         self.active_encode = 1  # rle
-        rle_text = f"{self.pixel_editor.rows:08b} <span style='color:gray'>#Höhe</span>, {self.pixel_editor.cols:08b} <span style='color:gray'>#Breite</span><br>"
+        rle_text = (
+            f"{self.pixel_editor.rows:08b} <span style='color:gray'>#Höhe</span>, "
+            f"{self.pixel_editor.cols:08b} <span style='color:gray'>#Breite</span><br>"
+        )
         rle_data = encode_rle(self.pixel_editor.pixel_data)
         rle_text += rle_to_string(rle_data, self.pixel_editor.color_index)
         self.text_sim.setHtml(f"<span style ={text_style}>{rle_text}</span>")
@@ -268,7 +282,7 @@ class MainWindow(QWidget):
         )
         self.set_label(rle_bit_label)
 
-    def clr_clicked(self):
+    def clr_clicked(self) -> None:
         """
         Zeigt die Indizierten-Farben-Codierung an.
         """
@@ -277,7 +291,11 @@ class MainWindow(QWidget):
         clr_data = clr_data_codes[0]
         clr_codes = clr_data_codes[1]
         code_length = clr_data_codes[2]
-        clr_text = f"{self.pixel_editor.rows:08b} <span style='color:gray'>#Höhe</span>, {self.pixel_editor.cols:08b} <span style='color:gray'>#Breite</span>, {len(clr_codes):08b} <span style='color:gray'>#Farb-Anzahl</span><br><br>"
+        clr_text = (
+            f"{self.pixel_editor.rows:08b} <span style='color:gray'>#Höhe</span>, "
+            f"{self.pixel_editor.cols:08b} <span style='color:gray'>#Breite</span>, "
+            f"{len(clr_codes):08b} <span style='color:gray'>#Farb-Anzahl</span><br><br>"
+        )
         clr_text += clr_to_string(clr_data, clr_codes, self.pixel_editor.color_index)
         self.text_sim.setHtml(f"<span style ={text_style}>{clr_text}</span>")
         color_count = len(clr_codes)
@@ -290,7 +308,7 @@ class MainWindow(QWidget):
         )
         self.set_label(clr_bit_label)
 
-    def set_label(self, bit_label: tuple[str, str, str, str, str, str]):
+    def set_label(self, bit_label: tuple[str, str, str, str, str, str]) -> None:
         """
         Setzt die jeweiligen Strings auf die Label der Datenanzeige.
 
@@ -308,7 +326,7 @@ class MainWindow(QWidget):
     # Funktionen für UI-Vermittlung
     # ----------------------------------------
 
-    def change_color(self, color: int):
+    def change_color(self, color: int) -> None:
         """
         Wechselt zur neu ausgewählten Farbe.
 

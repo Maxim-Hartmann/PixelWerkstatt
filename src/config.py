@@ -1,10 +1,21 @@
+"""
+Konfigurationsdatei.
+
+Enthält zentrale Konfigurationen für:
+
+- Farbauswahl
+- Pixelraster
+- HTML-Darstellung
+"""
+
 from PySide6.QtGui import QColor
 
 # ----------------------------------------
-# color_picker configuration
+# color_picker Konfiguration
 # ----------------------------------------
 
-# Größe des Farbwählers
+
+# Größe des Farbwählers.
 picker_grid_size = {"pixel_size": 40, "pixel_gap": 6}
 
 # Im System verfügbare Farben als QColor (RGB) und String (Farbname).
@@ -28,26 +39,31 @@ colors = [
     (QColor(150, 140, 190), "lavendel"),  # (15)
 ]
 
-# Mapping: Farbindex → (QColor, Farbname)
+# Mapping: Farbindex → (QColor, Farbname).
 color_index = dict(enumerate(colors))
 
+
 # ----------------------------------------
-# pixel_editor configuration
+# pixel_editor Konfiguration
 # ----------------------------------------
 
-# Größen des Pixelrasters: Reihen, Spalten, Pixelgröße, Pixelabstand
+
+# Größen des Pixelrasters: Reihen, Spalten, Pixelgröße, Pixelabstand.
 editor_grid_size = {
     "s": {"rows": 6, "cols": 8, "pixel_size": 90, "pixel_gap": 2},
     "l": {"rows": 9, "cols": 12, "pixel_size": 60, "pixel_gap": 2},
 }
 
-# Standardfarbe, wenn noch keine Farbe gewählt wurde
+# Standardfarbe, bevor eine Farbe gewählt wurde.
 standard_color = 0
 
+
 # ----------------------------------------
-# HTML configuration
+# HTML Konfiguration
 # ----------------------------------------
 
+
+# Standard Text-Formatierung: Schriftart, Leerzeichen-Verhalten, Schriftgröße.
 text_style = """
 \"
 font-family: Cascadia Code, Consolas, monospace;

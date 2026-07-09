@@ -1,3 +1,7 @@
+"""
+Enthält Funktionen zur Codierung und Darstellung von Bild-Daten.
+"""
+
 from collections import Counter
 from PySide6.QtGui import QColor
 import math
@@ -41,17 +45,20 @@ def encode_rle(pixel_data: list[list[int]]) -> list[(int, int)]:
     # --------------------
 
     pixel_data_list = array_to_list(pixel_data)
-    count = 1
-    prev_pixel = pixel_data_list[0]
+    # Zählt die Länge der Lauflänge.
+    count_len = 1
+    # Farbe des aktuellen Pixels.
+    current_pixel = pixel_data_list[0]
     for i in range(1, len(pixel_data_list)):
-        pixel = pixel_data_list[i]
-        if pixel == prev_pixel:
-            count += 1
+        # Farbe des folgenden Pixels.
+        next_pixel = pixel_data_list[i]
+        if next_pixel == current_pixel:
+            count_len += 1
         else:
-            rle_data.append((count, prev_pixel))
-            count = 1
-            prev_pixel = pixel
-    rle_data.append((count, prev_pixel))
+            rle_data.append((count_len, current_pixel))
+            count_len = 1
+            current_pixel = next_pixel
+    rle_data.append((count_len, current_pixel))
 
     return rle_data
 
@@ -64,21 +71,25 @@ def encode_clr(pixel_data: list[list[int]]) -> tuple[list[int], dict[int, str], 
         pixel_data: 2D-Array mit Farbindizes.
 
     Returns:
-        Informationen zur CLR-Codierung:
-        2D-Array mit Farbcodes, Dictionary mit (Farbindex, Farbcode), Anzahl benötigter Bits pro Pixel.
+        Informationen zur CLR-Codierung.
+
+        - pixel_data-Kopie mit Farbcodes
+        - Dictionary mit (Farbindex, Farbcode)
+        - Anzahl benötigter Bits pro Pixel
     """
     pixel_data_list = array_to_list(pixel_data)
     pixel_data_count = Counter(pixel_data_list)
-    # Farben und ihre Häufigkeit
+    # Farbindizes und ihre Häufigkeit.
     clr_frequencies = pixel_data_count.most_common()
-    # Farben und ihre Codes
+    # Mapt Farbindizes zu Farbcodes.
     clr_codes = {}
     clr_count = len(clr_frequencies)
+    # Anzahl der benötigten Bits für Farbcodes (Mindestens 1, auch bei einer Farbe).
     bits = max(1, math.ceil(math.log2(clr_count)))
     for i, (color, _) in enumerate(clr_frequencies):
         bit_code = f"{i:0{bits}b}"
-        # bit_code = f"{i:b}" # keine führenden nullen
         clr_codes[color] = bit_code
+
     clr_data = []
     for row in pixel_data:
         new_row = []
@@ -131,8 +142,11 @@ def rgb_to_string(
             r = rgb_color.red()
             g = rgb_color.green()
             b = rgb_color.blue()
-            rgb_text += f"<br>{r:08b} {g:08b} {b:08b}<span style='color:gray'> #{r:3} {g:3} {b:3}; {str_color}</span>"
-        # rgb_text += "\n" # Raster Form beibehalten
+            rgb_text += (
+                f"<br>{r:08b} {g:08b} {b:08b}"
+                f"<span style='color:gray'> #{r:3} {g:3} {b:3}; {str_color}</span>"
+            )
+        # rgb_text += "\n" <- Raster Form beibehalten
     return rgb_text
 
 
@@ -156,7 +170,11 @@ def rle_to_string(
         r = rgb_color.red()
         g = rgb_color.green()
         b = rgb_color.blue()
-        rle_text += f"<br>{i:08b} <span style='color:gray'>#{i:<2}</span> {r:08b} {g:08b} {b:08b} <span style='color:gray'>#{r:3} {g:3} {b:3}; {str_color}</span>"
+        rle_text += (
+            f"<br>{i:08b} <span style='color:gray'>#{i:<2}</span>"
+            f"{r:08b} {g:08b} {b:08b}"
+            f"<span style='color:gray'> #{r:3} {g:3} {b:3}; {str_color}</span>"
+        )
     return rle_text
 
 
@@ -174,12 +192,14 @@ def clr_to_string(
         color_index: Mapt Farbindex zu Farbe (Qcolor, Farbname).
 
     Returns:
-        String enthält:
-        Tabelle mit Farbcode und RGB-Werten (Binär, Dezi) sowie Farbnamen.
-        Farbcodes, RGB-Werte (Dezi) sowie Farbnamen.
+        - Tabelle mit Farbcode und RGB-Werten (Binär, Dezi) sowie Farbnamen.
+        - Farbcodes, RGB-Werte (Dezi) sowie Farbnamen.
     """
     rgb_codes = {}
-    clr_text = "<span style='color:gray'>#Code | #Farbe<br>----------------------------------<br></span>"
+    clr_text = (
+        "<span style='color:gray'>#Code | #Farbe"
+        "<br>----------------------------------<br></span>"
+    )
     for index, code in color_codes.items():
         rgb_color = color_index[index][0]
         str_color = color_index[index][1]
@@ -187,7 +207,11 @@ def clr_to_string(
         r = rgb_color.red()
         g = rgb_color.green()
         b = rgb_color.blue()
-        clr_text += f"{code:>5} <span style='color:gray'>|</span> {r:08b} {g:08b} {b:08b} <span style='color:gray'>#{r:3} {g:3} {b:3}; {str_color}</span><br>"
+        clr_text += (
+            f"{code:>5} <span style='color:gray'>|</span>"
+            f" {r:08b} {g:08b} {b:08b} <span style='color:gray'>"
+            f"#{r:3} {g:3} {b:3}; {str_color}</span><br>"
+        )
     for row in clr_data:
         for code in row:
             rgb_color = rgb_codes[code][0]
@@ -195,6 +219,9 @@ def clr_to_string(
             r = rgb_color.red()
             g = rgb_color.green()
             b = rgb_color.blue()
-            clr_text += f"<br>{code} <span style='color:gray'>#{r:3} {g:3} {b:3}; {str_color}</span>"
-        # clr_text += "\n" # Raster Form beibehalten
+            clr_text += (
+                f"<br>{code} <span style='color:gray'>#{r:3} {g:3} {b:3}; "
+                f"{str_color}</span>"
+            )
+        # clr_text += "\n" <- Raster Form beibehalten
     return clr_text

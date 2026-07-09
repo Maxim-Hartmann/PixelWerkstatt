@@ -1,5 +1,9 @@
+"""
+Erstellt das Color-Picker-Widget zur Auswahl von Farben.
+"""
+
 from PySide6.QtWidgets import QWidget
-from PySide6.QtGui import QPainter
+from PySide6.QtGui import QPainter, QPaintEvent
 from PySide6.QtCore import Signal
 from config import colors, picker_grid_size
 
@@ -26,10 +30,13 @@ class ColorPicker(QWidget):
             self.pixel_size,
         )
 
-    def paintEvent(self, event):
+    def paintEvent(self, paint_event: QPaintEvent) -> None:
         """
         Zeichnet die Farb-Auswahl.
         Farben werden als eine Reihe von farbigen Kacheln dargestellt.
+
+        Args:
+            paint_event: Informationen über aktuelles Zeichenereignis.
         """
         painter = QPainter(self)
         for i, (color, _) in enumerate(colors):
@@ -41,10 +48,13 @@ class ColorPicker(QWidget):
                 color,
             )
 
-    def mousePressEvent(self, event):
+    def mousePressEvent(self, paint_event: QPaintEvent) -> None:
         """
-        Ermittelt die angeklickte Farbe und gibt diese an main_window weiter
+        Ermittelt die angeklickte Farbe und gibt diese an main_window weiter.
+
+        Args:
+            paint_event: Informationen über aktuelles Zeichenereignis.
         """
-        pos = event.position().toPoint()
+        pos = paint_event.position().toPoint()
         color_pos = pos.x() // (self.pixel_size + self.pixel_gap)
         self.new_color.emit(color_pos)
