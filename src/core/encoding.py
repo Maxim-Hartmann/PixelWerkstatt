@@ -11,55 +11,47 @@ import math
 # ----------------------------------------
 
 
-def encode_rle(pixel_data: list[list[int]]) -> list[(int, int)]:
+def encode_rle(pixel_data: list[list[int]], rle_lines_on: bool) -> list[(int, int)]:
     """
     Setzt die RLE-Codierung (Lauflängen) auf das Bild an.
 
     Args:
         pixel_data: 2D-Array mit Farbindizes.
+        rle_lines_on: True -> Zeilenübergriff, False -> kein Zeilenübergriff.
 
     Returns:
         Liste mit Tupeln (Lauflänge, Farbindex).
     """
     rle_data = []
-
-    # --------------------
-    # 2D-Struktur
-    # --------------------
-
-    # for row in pixel_data:
-    #     count = 1
-    #     prev_pixel = row[0]
-    #     for col in range(1, len(row)):
-    #         pixel = row[col]
-    #         if pixel == prev_pixel:
-    #             count += 1
-    #         else:
-    #             rle_data.append((count, prev_pixel))
-    #             count = 1
-    #             prev_pixel = pixel
-    #     rle_data.append((count, prev_pixel))
-
-    # --------------------
-    # 1D-Struktur
-    # --------------------
-
-    pixel_data_list = array_to_list(pixel_data)
-    # Zählt die Länge der Lauflänge.
-    count_len = 1
-    # Farbe des aktuellen Pixels.
-    current_pixel = pixel_data_list[0]
-    for i in range(1, len(pixel_data_list)):
-        # Farbe des folgenden Pixels.
-        next_pixel = pixel_data_list[i]
-        if next_pixel == current_pixel:
-            count_len += 1
-        else:
-            rle_data.append((count_len, current_pixel))
+    if rle_lines_on:
+        pixel_data_list = array_to_list(pixel_data)
+        # Zählt die Länge der Lauflänge.
+        count_len = 1
+        # Farbe des aktuellen Pixels.
+        current_pixel = pixel_data_list[0]
+        for i in range(1, len(pixel_data_list)):
+            # Farbe des folgenden Pixels.
+            next_pixel = pixel_data_list[i]
+            if next_pixel == current_pixel:
+                count_len += 1
+            else:
+                rle_data.append((count_len, current_pixel))
+                count_len = 1
+                current_pixel = next_pixel
+        rle_data.append((count_len, current_pixel))
+    else:
+        for row in pixel_data:
             count_len = 1
-            current_pixel = next_pixel
-    rle_data.append((count_len, current_pixel))
-
+            current_pixel = row[0]
+            for col in range(1, len(row)):
+                next_pixel = row[col]
+                if next_pixel == current_pixel:
+                    count_len += 1
+                else:
+                    rle_data.append((count_len, current_pixel))
+                    count_len = 1
+                    current_pixel = next_pixel
+            rle_data.append((count_len, current_pixel))
     return rle_data
 
 
@@ -171,7 +163,7 @@ def rle_to_string(
         g = rgb_color.green()
         b = rgb_color.blue()
         rle_text += (
-            f"<br>{i:08b} <span style='color:gray'>#{i:<2}</span>"
+            f"<br>{i:08b} <span style='color:gray'>#{i:<3}</span>"
             f"{r:08b} {g:08b} {b:08b}"
             f"<span style='color:gray'> #{r:3} {g:3} {b:3}; {str_color}</span>"
         )

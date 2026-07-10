@@ -1,7 +1,8 @@
 """
 Startmodul.
 
-Initialisiert die PySide6-Anwendung, erstellt das Hauptfenster und startet die Ereignisschleife.
+Initialisiert die PySide6-Anwendung, erstellt das Hauptfenster
+und startet die Ereignisschleife.
 """
 
 import sys

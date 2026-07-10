@@ -59,7 +59,7 @@ class PixelEditor(QWidget):
         self.cols = editor_grid_size[preset]["cols"]
         self.gap = editor_grid_size[preset]["pixel_gap"]
         self.pixel_size = editor_grid_size[preset]["pixel_size"]
-        # Meta-Daten werden als jeweils ein Byte gespeichert (Höhe und Breite)
+        # Meta-Daten werden als jeweils ein Byte gespeichert -> (Höhe und Breite)
         # (Höhe + Breite) + (Reihen * Spalten * 8 Bit * 3 RGB)
         self.image_bits = (2 * 8) + (self.rows * self.cols * 8 * 3)
         # Pixel-Datenliste erstellen und mit 0en füllen

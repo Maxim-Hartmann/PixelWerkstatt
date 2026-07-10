@@ -4,6 +4,7 @@ Führt alle Widgets im Hauptfenster zusammen.
 
 from PySide6.QtWidgets import (
     QFileDialog,
+    QMenu,
     QHBoxLayout,
     QPushButton,
     QVBoxLayout,
@@ -11,6 +12,7 @@ from PySide6.QtWidgets import (
     QLabel,
     QTextEdit,
 )
+from PySide6.QtGui import QAction
 from PySide6.QtCore import Qt
 from ui.color_picker import ColorPicker
 from ui.pixel_editor import PixelEditor
@@ -23,7 +25,8 @@ class MainWindow(QWidget):
     """
     Hauptfenster der Anwendung.
 
-    Koordiniert die UI-Komponenten und steuert die aktive Codierung sowie Benutzerinteraktion.
+    Koordiniert die UI-Komponenten und steuert die aktive Codierung
+    sowie Benutzerinteraktion.
     """
 
     def __init__(self):
@@ -31,6 +34,8 @@ class MainWindow(QWidget):
 
         # aktive Codierung
         self.active_encode = 0
+        # RLE Zeilenübergreifend
+        self.rle_lines_on = True
 
         # ----------------------------------------
         # Fenstereinstellungen
@@ -86,25 +91,26 @@ class MainWindow(QWidget):
         # Buttons
         # ----------------------------------------
 
+        self.button_settings = QPushButton("⚙️")
+        self.button_settings.setToolTip("Einstellungen")
+        self.button_detective = QPushButton("🔎")
+        self.button_detective.setToolTip("Pixel-Detektiv")
         self.button_rgb = QPushButton(".rgb")
         self.button_rgb.setToolTip("RGB-Codierung")
         self.button_rle = QPushButton(".rle")
         self.button_rle.setToolTip("Lauflängen-Codierung")
         self.button_clr = QPushButton(".clr")
         self.button_clr.setToolTip("Indizierte-Farben-Codierung")
-        self.button_s = QPushButton("6:8")
-        self.button_l = QPushButton("9:12")
         self.button_new = QPushButton("Neu")
         self.button_save = QPushButton("Speichern")
-        self.button_detective = QPushButton("Pixeldetektiv")
+        self.button_load = QPushButton("Laden")
 
         # ----------------------------------------
         # Button-Aufrufe
         # ----------------------------------------
 
+        self.button_settings.clicked.connect(self.set_settings)
         self.button_new.clicked.connect(self.new_image)
-        self.button_s.clicked.connect(self.set_small)
-        self.button_l.clicked.connect(self.set_large)
         self.button_save.clicked.connect(self.save_image)
         self.button_rgb.clicked.connect(self.rgb_clicked)
         self.button_rle.clicked.connect(self.rle_clicked)
@@ -119,11 +125,11 @@ class MainWindow(QWidget):
         self.label_byte_bar = QLabel(
             "[________________________________________________]"
         )
-        self.label_byte_percent = QLabel("#Prozentuale Datenersparnis")
-        self.label_byte_comp = QLabel("#Kompressionsverhältnis")
-        self.label_byte_size = QLabel("#Dateigröße")
-        self.label_bits_pixel = QLabel("#Bit pro Pixel")
-        self.label_byte_opt = QLabel()
+        self.label_byte_percent = QLabel()
+        self.label_byte_comp = QLabel()
+        self.label_byte_size = QLabel()
+        self.label_bits_opt_a = QLabel()
+        self.label_byte_opt_b = QLabel()
 
         # ----------------------------------------
         # UI-Elemente
@@ -138,24 +144,23 @@ class MainWindow(QWidget):
 
         self.left_up_layout.addWidget(self.pixel_editor)
         self.left_middle_layout.addWidget(self.color_picker)
+        self.left_down_layout.addWidget(self.button_settings)
+        self.left_down_layout.addWidget(self.button_detective)
+        self.left_down_layout.addSpacing(20)
         self.left_down_layout.addWidget(self.button_rgb)
         self.left_down_layout.addWidget(self.button_rle)
         self.left_down_layout.addWidget(self.button_clr)
-        self.left_down_layout.addSpacing(30)
-        self.left_down_layout.addWidget(self.button_s)
-        self.left_down_layout.addWidget(self.button_l)
-        self.left_down_layout.addSpacing(30)
+        self.left_down_layout.addSpacing(20)
         self.left_down_layout.addWidget(self.button_new)
         self.left_down_layout.addWidget(self.button_save)
-        self.left_down_layout.addSpacing(30)
-        self.left_down_layout.addWidget(self.button_detective)
+        self.left_down_layout.addWidget(self.button_load)
         self.right_up_layout.addWidget(self.text_sim)
         self.right_down_layout.addWidget(self.label_byte_bar)
         self.right_down_layout.addWidget(self.label_byte_percent)
         self.right_down_layout.addWidget(self.label_byte_comp)
         self.right_down_layout.addWidget(self.label_byte_size)
-        self.right_down_layout.addWidget(self.label_bits_pixel)
-        self.right_down_layout.addWidget(self.label_byte_opt)
+        self.right_down_layout.addWidget(self.label_bits_opt_a)
+        self.right_down_layout.addWidget(self.label_byte_opt_b)
 
         # ----------------------------------------
         # Layouts zuweisen
@@ -181,34 +186,66 @@ class MainWindow(QWidget):
         # ----------------------------------------
 
         self.setStyleSheet("""
-                           
-                           QPushButton {
-                           background-color: rgb(60, 60, 60);
-                           color: white;
-                           padding: 5px;
-                           border: 1px solid black;
-                           }
-
-                           QPushButton:hover {
-                               background-color: rgb(0, 0, 0);
-                           }
-
-                           QPushButton:pressed {
-                               background-color: rgb(30, 30, 30);
-                           }
-
-                           QLabel {
-                           color: gray;
-                           font-size: 11pt;
-                           font-family: Cascadia Code, Consolas, monospace;
-                           padding: 5px;
-                           }
-                           
-                           """)
+            QPushButton {
+                background-color: rgb(60, 60, 60);
+                color: white;
+                padding: 5px;
+                border-radius: 5px;
+                border: 1px solid black;
+            }
+            QPushButton:hover {
+                background-color: rgb(0, 0, 0);
+            }
+            QPushButton:pressed {
+                background-color: rgb(30, 30, 30);
+            }
+            QLabel {
+                color: gray;
+                font-size: 11pt;
+                font-family: Cascadia Code, Consolas, monospace;
+                padding: 5px;
+            }
+            """)
 
     # ----------------------------------------
     # Funktionen für Button-Aufrufe
     # ----------------------------------------
+
+    def set_settings(self) -> None:
+        """
+        Ausgewählte Einstellungen können angepasst werden.
+
+        - 6:8 Raster
+        - 9:12 Raster
+        - RLE Zeilenübergreifend an/aus
+        """
+        settings_menu = QMenu(self)
+        action_s = QAction("6:8", self)
+        action_l = QAction("9:12", self)
+        action_rle = QAction("RLE Zeilenübergreifend:")
+        action_rle.setCheckable(True)
+        action_rle.setChecked(self.rle_lines_on)
+
+        action_s.triggered.connect(self.set_small)
+        action_l.triggered.connect(self.set_large)
+        action_rle.triggered.connect(self.set_rle)
+        settings_menu.addAction(action_s)
+        settings_menu.addAction(action_l)
+        settings_menu.addAction(action_rle)
+
+        settings_pos = self.button_settings.rect().topLeft()
+        window_pos = self.button_settings.mapToGlobal(settings_pos)
+        window_pos.setY(window_pos.y() - 90)
+        settings_menu.exec(window_pos)
+
+    def set_rle(self, checked: bool) -> None:
+        """
+        Ändert den Zeilenübergriff der RLE-Codierung.
+
+        Args:
+            checked: True -> Zeilenübergriff, False -> kein Zeilenübergriff.
+        """
+        self.rle_lines_on = checked
 
     def new_image(self) -> None:
         """
@@ -251,7 +288,7 @@ class MainWindow(QWidget):
         """
         self.active_encode = 0  # rgb
         rgb_text = (
-            f"{self.pixel_editor.rows:08b} <span style='color:gray'>#Höhe</span>, "
+            f"{self.pixel_editor.rows:08b} <span style='color:gray'>#Höhe,</span> "
             f"{self.pixel_editor.cols:08b} <span style='color:gray'>#Breite</span><br>"
         )
         rgb_text += rgb_to_string(
@@ -269,16 +306,20 @@ class MainWindow(QWidget):
         """
         self.active_encode = 1  # rle
         rle_text = (
-            f"{self.pixel_editor.rows:08b} <span style='color:gray'>#Höhe</span>, "
+            f"{self.pixel_editor.rows:08b} <span style='color:gray'>#Höhe,</span> "
             f"{self.pixel_editor.cols:08b} <span style='color:gray'>#Breite</span><br>"
         )
-        rle_data = encode_rle(self.pixel_editor.pixel_data)
+        rle_data = encode_rle(self.pixel_editor.pixel_data, self.rle_lines_on)
         rle_text += rle_to_string(rle_data, self.pixel_editor.color_index)
         self.text_sim.setHtml(f"<span style ={text_style}>{rle_text}</span>")
         run_length_count = len(rle_data)
         run_length_length = [count for count, _ in rle_data]
         rle_bit_label = rle_to_bit(
-            self.pixel_editor.image_bits, run_length_count, run_length_length
+            self.pixel_editor.image_bits,
+            run_length_count,
+            run_length_length,
+            self.pixel_editor.rows,
+            self.pixel_editor.cols,
         )
         self.set_label(rle_bit_label)
 
@@ -292,8 +333,8 @@ class MainWindow(QWidget):
         clr_codes = clr_data_codes[1]
         code_length = clr_data_codes[2]
         clr_text = (
-            f"{self.pixel_editor.rows:08b} <span style='color:gray'>#Höhe</span>, "
-            f"{self.pixel_editor.cols:08b} <span style='color:gray'>#Breite</span>, "
+            f"{self.pixel_editor.rows:08b} <span style='color:gray'>#Höhe,</span> "
+            f"{self.pixel_editor.cols:08b} <span style='color:gray'>#Breite,</span> "
             f"{len(clr_codes):08b} <span style='color:gray'>#Farb-Anzahl</span><br><br>"
         )
         clr_text += clr_to_string(clr_data, clr_codes, self.pixel_editor.color_index)
@@ -319,8 +360,8 @@ class MainWindow(QWidget):
         self.label_byte_percent.setText(bit_label[1])
         self.label_byte_comp.setText(bit_label[2])
         self.label_byte_size.setText(bit_label[3])
-        self.label_bits_pixel.setText(bit_label[4])
-        self.label_byte_opt.setText(bit_label[5])
+        self.label_bits_opt_a.setText(bit_label[4])
+        self.label_byte_opt_b.setText(bit_label[5])
 
     # ----------------------------------------
     # Funktionen für UI-Vermittlung
