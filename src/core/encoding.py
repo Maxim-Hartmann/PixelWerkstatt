@@ -5,6 +5,7 @@ Enthält Funktionen zur Codierung und Darstellung von Bild-Daten.
 from collections import Counter
 from PySide6.QtGui import QColor
 import math
+from config import select_color
 
 # ----------------------------------------
 # Codierungen
@@ -114,7 +115,10 @@ def array_to_list(array) -> list[int]:
 
 
 def rgb_to_string(
-    rgb_data: list[list[int]], color_index: dict[int, tuple[QColor, str]]
+    rgb_data: list[list[int]],
+    color_index: dict[int, tuple[QColor, str]],
+    mode: str,
+    pixel_row_col: tuple[int, int],
 ) -> str:
     """
     Konvertiert pixel_data in einen String.
@@ -122,23 +126,34 @@ def rgb_to_string(
     Args:
         rgb_data: 2D-Array mit Farbindizes (pixel_data).
         color_index: Mapt Farbindex zu Farbe (Qcolor, Farbname).
+        mode: paint oder select.
+        pixel_row_col: Reihe und Spalte des ausgewählten Pixels.
 
     Returns:
         RGB-Werte (Binär, Dezi) sowie Farbnamen.
     """
     rgb_text = ""
-    for row in rgb_data:
-        for index in row:
+    if mode == "paint":
+        pixel_row_col = None
+    for row_pos, row in enumerate(rgb_data):
+        for col_pos, index in enumerate(row):
             rgb_color = color_index[index][0]
             str_color = color_index[index][1]
             r = rgb_color.red()
             g = rgb_color.green()
             b = rgb_color.blue()
-            rgb_text += (
-                f"<br>{r:08b} {g:08b} {b:08b}"
-                f"<span style='color:gray'> #{r:3} {g:3} {b:3}; {str_color}</span>"
-            )
-        # rgb_text += "\n" <- Raster Form beibehalten
+            if pixel_row_col == (row_pos, col_pos):
+                rgb_text += (
+                    f"<br><span style='background-color: {select_color[1]};'>"
+                    f"{r:08b} {g:08b} {b:08b}"
+                    f"<span style='color:gray'> #{r:3} {g:3} {b:3}; {str_color}</span>"
+                    "</span>"
+                )
+            else:
+                rgb_text += (
+                    f"<br>{r:08b} {g:08b} {b:08b}"
+                    f"<span style='color:gray'> #{r:3} {g:3} {b:3}; {str_color}</span>"
+                )
     return rgb_text
 
 

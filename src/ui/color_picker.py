@@ -16,7 +16,7 @@ class ColorPicker(QWidget):
     Die ausgewählte Farbe wird an das System weitergegeben.
     """
 
-    # Farbwechsel-Signal
+    # Farbwechsel-Signal.
     new_color = Signal(int)
 
     def __init__(self):
@@ -55,6 +55,7 @@ class ColorPicker(QWidget):
         Args:
             paint_event: Informationen über aktuelles Zeichenereignis.
         """
+        
         pos = paint_event.position().toPoint()
         color_pos = pos.x() // (self.pixel_size + self.pixel_gap)
         self.new_color.emit(color_pos)

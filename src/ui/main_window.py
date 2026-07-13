@@ -7,6 +7,7 @@ from PySide6.QtWidgets import (
     QMenu,
     QHBoxLayout,
     QPushButton,
+    QButtonGroup,
     QVBoxLayout,
     QWidget,
     QLabel,
@@ -18,7 +19,7 @@ from ui.color_picker import ColorPicker
 from ui.pixel_editor import PixelEditor
 from core.encoding import *
 from core.bit_analysis import *
-from config import text_style
+from config import text_style, select_color
 
 
 class MainWindow(QWidget):
@@ -33,7 +34,7 @@ class MainWindow(QWidget):
         super().__init__()
 
         # aktive Codierung
-        self.active_encode = 0
+        self.active_encode = "rgb"
         # RLE Zeilenübergreifend
         self.rle_lines_on = True
 
@@ -93,23 +94,39 @@ class MainWindow(QWidget):
 
         self.button_settings = QPushButton("⚙️")
         self.button_settings.setToolTip("Einstellungen")
+
         self.button_detective = QPushButton("🔎")
         self.button_detective.setToolTip("Pixel-Detektiv")
+        self.button_detective.setCheckable(True)
+
         self.button_rgb = QPushButton(".rgb")
         self.button_rgb.setToolTip("RGB-Codierung")
+        self.button_rgb.setCheckable(True)
+
         self.button_rle = QPushButton(".rle")
         self.button_rle.setToolTip("Lauflängen-Codierung")
+        self.button_rle.setCheckable(True)
+
         self.button_clr = QPushButton(".clr")
         self.button_clr.setToolTip("Indizierte-Farben-Codierung")
+        self.button_clr.setCheckable(True)
+
         self.button_new = QPushButton("Neu")
         self.button_save = QPushButton("Speichern")
         self.button_load = QPushButton("Laden")
+
+        self.encode_buttons = QButtonGroup(self)
+        self.encode_buttons.addButton(self.button_rgb)
+        self.encode_buttons.addButton(self.button_rle)
+        self.encode_buttons.addButton(self.button_clr)
+        self.encode_buttons.setExclusive(True)
 
         # ----------------------------------------
         # Button-Aufrufe
         # ----------------------------------------
 
         self.button_settings.clicked.connect(self.set_settings)
+        self.button_detective.clicked.connect(self.activate_select_mode)
         self.button_new.clicked.connect(self.new_image)
         self.button_save.clicked.connect(self.save_image)
         self.button_rgb.clicked.connect(self.rgb_clicked)
@@ -145,12 +162,13 @@ class MainWindow(QWidget):
         self.left_up_layout.addWidget(self.pixel_editor)
         self.left_middle_layout.addWidget(self.color_picker)
         self.left_down_layout.addWidget(self.button_settings)
+        self.left_down_layout.addSpacing(10)
         self.left_down_layout.addWidget(self.button_detective)
-        self.left_down_layout.addSpacing(20)
+        self.left_down_layout.addSpacing(10)
         self.left_down_layout.addWidget(self.button_rgb)
         self.left_down_layout.addWidget(self.button_rle)
         self.left_down_layout.addWidget(self.button_clr)
-        self.left_down_layout.addSpacing(20)
+        self.left_down_layout.addSpacing(10)
         self.left_down_layout.addWidget(self.button_new)
         self.left_down_layout.addWidget(self.button_save)
         self.left_down_layout.addWidget(self.button_load)
@@ -180,6 +198,7 @@ class MainWindow(QWidget):
         # ----------------------------------------
 
         self.color_picker.new_color.connect(self.change_color)
+        self.pixel_editor.pixel_selected.connect(self.rgb_text_update)
 
         # ----------------------------------------
         # Stylesheet
@@ -187,17 +206,22 @@ class MainWindow(QWidget):
 
         self.setStyleSheet("""
             QPushButton {
-                background-color: rgb(60, 60, 60);
+                font-weight: 800;
+                background-color: rgb(80, 80, 80);
                 color: white;
                 padding: 5px;
                 border-radius: 5px;
-                border: 1px solid black;
+                border: 2px solid rgb(80, 80, 80);
             }
             QPushButton:hover {
-                background-color: rgb(0, 0, 0);
+                background-color: rgb(40, 40, 40);
             }
             QPushButton:pressed {
-                background-color: rgb(30, 30, 30);
+                background-color: rgb(20, 20, 20);
+            }
+            QPushButton:checked {
+            background-color: rgb(80, 80, 80);
+            border: 2px solid rgb(180, 180, 180);
             }
             QLabel {
                 color: gray;
@@ -247,10 +271,15 @@ class MainWindow(QWidget):
         """
         self.rle_lines_on = checked
 
+    def activate_select_mode(self):
+        self.button_detective.setChecked(True)
+        self.pixel_editor.mode = "select"
+
     def new_image(self) -> None:
         """
         Stellt ein weißes Bild im ausgewähltem Format her.
         """
+        self.button_detective.setChecked(False)
         if self.pixel_editor.preset == "s":
             self.pixel_editor.set_preset("s")
         else:
@@ -260,12 +289,14 @@ class MainWindow(QWidget):
         """
         Setzt das Format auf "s".
         """
+        self.button_detective.setChecked(False)
         self.pixel_editor.set_preset("s")
 
     def set_large(self) -> None:
         """
         Setzt das Format auf "l".
         """
+        self.button_detective.setChecked(False)
         self.pixel_editor.set_preset("l")
 
     def save_image(self) -> None:
@@ -286,25 +317,33 @@ class MainWindow(QWidget):
         """
         Zeigt die RGB-Codierung an.
         """
-        self.active_encode = 0  # rgb
-        rgb_text = (
-            f"{self.pixel_editor.rows:08b} <span style='color:gray'>#Höhe,</span> "
-            f"{self.pixel_editor.cols:08b} <span style='color:gray'>#Breite</span><br>"
-        )
-        rgb_text += rgb_to_string(
-            self.pixel_editor.pixel_data, self.pixel_editor.color_index
-        )
-        self.text_sim.setHtml(f"<span style ={text_style}>{rgb_text}</span>")
+        self.active_encode = "rgb"
+        self.button_rgb.setChecked(True)
+        self.rgb_text_update()
         rgb_bit_label = rgb_to_bit(
             self.pixel_editor.image_bits, self.pixel_editor.rows, self.pixel_editor.cols
         )
         self.set_label(rgb_bit_label)
 
+    def rgb_text_update(self):
+        rgb_text = (
+            f"{self.pixel_editor.rows:08b} <span style='color:gray'>#Höhe,</span> "
+            f"{self.pixel_editor.cols:08b} <span style='color:gray'>#Breite</span><br>"
+        )
+        rgb_text += rgb_to_string(
+            self.pixel_editor.pixel_data,
+            self.pixel_editor.color_index,
+            self.pixel_editor.mode,
+            self.pixel_editor.pixel_row_col,
+        )
+        self.text_sim.setHtml(f"<span style ={text_style}>{rgb_text}</span>")
+
     def rle_clicked(self) -> None:
         """
         Zeigt die Lauflängen-Codierungan an.
         """
-        self.active_encode = 1  # rle
+        self.active_encode = "rle"
+        self.button_rle.setChecked(True)
         rle_text = (
             f"{self.pixel_editor.rows:08b} <span style='color:gray'>#Höhe,</span> "
             f"{self.pixel_editor.cols:08b} <span style='color:gray'>#Breite</span><br>"
@@ -327,7 +366,8 @@ class MainWindow(QWidget):
         """
         Zeigt die Indizierten-Farben-Codierung an.
         """
-        self.active_encode = 2  # clr
+        self.active_encode = "clr"
+        self.button_clr.setChecked(True)
         clr_data_codes = encode_clr(self.pixel_editor.pixel_data)
         clr_data = clr_data_codes[0]
         clr_codes = clr_data_codes[1]
@@ -375,3 +415,5 @@ class MainWindow(QWidget):
             color: Farbindex der aktuell ausgewählten Farbe.
         """
         self.pixel_editor.current_color = color
+        self.pixel_editor.mode = "paint"
+        self.button_detective.setChecked(False)

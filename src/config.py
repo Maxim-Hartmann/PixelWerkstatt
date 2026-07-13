@@ -55,8 +55,10 @@ editor_grid_size = {
 }
 
 # Standardfarbe, bevor eine Farbe gewählt wurde.
-standard_color = 0
+standard_color = 1
 
+# Farbe für das Markieren (QColor, String(HTML))
+select_color = (QColor(180, 180, 50), "rgb(180, 180, 50)")
 
 # ----------------------------------------
 # HTML Konfiguration

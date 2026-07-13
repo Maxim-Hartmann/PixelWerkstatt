@@ -3,9 +3,10 @@ Erstellt das Pixel-Editor-Widget zur Bearbeitung von Bildern.
 """
 
 from PySide6.QtWidgets import QWidget
-from PySide6.QtGui import QPainter, QPaintEvent, QMouseEvent
+from PySide6.QtGui import QPainter, QPaintEvent, QMouseEvent, QPen
+from PySide6.QtCore import Signal
 import numpy as np
-from config import editor_grid_size, standard_color, color_index
+from config import editor_grid_size, standard_color, color_index, select_color
 
 
 class PixelEditor(QWidget):
@@ -16,6 +17,9 @@ class PixelEditor(QWidget):
     Beim klicken ändert sich die Farbe des Rasters.
     """
 
+    # Pixel-Auswahl-Signal.
+    pixel_selected = Signal()
+
     def __init__(self, preset="s"):
         super().__init__()
 
@@ -25,6 +29,15 @@ class PixelEditor(QWidget):
         self.current_color = standard_color
         # Farbindex
         self.color_index = color_index
+        # Mal- (paint) oder Auswähl-Modus (select)
+        self.mode = "paint"
+        # aktuell ausgewählter Pixel
+        self.pixel_row_col = (0, 0)
+        # Stift für das Markieren des hervorgehobenen Pixels
+        self.select_pen = QPen()
+        self.select_pen_width = 2 * self.gap
+        self.select_pen.setWidth(self.select_pen_width)
+        self.select_pen.setColor(select_color[0])
 
     def paintEvent(self, paint_event: QPaintEvent) -> None:
         """
@@ -40,12 +53,20 @@ class PixelEditor(QWidget):
                 index = self.pixel_data[row][col]
                 color = self.color_index[index][0]
                 painter.fillRect(
-                    col * (self.pixel_size + self.gap),
-                    row * (self.pixel_size + self.gap),
+                    col * (self.pixel_size + self.gap) + self.gap,
+                    row * (self.pixel_size + self.gap) + self.gap,
                     self.pixel_size,
                     self.pixel_size,
                     color,
                 )
+        if self.mode == "select":
+            painter.setPen(self.select_pen)
+            painter.drawRect(
+                self.pixel_row_col[1] * (self.pixel_size + self.gap) + self.gap,
+                self.pixel_row_col[0] * (self.pixel_size + self.gap) + self.gap,
+                self.pixel_size,
+                self.pixel_size,
+            )
 
     def set_preset(self, preset: str) -> None:
         """
@@ -54,6 +75,7 @@ class PixelEditor(QWidget):
         Args:
             preset: Key für die Auswahl der richtigen Voreinstellungen.
         """
+        self.mode = "paint"
         self.preset = preset
         self.rows = editor_grid_size[preset]["rows"]
         self.cols = editor_grid_size[preset]["cols"]
@@ -65,14 +87,14 @@ class PixelEditor(QWidget):
         # Pixel-Datenliste erstellen und mit 0en füllen
         self.pixel_data = np.zeros((self.rows, self.cols), dtype=int)
         self.setFixedSize(
-            self.cols * (self.pixel_size + self.gap) - self.gap,
-            self.rows * (self.pixel_size + self.gap) - self.gap,
+            self.cols * (self.pixel_size + self.gap) + self.gap,
+            self.rows * (self.pixel_size + self.gap) + self.gap,
         )
         self.update()
 
     def mousePressEvent(self, mouse_event: QMouseEvent) -> None:
         """
-        Ermittelt das angeklickte Feld und ändert die Farbe zur aktuell ausgewählten.
+        Ermittelt das angeklickte Feld und gibt dieses an paint() oder select() weiter.
 
         Args:
             mouse_event: Enthält Informationen über den Mausklick.
@@ -80,5 +102,15 @@ class PixelEditor(QWidget):
         pos = mouse_event.position().toPoint()
         row = pos.y() // (self.pixel_size + self.gap)
         col = pos.x() // (self.pixel_size + self.gap)
-        self.pixel_data[row][col] = self.current_color
+        if self.mode == "paint":
+            self.paint(row, col)
+        else:
+            self.select(row, col)
         self.update()
+
+    def paint(self, row, col):
+        self.pixel_data[row][col] = self.current_color
+
+    def select(self, row, col):
+        self.pixel_row_col = (row, col)
+        self.pixel_selected.emit()
