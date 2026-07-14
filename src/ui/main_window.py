@@ -198,7 +198,8 @@ class MainWindow(QWidget):
         # ----------------------------------------
 
         self.color_picker.new_color.connect(self.change_color)
-        self.pixel_editor.pixel_selected.connect(self.rgb_text_update)
+        self.pixel_editor.pixel_selected.connect(self.text_update)
+        self.pixel_editor.pixel_painted.connect(self.text_update)
 
         # ----------------------------------------
         # Stylesheet
@@ -270,34 +271,53 @@ class MainWindow(QWidget):
             checked: True -> Zeilenübergriff, False -> kein Zeilenübergriff.
         """
         self.rle_lines_on = checked
+        print(str(self.rle_lines_on))
+        self.pixel_editor.update()
+        self.text_update()
 
     def activate_select_mode(self):
-        self.button_detective.setChecked(True)
-        self.pixel_editor.mode = "select"
+        if self.pixel_editor.mode == "paint":
+            self.button_detective.setChecked(True)
+            self.pixel_editor.mode = "select"
+        else:
+            self.button_detective.setChecked(False)
+            self.pixel_editor.mode = "paint"
+            self.pixel_editor.pixel_row_col = None
+        self.pixel_editor.update()
+        self.text_update()
 
     def new_image(self) -> None:
         """
         Stellt ein weißes Bild im ausgewähltem Format her.
         """
-        self.button_detective.setChecked(False)
         if self.pixel_editor.preset == "s":
             self.pixel_editor.set_preset("s")
         else:
             self.pixel_editor.set_preset("l")
+        self.button_detective.setChecked(False)
+        self.pixel_editor.mode = "paint"
+        self.pixel_editor.pixel_row_col = None
+        self.text_update()
 
     def set_small(self) -> None:
         """
         Setzt das Format auf "s".
         """
-        self.button_detective.setChecked(False)
         self.pixel_editor.set_preset("s")
+        self.button_detective.setChecked(False)
+        self.pixel_editor.mode = "paint"
+        self.pixel_editor.pixel_row_col = None
+        self.text_update()
 
     def set_large(self) -> None:
         """
         Setzt das Format auf "l".
         """
-        self.button_detective.setChecked(False)
         self.pixel_editor.set_preset("l")
+        self.button_detective.setChecked(False)
+        self.pixel_editor.mode = "paint"
+        self.pixel_editor.pixel_row_col = None
+        self.text_update()
 
     def save_image(self) -> None:
         """
@@ -319,13 +339,7 @@ class MainWindow(QWidget):
         """
         self.active_encode = "rgb"
         self.button_rgb.setChecked(True)
-        self.rgb_text_update()
-        rgb_bit_label = rgb_to_bit(
-            self.pixel_editor.image_bits, self.pixel_editor.rows, self.pixel_editor.cols
-        )
-        self.set_label(rgb_bit_label)
 
-    def rgb_text_update(self):
         rgb_text = (
             f"{self.pixel_editor.rows:08b} <span style='color:gray'>#Höhe,</span> "
             f"{self.pixel_editor.cols:08b} <span style='color:gray'>#Breite</span><br>"
@@ -333,10 +347,14 @@ class MainWindow(QWidget):
         rgb_text += rgb_to_string(
             self.pixel_editor.pixel_data,
             self.pixel_editor.color_index,
-            self.pixel_editor.mode,
             self.pixel_editor.pixel_row_col,
         )
         self.text_sim.setHtml(f"<span style ={text_style}>{rgb_text}</span>")
+
+        rgb_bit_label = rgb_to_bit(
+            self.pixel_editor.image_bits, self.pixel_editor.rows, self.pixel_editor.cols
+        )
+        self.set_label(rgb_bit_label)
 
     def rle_clicked(self) -> None:
         """
@@ -344,13 +362,23 @@ class MainWindow(QWidget):
         """
         self.active_encode = "rle"
         self.button_rle.setChecked(True)
+
+        rle_data, pos_to_number = encode_rle(
+            self.pixel_editor.pixel_data, self.rle_lines_on
+        )
+
         rle_text = (
             f"{self.pixel_editor.rows:08b} <span style='color:gray'>#Höhe,</span> "
             f"{self.pixel_editor.cols:08b} <span style='color:gray'>#Breite</span><br>"
         )
-        rle_data = encode_rle(self.pixel_editor.pixel_data, self.rle_lines_on)
-        rle_text += rle_to_string(rle_data, self.pixel_editor.color_index)
+        rle_text += rle_to_string(
+            rle_data,
+            self.pixel_editor.color_index,
+            self.pixel_editor.pixel_row_col,
+            pos_to_number,
+        )
         self.text_sim.setHtml(f"<span style ={text_style}>{rle_text}</span>")
+
         run_length_count = len(rle_data)
         run_length_length = [count for count, _ in rle_data]
         rle_bit_label = rle_to_bit(
@@ -368,17 +396,22 @@ class MainWindow(QWidget):
         """
         self.active_encode = "clr"
         self.button_clr.setChecked(True)
-        clr_data_codes = encode_clr(self.pixel_editor.pixel_data)
-        clr_data = clr_data_codes[0]
-        clr_codes = clr_data_codes[1]
-        code_length = clr_data_codes[2]
+
+        clr_data, clr_codes, code_length = encode_clr(self.pixel_editor.pixel_data)
+
         clr_text = (
             f"{self.pixel_editor.rows:08b} <span style='color:gray'>#Höhe,</span> "
             f"{self.pixel_editor.cols:08b} <span style='color:gray'>#Breite,</span> "
             f"{len(clr_codes):08b} <span style='color:gray'>#Farb-Anzahl</span><br><br>"
         )
-        clr_text += clr_to_string(clr_data, clr_codes, self.pixel_editor.color_index)
+        clr_text += clr_to_string(
+            clr_data,
+            clr_codes,
+            self.pixel_editor.color_index,
+            self.pixel_editor.pixel_row_col,
+        )
         self.text_sim.setHtml(f"<span style ={text_style}>{clr_text}</span>")
+
         color_count = len(clr_codes)
         clr_bit_label = clr_to_bit(
             self.pixel_editor.image_bits,
@@ -388,6 +421,14 @@ class MainWindow(QWidget):
             self.pixel_editor.cols,
         )
         self.set_label(clr_bit_label)
+
+    def text_update(self):
+        if self.active_encode == "rgb":
+            self.rgb_clicked()
+        elif self.active_encode == "rle":
+            self.rle_clicked()
+        else:
+            self.clr_clicked()
 
     def set_label(self, bit_label: tuple[str, str, str, str, str, str]) -> None:
         """
@@ -402,6 +443,7 @@ class MainWindow(QWidget):
         self.label_byte_size.setText(bit_label[3])
         self.label_bits_opt_a.setText(bit_label[4])
         self.label_byte_opt_b.setText(bit_label[5])
+        self.pixel_editor.update()
 
     # ----------------------------------------
     # Funktionen für UI-Vermittlung
@@ -415,5 +457,9 @@ class MainWindow(QWidget):
             color: Farbindex der aktuell ausgewählten Farbe.
         """
         self.pixel_editor.current_color = color
-        self.pixel_editor.mode = "paint"
-        self.button_detective.setChecked(False)
+        if self.pixel_editor.mode == "select":
+            self.pixel_editor.mode = "paint"
+            self.pixel_editor.pixel_row_col = None
+            self.button_detective.setChecked(False)
+            self.pixel_editor.update()
+            self.text_update()

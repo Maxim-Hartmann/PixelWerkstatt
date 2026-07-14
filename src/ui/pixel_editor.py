@@ -19,6 +19,8 @@ class PixelEditor(QWidget):
 
     # Pixel-Auswahl-Signal.
     pixel_selected = Signal()
+    # Pixel-Mal-Siganl
+    pixel_painted = Signal()
 
     def __init__(self, preset="s"):
         super().__init__()
@@ -32,7 +34,7 @@ class PixelEditor(QWidget):
         # Mal- (paint) oder Auswähl-Modus (select)
         self.mode = "paint"
         # aktuell ausgewählter Pixel
-        self.pixel_row_col = (0, 0)
+        self.pixel_row_col = None
         # Stift für das Markieren des hervorgehobenen Pixels
         self.select_pen = QPen()
         self.select_pen_width = 2 * self.gap
@@ -59,7 +61,7 @@ class PixelEditor(QWidget):
                     self.pixel_size,
                     color,
                 )
-        if self.mode == "select":
+        if self.mode == "select" and self.pixel_row_col is not None:
             painter.setPen(self.select_pen)
             painter.drawRect(
                 self.pixel_row_col[1] * (self.pixel_size + self.gap) + self.gap,
@@ -110,6 +112,7 @@ class PixelEditor(QWidget):
 
     def paint(self, row, col):
         self.pixel_data[row][col] = self.current_color
+        self.pixel_painted.emit()
 
     def select(self, row, col):
         self.pixel_row_col = (row, col)

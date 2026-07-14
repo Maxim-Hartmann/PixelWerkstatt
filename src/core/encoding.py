@@ -12,7 +12,9 @@ from config import select_color
 # ----------------------------------------
 
 
-def encode_rle(pixel_data: list[list[int]], rle_lines_on: bool) -> list[(int, int)]:
+def encode_rle(
+    pixel_data: list[list[int]], rle_lines_on: bool
+) -> tuple[list[tuple[int, int]], dict[tuple[int, int], int]]:
     """
     Setzt die RLE-Codierung (Lauflängen) auf das Bild an.
 
@@ -21,16 +23,23 @@ def encode_rle(pixel_data: list[list[int]], rle_lines_on: bool) -> list[(int, in
         rle_lines_on: True -> Zeilenübergriff, False -> kein Zeilenübergriff.
 
     Returns:
-        Liste mit Tupeln (Lauflänge, Farbindex).
+        - Liste mit Tupeln (Lauflänge, Farbindex).
+        - Dictionary (Reihe, Spalte -> Lauflängen-Nummer)
     """
+    pos_to_number = {}
     rle_data = []
+    rle_number = 0
     if rle_lines_on:
         pixel_data_list = array_to_list(pixel_data)
         # Zählt die Länge der Lauflänge.
         count_len = 1
         # Farbe des aktuellen Pixels.
         current_pixel = pixel_data_list[0]
+        cols = len(pixel_data[0])
+        pos_to_number[(0, 0)] = rle_number
         for i in range(1, len(pixel_data_list)):
+            row_pos = i // cols
+            col_pos = i % cols
             # Farbe des folgenden Pixels.
             next_pixel = pixel_data_list[i]
             if next_pixel == current_pixel:
@@ -38,22 +47,28 @@ def encode_rle(pixel_data: list[list[int]], rle_lines_on: bool) -> list[(int, in
             else:
                 rle_data.append((count_len, current_pixel))
                 count_len = 1
+                rle_number += 1
                 current_pixel = next_pixel
+            pos_to_number[(row_pos, col_pos)] = rle_number
         rle_data.append((count_len, current_pixel))
     else:
-        for row in pixel_data:
+        for row_pos, row in enumerate(pixel_data):
             count_len = 1
             current_pixel = row[0]
-            for col in range(1, len(row)):
-                next_pixel = row[col]
+            pos_to_number[(row_pos, 0)] = rle_number
+            for col_pos in range(1, len(row)):
+                next_pixel = row[col_pos]
                 if next_pixel == current_pixel:
                     count_len += 1
                 else:
                     rle_data.append((count_len, current_pixel))
                     count_len = 1
+                    rle_number += 1
                     current_pixel = next_pixel
+                pos_to_number[(row_pos, col_pos)] = rle_number
             rle_data.append((count_len, current_pixel))
-    return rle_data
+            rle_number += 1
+    return rle_data, pos_to_number
 
 
 def encode_clr(pixel_data: list[list[int]]) -> tuple[list[int], dict[int, str], int]:
@@ -117,8 +132,7 @@ def array_to_list(array) -> list[int]:
 def rgb_to_string(
     rgb_data: list[list[int]],
     color_index: dict[int, tuple[QColor, str]],
-    mode: str,
-    pixel_row_col: tuple[int, int],
+    pixel_row_col: tuple[int, int] | None,
 ) -> str:
     """
     Konvertiert pixel_data in einen String.
@@ -126,15 +140,12 @@ def rgb_to_string(
     Args:
         rgb_data: 2D-Array mit Farbindizes (pixel_data).
         color_index: Mapt Farbindex zu Farbe (Qcolor, Farbname).
-        mode: paint oder select.
         pixel_row_col: Reihe und Spalte des ausgewählten Pixels.
 
     Returns:
         RGB-Werte (Binär, Dezi) sowie Farbnamen.
     """
     rgb_text = ""
-    if mode == "paint":
-        pixel_row_col = None
     for row_pos, row in enumerate(rgb_data):
         for col_pos, index in enumerate(row):
             rgb_color = color_index[index][0]
@@ -158,7 +169,10 @@ def rgb_to_string(
 
 
 def rle_to_string(
-    rle_data: list[tuple[int, int]], color_index: dict[int, tuple[QColor, str]]
+    rle_data: list[tuple[int, int]],
+    color_index: dict[int, tuple[QColor, str]],
+    pixel_row_col: tuple[int, int] | None,
+    pos_to_number: dict[tuple[int, int], int],
 ) -> str:
     """
     Konvertiert rle_data in einen String.
@@ -166,22 +180,36 @@ def rle_to_string(
     Args:
         rle_data: Liste mit Tupeln (Lauflänge, Farbindex).
         color_index: Mapt Farbindex zu Farbe (Qcolor, Farbname).
+        pixel_row_col: Reihe und Spalte des ausgewählten Pixels.
+        pos_to_number: Dictionary (Reihe, Spalte -> Lauflängen-Nummer).
 
     Returns:
         Anzahl der Farbwiderholung, RGB-Werte (Binär, Dezi) sowie Farbnamen.
     """
     rle_text = ""
-    for i, index in rle_data:
+    selected_rle = None
+    if pixel_row_col is not None:
+        selected_rle = pos_to_number[pixel_row_col]
+    for rle_number, (rle_len, index) in enumerate(rle_data):
         rgb_color = color_index[index][0]
         str_color = color_index[index][1]
         r = rgb_color.red()
         g = rgb_color.green()
         b = rgb_color.blue()
-        rle_text += (
-            f"<br>{i:08b} <span style='color:gray'>#{i:<3}</span>"
-            f"{r:08b} {g:08b} {b:08b}"
-            f"<span style='color:gray'> #{r:3} {g:3} {b:3}; {str_color}</span>"
-        )
+        if selected_rle == rle_number:
+            rle_text += (
+                f"<br><span style='background-color: {select_color[1]};'>"
+                f"{rle_len:08b} <span style='color:gray'>#{rle_len:<3}</span>"
+                f"{r:08b} {g:08b} {b:08b}"
+                f"<span style='color:gray'> #{r:3} {g:3} {b:3}; {str_color}</span>"
+                "</span>"
+            )
+        else:
+            rle_text += (
+                f"<br>{rle_len:08b} <span style='color:gray'>#{rle_len:<3}</span>"
+                f"{r:08b} {g:08b} {b:08b}"
+                f"<span style='color:gray'> #{r:3} {g:3} {b:3}; {str_color}</span>"
+            )
     return rle_text
 
 
@@ -189,6 +217,7 @@ def clr_to_string(
     clr_data: list[list[str]],
     color_codes: dict[int, str],
     color_index: dict[int, tuple[QColor, str]],
+    pixel_row_col: tuple[int, int] | None,
 ) -> str:
     """
     Konvertiert clr_data in einen String.
@@ -197,6 +226,7 @@ def clr_to_string(
         clr_data: 2D-Array mit Farbcodes.
         color_codes: Mapt Farbindex zu Farbcode.
         color_index: Mapt Farbindex zu Farbe (Qcolor, Farbname).
+        pixel_row_col: Reihe und Spalte des ausgewählten Pixels.
 
     Returns:
         - Tabelle mit Farbcode und RGB-Werten (Binär, Dezi) sowie Farbnamen.
@@ -219,16 +249,23 @@ def clr_to_string(
             f" {r:08b} {g:08b} {b:08b} <span style='color:gray'>"
             f"#{r:3} {g:3} {b:3}; {str_color}</span><br>"
         )
-    for row in clr_data:
-        for code in row:
+    for row_pos, row in enumerate(clr_data):
+        for col_pos, code in enumerate(row):
             rgb_color = rgb_codes[code][0]
             str_color = rgb_codes[code][1]
             r = rgb_color.red()
             g = rgb_color.green()
             b = rgb_color.blue()
-            clr_text += (
-                f"<br>{code} <span style='color:gray'>#{r:3} {g:3} {b:3}; "
-                f"{str_color}</span>"
-            )
-        # clr_text += "\n" <- Raster Form beibehalten
+            if pixel_row_col == (row_pos, col_pos):
+                clr_text += (
+                    f"<br><span style='background-color: {select_color[1]};'>"
+                    f"{code} <span style='color:gray'>#{r:3} {g:3} {b:3}; "
+                    f"{str_color}</span>"
+                    "</span>"
+                )
+            else:
+                clr_text += (
+                    f"<br>{code} <span style='color:gray'>#{r:3} {g:3} {b:3}; "
+                    f"{str_color}</span>"
+                )
     return clr_text
