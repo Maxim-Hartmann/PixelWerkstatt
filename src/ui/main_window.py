@@ -14,7 +14,7 @@ from PySide6.QtWidgets import (
     QTextEdit,
 )
 from PySide6.QtGui import QAction
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, Signal
 from ui.color_picker import ColorPicker
 from ui.pixel_editor import PixelEditor
 from core.encoding import *
@@ -29,6 +29,9 @@ class MainWindow(QWidget):
     Koordiniert die UI-Komponenten und steuert die aktive Codierung
     sowie Benutzerinteraktion.
     """
+
+    # Sendet alle Pixel einer ausgewählten Lauflänge an PixelEditor.
+    send_selected_pixels = Signal(list)
 
     def __init__(self):
         super().__init__()
@@ -197,9 +200,10 @@ class MainWindow(QWidget):
         # UI-Vermittlung
         # ----------------------------------------
 
-        self.color_picker.new_color.connect(self.change_color)
-        self.pixel_editor.pixel_selected.connect(self.text_update)
-        self.pixel_editor.pixel_painted.connect(self.text_update)
+        self.color_picker.send_new_color.connect(self.change_color)
+        self.pixel_editor.send_selected_pixel.connect(self.text_update)
+        self.pixel_editor.send_painted_pixel.connect(self.text_update)
+        self.send_selected_pixels.connect(self.pixel_editor.set_selected_pixels)
 
         # ----------------------------------------
         # Stylesheet
@@ -231,6 +235,25 @@ class MainWindow(QWidget):
                 padding: 5px;
             }
             """)
+
+    # ----------------------------------------
+    # Funktionen der UI-Vermittlung
+    # ----------------------------------------
+
+    def change_color(self, color: int) -> None:
+        """
+        Wechselt zur neu ausgewählten Farbe.
+
+        Args:
+            color: Farbindex der aktuell ausgewählten Farbe.
+        """
+        self.pixel_editor.current_color = color
+        if self.pixel_editor.mode == "select":
+            self.pixel_editor.mode = "paint"
+            self.pixel_editor.pixel_row_col = None
+            self.button_detective.setChecked(False)
+            self.pixel_editor.update()
+            self.text_update()
 
     # ----------------------------------------
     # Funktionen für Button-Aufrufe
@@ -271,11 +294,13 @@ class MainWindow(QWidget):
             checked: True -> Zeilenübergriff, False -> kein Zeilenübergriff.
         """
         self.rle_lines_on = checked
-        print(str(self.rle_lines_on))
         self.pixel_editor.update()
         self.text_update()
 
-    def activate_select_mode(self):
+    def activate_select_mode(self) -> None:
+        """
+        De-/aktiviert den Select-Modus.
+        """
         if self.pixel_editor.mode == "paint":
             self.button_detective.setChecked(True)
             self.pixel_editor.mode = "select"
@@ -363,9 +388,17 @@ class MainWindow(QWidget):
         self.active_encode = "rle"
         self.button_rle.setChecked(True)
 
-        rle_data, pos_to_number = encode_rle(
+        rle_data, pos_to_number, number_to_pos = encode_rle(
             self.pixel_editor.pixel_data, self.rle_lines_on
         )
+
+        if (
+            self.pixel_editor.mode == "select"
+            and self.pixel_editor.pixel_row_col is not None
+        ):
+            selected_rle = pos_to_number[self.pixel_editor.pixel_row_col]
+            selected_pixels = number_to_pos[selected_rle]
+            self.send_selected_pixels.emit(selected_pixels)
 
         rle_text = (
             f"{self.pixel_editor.rows:08b} <span style='color:gray'>#Höhe,</span> "
@@ -422,7 +455,10 @@ class MainWindow(QWidget):
         )
         self.set_label(clr_bit_label)
 
-    def text_update(self):
+    def text_update(self) -> None:
+        """
+        Updatet gesammten Text. Simuliert einen Klick auf aktuelle Codierung.
+        """
         if self.active_encode == "rgb":
             self.rgb_clicked()
         elif self.active_encode == "rle":
@@ -444,22 +480,3 @@ class MainWindow(QWidget):
         self.label_bits_opt_a.setText(bit_label[4])
         self.label_byte_opt_b.setText(bit_label[5])
         self.pixel_editor.update()
-
-    # ----------------------------------------
-    # Funktionen für UI-Vermittlung
-    # ----------------------------------------
-
-    def change_color(self, color: int) -> None:
-        """
-        Wechselt zur neu ausgewählten Farbe.
-
-        Args:
-            color: Farbindex der aktuell ausgewählten Farbe.
-        """
-        self.pixel_editor.current_color = color
-        if self.pixel_editor.mode == "select":
-            self.pixel_editor.mode = "paint"
-            self.pixel_editor.pixel_row_col = None
-            self.button_detective.setChecked(False)
-            self.pixel_editor.update()
-            self.text_update()

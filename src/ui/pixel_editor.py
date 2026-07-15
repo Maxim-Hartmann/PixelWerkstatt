@@ -17,24 +17,26 @@ class PixelEditor(QWidget):
     Beim klicken ändert sich die Farbe des Rasters.
     """
 
-    # Pixel-Auswahl-Signal.
-    pixel_selected = Signal()
-    # Pixel-Mal-Siganl
-    pixel_painted = Signal()
+    # Sendet einen ausgewählten Pixel an MainWindow.
+    send_selected_pixel = Signal()
+    # Sendet einen bemalten Pixel an MainWindow.
+    send_painted_pixel = Signal()
 
     def __init__(self, preset="s"):
         super().__init__()
 
         # Voreinstellungen für das Raster setzen
         self.set_preset(preset)
-        # aktuelle Farbe
+        # aktueller Farbindex
         self.current_color = standard_color
-        # Farbindex
+        # Farbindex → (QColor, Farbname)
         self.color_index = color_index
         # Mal- (paint) oder Auswähl-Modus (select)
         self.mode = "paint"
         # aktuell ausgewählter Pixel
         self.pixel_row_col = None
+        # zugehörige Lauflänge vom aktuell ausgewählten Pixel.
+        self.selected_pixels = []
         # Stift für das Markieren des hervorgehobenen Pixels
         self.select_pen = QPen()
         self.select_pen_width = 2 * self.gap
@@ -63,12 +65,22 @@ class PixelEditor(QWidget):
                 )
         if self.mode == "select" and self.pixel_row_col is not None:
             painter.setPen(self.select_pen)
-            painter.drawRect(
-                self.pixel_row_col[1] * (self.pixel_size + self.gap) + self.gap,
-                self.pixel_row_col[0] * (self.pixel_size + self.gap) + self.gap,
-                self.pixel_size,
-                self.pixel_size,
-            )
+            if self.selected_pixels:
+                for row, col in self.selected_pixels:
+                    painter.drawRect(
+                        col * (self.pixel_size + self.gap) + self.gap,
+                        row * (self.pixel_size + self.gap) + self.gap,
+                        self.pixel_size,
+                        self.pixel_size,
+                    )
+                self.selected_pixels = []
+            else:
+                painter.drawRect(
+                    self.pixel_row_col[1] * (self.pixel_size + self.gap) + self.gap,
+                    self.pixel_row_col[0] * (self.pixel_size + self.gap) + self.gap,
+                    self.pixel_size,
+                    self.pixel_size,
+                )
 
     def set_preset(self, preset: str) -> None:
         """
@@ -96,7 +108,7 @@ class PixelEditor(QWidget):
 
     def mousePressEvent(self, mouse_event: QMouseEvent) -> None:
         """
-        Ermittelt das angeklickte Feld und gibt dieses an paint() oder select() weiter.
+        Ermittelt das angeklickte Feld und sendet dieses an MainWindow.
 
         Args:
             mouse_event: Enthält Informationen über den Mausklick.
@@ -105,15 +117,19 @@ class PixelEditor(QWidget):
         row = pos.y() // (self.pixel_size + self.gap)
         col = pos.x() // (self.pixel_size + self.gap)
         if self.mode == "paint":
-            self.paint(row, col)
+            self.pixel_data[row][col] = self.current_color
+            self.send_painted_pixel.emit()
         else:
-            self.select(row, col)
+            self.pixel_row_col = (row, col)
+            self.send_selected_pixel.emit()
         self.update()
 
-    def paint(self, row, col):
-        self.pixel_data[row][col] = self.current_color
-        self.pixel_painted.emit()
+    def set_selected_pixels(self, selected_pixels: list[tuple[int, int]]) -> None:
+        """
+        Setzt die ausgewählten Pixel.
 
-    def select(self, row, col):
-        self.pixel_row_col = (row, col)
-        self.pixel_selected.emit()
+        Args:
+            selected_pixels: Liste mit allen ausgewählten Pixeln (Reihe, Spalte).
+        """
+        self.selected_pixels = selected_pixels
+        self.update()

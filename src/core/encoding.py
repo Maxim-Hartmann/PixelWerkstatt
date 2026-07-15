@@ -2,7 +2,7 @@
 Enthält Funktionen zur Codierung und Darstellung von Bild-Daten.
 """
 
-from collections import Counter
+from collections import Counter, defaultdict
 from PySide6.QtGui import QColor
 import math
 from config import select_color
@@ -14,7 +14,9 @@ from config import select_color
 
 def encode_rle(
     pixel_data: list[list[int]], rle_lines_on: bool
-) -> tuple[list[tuple[int, int]], dict[tuple[int, int], int]]:
+) -> tuple[
+    list[tuple[int, int]], dict[tuple[int, int], int], dict[int, list[tuple[int, int]]]
+]:
     """
     Setzt die RLE-Codierung (Lauflängen) auf das Bild an.
 
@@ -23,39 +25,57 @@ def encode_rle(
         rle_lines_on: True -> Zeilenübergriff, False -> kein Zeilenübergriff.
 
     Returns:
+        Informationen zur RLE-Codierung.
+
         - Liste mit Tupeln (Lauflänge, Farbindex).
-        - Dictionary (Reihe, Spalte -> Lauflängen-Nummer)
+        - Dictionary (Reihe, Spalte -> Lauflängen-Nummer).
+        - Dictionary (Lauflängen-Nummer -> list(Reihe, Spalte)).
     """
+    # Zum Erstellen der Markierungen im String.
     pos_to_number = {}
+    # Zum Erstellen der Markierungen im Pixel-Editor.
+    number_to_pos = defaultdict(list)
+    # Speichert Lauflänge und Farbindex.
     rle_data = []
-    rle_number = 0
+    # Zählt die Lauflängen durch.
+    rle_count = 0
+    # Falls RLE Zeilenübergreifend laufen soll:
     if rle_lines_on:
         pixel_data_list = array_to_list(pixel_data)
         # Zählt die Länge der Lauflänge.
         count_len = 1
-        # Farbe des aktuellen Pixels.
+        # Farbindex des aktuellen Pixels.
         current_pixel = pixel_data_list[0]
         cols = len(pixel_data[0])
-        pos_to_number[(0, 0)] = rle_number
+        # da die Schleife bei next_pixel (1) beginnt werden die erste Position
+        # beider dicts vorher gefüllt.
+        pos_to_number[(0, 0)] = rle_count
+        number_to_pos[rle_count].append((0, 0))
+        # Liste wird durchgegangen und nächster Farbindex wird mit aktuellem
+        # Farbindex verglichen.
         for i in range(1, len(pixel_data_list)):
+            # Reihe und Spalte wird ausgerechnet: 2D -> 1D. 
             row_pos = i // cols
             col_pos = i % cols
-            # Farbe des folgenden Pixels.
+            # Farbindex des folgenden Pixels.
             next_pixel = pixel_data_list[i]
             if next_pixel == current_pixel:
                 count_len += 1
             else:
                 rle_data.append((count_len, current_pixel))
                 count_len = 1
-                rle_number += 1
+                rle_count += 1
                 current_pixel = next_pixel
-            pos_to_number[(row_pos, col_pos)] = rle_number
+            pos_to_number[(row_pos, col_pos)] = rle_count
+            number_to_pos[rle_count].append((row_pos, col_pos))
         rle_data.append((count_len, current_pixel))
+    # Falls RLE nicht Zeilenübergreifend laufen soll:
     else:
         for row_pos, row in enumerate(pixel_data):
             count_len = 1
             current_pixel = row[0]
-            pos_to_number[(row_pos, 0)] = rle_number
+            pos_to_number[(row_pos, 0)] = rle_count
+            number_to_pos[rle_count].append((row_pos, 0))
             for col_pos in range(1, len(row)):
                 next_pixel = row[col_pos]
                 if next_pixel == current_pixel:
@@ -63,12 +83,14 @@ def encode_rle(
                 else:
                     rle_data.append((count_len, current_pixel))
                     count_len = 1
-                    rle_number += 1
+                    rle_count += 1
                     current_pixel = next_pixel
-                pos_to_number[(row_pos, col_pos)] = rle_number
+                pos_to_number[(row_pos, col_pos)] = rle_count
+                number_to_pos[rle_count].append((row_pos, col_pos))
+            # Zeilenumsprung erreicht = neue Lauflänge
             rle_data.append((count_len, current_pixel))
-            rle_number += 1
-    return rle_data, pos_to_number
+            rle_count += 1
+    return rle_data, pos_to_number, number_to_pos
 
 
 def encode_clr(pixel_data: list[list[int]]) -> tuple[list[int], dict[int, str], int]:
@@ -89,16 +111,18 @@ def encode_clr(pixel_data: list[list[int]]) -> tuple[list[int], dict[int, str], 
     pixel_data_count = Counter(pixel_data_list)
     # Farbindizes und ihre Häufigkeit.
     clr_frequencies = pixel_data_count.most_common()
-    # Mapt Farbindizes zu Farbcodes.
+    # Mapt Farbindex -> Farbcode.
     clr_codes = {}
     clr_count = len(clr_frequencies)
     # Anzahl der benötigten Bits für Farbcodes (Mindestens 1, auch bei einer Farbe).
     bits = max(1, math.ceil(math.log2(clr_count)))
+    # clr_codes wird gefüllt:
     for i, (color, _) in enumerate(clr_frequencies):
         bit_code = f"{i:0{bits}b}"
         clr_codes[color] = bit_code
-
+    # clr_data wird gefüllt:
     clr_data = []
+    # 1D -> 2D
     for row in pixel_data:
         new_row = []
         for color in row:
@@ -139,11 +163,14 @@ def rgb_to_string(
 
     Args:
         rgb_data: 2D-Array mit Farbindizes (pixel_data).
-        color_index: Mapt Farbindex zu Farbe (Qcolor, Farbname).
+        color_index: Mapt Farbindex -> (Qcolor, Farbname).
         pixel_row_col: Reihe und Spalte des ausgewählten Pixels.
 
     Returns:
-        RGB-Werte (Binär, Dezi) sowie Farbnamen.
+        Informationen zur RGB-Codierung als String.
+
+        - RGB-Werte (Binär, Dezi).
+        - Farbnamen.
     """
     rgb_text = ""
     for row_pos, row in enumerate(rgb_data):
@@ -179,24 +206,28 @@ def rle_to_string(
 
     Args:
         rle_data: Liste mit Tupeln (Lauflänge, Farbindex).
-        color_index: Mapt Farbindex zu Farbe (Qcolor, Farbname).
+        color_index: Mapt Farbindex -> (Qcolor, Farbname).
         pixel_row_col: Reihe und Spalte des ausgewählten Pixels.
         pos_to_number: Dictionary (Reihe, Spalte -> Lauflängen-Nummer).
 
     Returns:
-        Anzahl der Farbwiderholung, RGB-Werte (Binär, Dezi) sowie Farbnamen.
+        Informationen zur RLE-Codierung als String.
+
+        - Anzahl der Pixel innerhalb der Lauflänge.
+        - RGB-Werte (Binär, Dezi).
+        - Farbnamen.
     """
     rle_text = ""
     selected_rle = None
     if pixel_row_col is not None:
         selected_rle = pos_to_number[pixel_row_col]
-    for rle_number, (rle_len, index) in enumerate(rle_data):
+    for rle_count, (rle_len, index) in enumerate(rle_data):
         rgb_color = color_index[index][0]
         str_color = color_index[index][1]
         r = rgb_color.red()
         g = rgb_color.green()
         b = rgb_color.blue()
-        if selected_rle == rle_number:
+        if selected_rle == rle_count:
             rle_text += (
                 f"<br><span style='background-color: {select_color[1]};'>"
                 f"{rle_len:08b} <span style='color:gray'>#{rle_len:<3}</span>"
@@ -224,13 +255,17 @@ def clr_to_string(
 
     Args:
         clr_data: 2D-Array mit Farbcodes.
-        color_codes: Mapt Farbindex zu Farbcode.
-        color_index: Mapt Farbindex zu Farbe (Qcolor, Farbname).
+        color_codes: Mapt Farbindex -> Farbcode.
+        color_index: Mapt Farbindex -> (Qcolor, Farbname).
         pixel_row_col: Reihe und Spalte des ausgewählten Pixels.
 
     Returns:
-        - Tabelle mit Farbcode und RGB-Werten (Binär, Dezi) sowie Farbnamen.
-        - Farbcodes, RGB-Werte (Dezi) sowie Farbnamen.
+        Informationen zur CLR-Codierung als String.
+
+        - Farbcode-Tabelle (Farbcode | RGB-Wert (Binär, Dezi), Farbname).
+        - Farbcodes.
+        - RGB-Werte (Dezi).
+        - Farbnamen.
     """
     rgb_codes = {}
     clr_text = (
