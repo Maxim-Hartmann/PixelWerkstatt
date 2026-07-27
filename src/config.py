@@ -14,7 +14,6 @@ from PySide6.QtGui import QColor
 # color_picker Konfiguration
 # ----------------------------------------
 
-
 # Größe des Farbwählers.
 picker_grid_size = {"pixel_size": 40, "pixel_gap": 6}
 
@@ -42,11 +41,29 @@ colors = [
 # Mapping: Farbindex → (QColor, Farbname).
 color_index = dict(enumerate(colors))
 
+# Mapping: RGB-Binär-String -> Farbindex.
+binary_index = {
+    "111111111111111111111111": 0,
+    "000000000000000000000000": 1,
+    "100011001000110010001100": 2,
+    "101111100001010000011110": 3,
+    "100000100011001000001010": 4,
+    "110111000110111000110010": 5,
+    "110100101010000010000010": 6,
+    "111001101101110000000000": 7,
+    "000000001010000000000000": 8,
+    "000000000110010000110010": 9,
+    "101000001101001011110000": 10,
+    "000000000011110010010110": 11,
+    "010100000010100001101110": 12,
+    "110010000000000011001000": 13,
+    "110010000101101010001100": 14,
+    "100101101000110010111110": 15,
+}
 
 # ----------------------------------------
 # pixel_editor Konfiguration
 # ----------------------------------------
-
 
 # Größen des Pixelrasters: Reihen, Spalten, Pixelgröße, Pixelabstand.
 editor_grid_size = {
@@ -57,13 +74,12 @@ editor_grid_size = {
 # Standardfarbe, bevor eine Farbe gewählt wurde.
 standard_color = 1
 
-# Farbe für das Markieren (QColor, String(HTML))
+# Farbe für das Markieren (QColor, String(HTML)).
 select_color = (QColor(180, 180, 50), "rgb(180, 180, 50)")
 
 # ----------------------------------------
 # HTML Konfiguration
 # ----------------------------------------
-
 
 # Standard Text-Formatierung: Schriftart, Leerzeichen-Verhalten, Schriftgröße.
 text_style = """

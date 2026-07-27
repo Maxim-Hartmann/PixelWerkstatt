@@ -13,12 +13,13 @@ from PySide6.QtWidgets import (
     QLabel,
     QTextEdit,
 )
-from PySide6.QtGui import QAction
+from PySide6.QtGui import QAction, QIcon
 from PySide6.QtCore import Qt, Signal
 from ui.color_picker import ColorPicker
 from ui.pixel_editor import PixelEditor
 from core.encoding import *
 from core.bit_analysis import *
+from core.file_io import read_file
 from config import text_style, select_color
 
 
@@ -45,7 +46,8 @@ class MainWindow(QWidget):
         # Fenstereinstellungen
         # ----------------------------------------
 
-        self.setWindowTitle("Komprimierung Tool")
+        self.setWindowTitle("PixelWerkstatt")
+        self.setWindowIcon(QIcon("assets/Icon_chess.png"))
 
         # ----------------------------------------
         # Layouts
@@ -132,6 +134,7 @@ class MainWindow(QWidget):
         self.button_detective.clicked.connect(self.activate_select_mode)
         self.button_new.clicked.connect(self.new_image)
         self.button_save.clicked.connect(self.save_image)
+        self.button_load.clicked.connect(self.load_image)
         self.button_rgb.clicked.connect(self.rgb_clicked)
         self.button_rle.clicked.connect(self.rle_clicked)
         self.button_clr.clicked.connect(self.clr_clicked)
@@ -358,6 +361,18 @@ class MainWindow(QWidget):
             image = self.pixel_editor.grab()
             image.save(path)
 
+    def load_image(self) -> None:
+        """
+        Zeigt eine PixelWerkstatt-Datei im Editor an.
+        """
+        path, _ = QFileDialog.getOpenFileName(
+            self, "Datei öffnen", "", "PixelWerkstatt-Dateien (*.rgb *.rle *.clr)"
+        )
+        if path:
+            preset, pixel_data = read_file(path)
+            self.pixel_editor.set_preset(preset, pixel_data)
+            self.text_update()
+
     def rgb_clicked(self) -> None:
         """
         Zeigt die RGB-Codierung an.
@@ -366,8 +381,8 @@ class MainWindow(QWidget):
         self.button_rgb.setChecked(True)
 
         rgb_text = (
-            f"{self.pixel_editor.rows:08b} <span style='color:gray'>#Höhe,</span> "
-            f"{self.pixel_editor.cols:08b} <span style='color:gray'>#Breite</span><br>"
+            f"{self.pixel_editor.rows:08b} <span style='color:gray'>(Höhe) </span>"
+            f"{self.pixel_editor.cols:08b} <span style='color:gray'>(Breite)</span><br>"
         )
         rgb_text += rgb_to_string(
             self.pixel_editor.pixel_data,
@@ -401,8 +416,8 @@ class MainWindow(QWidget):
             self.send_selected_pixels.emit(selected_pixels)
 
         rle_text = (
-            f"{self.pixel_editor.rows:08b} <span style='color:gray'>#Höhe,</span> "
-            f"{self.pixel_editor.cols:08b} <span style='color:gray'>#Breite</span><br>"
+            f"{self.pixel_editor.rows:08b} <span style='color:gray'>(Höhe) </span>"
+            f"{self.pixel_editor.cols:08b} <span style='color:gray'>(Breite)</span><br>"
         )
         rle_text += rle_to_string(
             rle_data,
@@ -433,9 +448,9 @@ class MainWindow(QWidget):
         clr_data, clr_codes, code_length = encode_clr(self.pixel_editor.pixel_data)
 
         clr_text = (
-            f"{self.pixel_editor.rows:08b} <span style='color:gray'>#Höhe,</span> "
-            f"{self.pixel_editor.cols:08b} <span style='color:gray'>#Breite,</span> "
-            f"{len(clr_codes):08b} <span style='color:gray'>#Farb-Anzahl</span><br><br>"
+            f"{self.pixel_editor.rows:08b} <span style='color:gray'>(Höhe) </span>"
+            f"{self.pixel_editor.cols:08b} <span style='color:gray'>(Breite) </span>"
+            f"{len(clr_codes):08b} <span style='color:gray'>(Farb-Anzahl)</span><br><br>"
         )
         clr_text += clr_to_string(
             clr_data,

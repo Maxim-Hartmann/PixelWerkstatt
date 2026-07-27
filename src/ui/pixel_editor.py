@@ -5,7 +5,6 @@ Erstellt das Pixel-Editor-Widget zur Bearbeitung von Bildern.
 from PySide6.QtWidgets import QWidget
 from PySide6.QtGui import QPainter, QPaintEvent, QMouseEvent, QPen
 from PySide6.QtCore import Signal
-import numpy as np
 from config import editor_grid_size, standard_color, color_index, select_color
 
 
@@ -82,12 +81,13 @@ class PixelEditor(QWidget):
                     self.pixel_size,
                 )
 
-    def set_preset(self, preset: str) -> None:
+    def set_preset(self, preset: str, pixel_data: list[int] = []) -> None:
         """
         Setzt/Updatet die Voreinstellungen für das Raster.
 
         Args:
             preset: Key für die Auswahl der richtigen Voreinstellungen.
+            pixel_data: Array, dass das Bild durch Farbindizes abbildet.
         """
         self.mode = "paint"
         self.preset = preset
@@ -98,8 +98,10 @@ class PixelEditor(QWidget):
         # Meta-Daten werden als jeweils ein Byte gespeichert -> (Höhe und Breite)
         # (Höhe + Breite) + (Reihen * Spalten * 8 Bit * 3 RGB)
         self.image_bits = (2 * 8) + (self.rows * self.cols * 8 * 3)
-        # Pixel-Datenliste erstellen und mit 0en füllen
-        self.pixel_data = np.zeros((self.rows, self.cols), dtype=int)
+        if pixel_data:
+            self.pixel_data = pixel_data
+        else:
+            self.pixel_data = [[0 for _ in range(self.cols)] for _ in range(self.rows)]
         self.setFixedSize(
             self.cols * (self.pixel_size + self.gap) + self.gap,
             self.rows * (self.pixel_size + self.gap) + self.gap,

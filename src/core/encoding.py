@@ -54,7 +54,7 @@ def encode_rle(
         # Liste wird durchgegangen und nächster Farbindex wird mit aktuellem
         # Farbindex verglichen.
         for i in range(1, len(pixel_data_list)):
-            # Reihe und Spalte wird ausgerechnet: 2D -> 1D. 
+            # Reihe und Spalte wird ausgerechnet: 2D -> 1D.
             row_pos = i // cols
             col_pos = i % cols
             # Farbindex des folgenden Pixels.
@@ -184,13 +184,13 @@ def rgb_to_string(
                 rgb_text += (
                     f"<br><span style='background-color: {select_color[1]};'>"
                     f"{r:08b} {g:08b} {b:08b}"
-                    f"<span style='color:gray'> #{r:3} {g:3} {b:3}; {str_color}</span>"
+                    f"<span style='color:gray'> ({r:3} {g:3} {b:3}; {str_color})</span>"
                     "</span>"
                 )
             else:
                 rgb_text += (
                     f"<br>{r:08b} {g:08b} {b:08b}"
-                    f"<span style='color:gray'> #{r:3} {g:3} {b:3}; {str_color}</span>"
+                    f"<span style='color:gray'> ({r:3} {g:3} {b:3}; {str_color})</span>"
                 )
     return rgb_text
 
@@ -227,19 +227,22 @@ def rle_to_string(
         r = rgb_color.red()
         g = rgb_color.green()
         b = rgb_color.blue()
+        rle_digits = len(str(rle_len))
         if selected_rle == rle_count:
             rle_text += (
                 f"<br><span style='background-color: {select_color[1]};'>"
-                f"{rle_len:08b} <span style='color:gray'>#{rle_len:<3}</span>"
+                f"{rle_len:08b} "
+                f"<span style='color:gray'>({rle_len:<{rle_digits}}) </span>"
                 f"{r:08b} {g:08b} {b:08b}"
-                f"<span style='color:gray'> #{r:3} {g:3} {b:3}; {str_color}</span>"
+                f"<span style='color:gray'> ({r:3} {g:3} {b:3}; {str_color})</span>"
                 "</span>"
             )
         else:
             rle_text += (
-                f"<br>{rle_len:08b} <span style='color:gray'>#{rle_len:<3}</span>"
+                f"<br>{rle_len:08b} "
+                f"<span style='color:gray'>({rle_len:<{rle_digits}}) </span>"
                 f"{r:08b} {g:08b} {b:08b}"
-                f"<span style='color:gray'> #{r:3} {g:3} {b:3}; {str_color}</span>"
+                f"<span style='color:gray'> ({r:3} {g:3} {b:3}; {str_color})</span>"
             )
     return rle_text
 
@@ -269,8 +272,8 @@ def clr_to_string(
     """
     rgb_codes = {}
     clr_text = (
-        "<span style='color:gray'>#Code | #Farbe"
-        "<br>----------------------------------<br></span>"
+        "<span style='color:gray'>(Code) | (Farbe)"
+        "<br>-----------------------------------<br></span>"
     )
     for index, code in color_codes.items():
         rgb_color = color_index[index][0]
@@ -280,9 +283,9 @@ def clr_to_string(
         g = rgb_color.green()
         b = rgb_color.blue()
         clr_text += (
-            f"{code:>5} <span style='color:gray'>|</span>"
-            f" {r:08b} {g:08b} {b:08b} <span style='color:gray'>"
-            f"#{r:3} {g:3} {b:3}; {str_color}</span><br>"
+            f"{code:<7}<span style='color:gray'>| </span>"
+            f"{r:08b} {g:08b} {b:08b} <span style='color:gray'>"
+            f"({r:3} {g:3} {b:3}; {str_color})</span><br>"
         )
     for row_pos, row in enumerate(clr_data):
         for col_pos, code in enumerate(row):
@@ -294,13 +297,13 @@ def clr_to_string(
             if pixel_row_col == (row_pos, col_pos):
                 clr_text += (
                     f"<br><span style='background-color: {select_color[1]};'>"
-                    f"{code} <span style='color:gray'>#{r:3} {g:3} {b:3}; "
-                    f"{str_color}</span>"
+                    f"{code} <span style='color:gray'>({r:3} {g:3} {b:3}; "
+                    f"{str_color})</span>"
                     "</span>"
                 )
             else:
                 clr_text += (
-                    f"<br>{code} <span style='color:gray'>#{r:3} {g:3} {b:3}; "
-                    f"{str_color}</span>"
+                    f"<br>{code} <span style='color:gray'>({r:3} {g:3} {b:3}; "
+                    f"{str_color})</span>"
                 )
     return clr_text
