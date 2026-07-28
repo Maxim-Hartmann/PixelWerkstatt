@@ -20,6 +20,14 @@ core.encoding module
    :show-inheritance:
    :undoc-members:
 
+core.file\_io module
+--------------------
+
+.. automodule:: core.file_io
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 Module contents
 ---------------
 

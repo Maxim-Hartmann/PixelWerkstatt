@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="de" data-accent-color="violet" data-content_root="./">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>ui package - Komprimierung-Tool 0.5 Dokumentation</title><link rel="index" title="Stichwortverzeichnis" href="genindex.html" /><link rel="search" title="Suche" href="search.html" /><link rel="prev" title="main module" href="main.html" /><script>
+    function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
+    setColorMode(localStorage._theme||"auto");
+  </script><link rel="stylesheet" type="text/css" href="_static/pygments.css?v=e1a1ceaf" />
+    <link rel="stylesheet" type="text/css" href="_static/shibuya.css?v=70423902" />
+    <link media="print" rel="stylesheet" type="text/css" href="_static/print.css?v=20ff2c19" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sy-f-text: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+  --sy-f-heading: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+}
+</style>
+    
+  <meta property="og:type" content="website"/><meta property="og:title" content="ui package"/>
+    <meta name="twitter:card" content="summary"/>
+  </head>
+<body><div class="sy-head">
+  <div class="sy-head-blur"></div>
+  <div class="sy-head-inner sy-container mx-auto">
+    <a class="sy-head-brand" href="index.html">
+      
+      
+      <strong>Komprimierung-Tool</strong>
+    </a>
+    <div class="sy-head-nav" id="head-nav">
+      <nav class="sy-head-links"></nav>
+      <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="search.html" method="get">
+  <input type="text" name="q" placeholder="Suche" />
+  <kbd>/</kbd>
+</form><div class="sy-head-socials"></div></div>
+    </div>
+    <div class="sy-head-actions flex items-center shrink-0 print:hidden"><button class="js-theme theme-switch flex items-center"
+data-aria-auto="In den Hellmodus wechseln"
+data-aria-light="In den Dunkelmodus wechseln"
+data-aria-dark="In den automatischen wechseln">
+<i class="i-lucide theme-icon"></i>
+</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="head-nav" aria-expanded="false">
+        <div class="hamburger">
+          <span class="hamburger_1"></span>
+          <span class="hamburger_2"></span>
+          <span class="hamburger_3"></span>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+<div class="sy-page sy-container flex mx-auto">
+  <aside id="lside" class="sy-lside md:w-72 md:shrink-0 print:hidden">
+    <div class="sy-lside-inner md:sticky">
+      <div class="sy-scrollbar p-6">
+        <div class="globaltoc" data-expand-depth="0"><p class="caption" role="heading" aria-level="3"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">src</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="config.html">config module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="core.html">core package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.html">main module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">ui package</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="lside-overlay js-menu" role="button" aria-label="Close left sidebar" aria-controls="lside" aria-expanded="false"></div>
+  <aside id="rside" class="sy-rside pb-3 w-64 shrink-0 order-last">
+    <button class="rside-close js-menu xl:hidden" aria-label="Close Table of Contents" type="button" aria-controls="rside" aria-expanded="false">
+      <i class="i-lucide close"></i>
+    </button>
+    <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div class="localtoc"><h3>Auf dieser Seite</h3><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-ui.color_picker">ui.color_picker module</a><ul>
+<li><a class="reference internal" href="#ui.color_picker.ColorPicker"><code class="docutils literal notranslate"><span class="pre">ColorPicker</span></code></a><ul>
+<li><a class="reference internal" href="#ui.color_picker.ColorPicker.mousePressEvent"><code class="docutils literal notranslate">mousePressEvent()</span></code></a></li>
+<li><a class="reference internal" href="#ui.color_picker.ColorPicker.paintEvent"><code class="docutils literal notranslate">paintEvent()</span></code></a></li>
+<li><a class="reference internal" href="#ui.color_picker.ColorPicker.send_new_color"><code class="docutils literal notranslate">send_new_color</span></code></a></li>
+<li><a class="reference internal" href="#ui.color_picker.ColorPicker.staticMetaObject"><code class="docutils literal notranslate">staticMetaObject</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-ui.main_window">ui.main_window module</a><ul>
+<li><a class="reference internal" href="#ui.main_window.MainWindow"><code class="docutils literal notranslate"><span class="pre">MainWindow</span></code></a><ul>
+<li><a class="reference internal" href="#ui.main_window.MainWindow.activate_select_mode"><code class="docutils literal notranslate">activate_select_mode()</span></code></a></li>
+<li><a class="reference internal" href="#ui.main_window.MainWindow.change_color"><code class="docutils literal notranslate">change_color()</span></code></a></li>
+<li><a class="reference internal" href="#ui.main_window.MainWindow.clr_clicked"><code class="docutils literal notranslate">clr_clicked()</span></code></a></li>
+<li><a class="reference internal" href="#ui.main_window.MainWindow.load_image"><code class="docutils literal notranslate">load_image()</span></code></a></li>
+<li><a class="reference internal" href="#ui.main_window.MainWindow.new_image"><code class="docutils literal notranslate">new_image()</span></code></a></li>
+<li><a class="reference internal" href="#ui.main_window.MainWindow.rgb_clicked"><code class="docutils literal notranslate">rgb_clicked()</span></code></a></li>
+<li><a class="reference internal" href="#ui.main_window.MainWindow.rle_clicked"><code class="docutils literal notranslate">rle_clicked()</span></code></a></li>
+<li><a class="reference internal" href="#ui.main_window.MainWindow.save_image"><code class="docutils literal notranslate">save_image()</span></code></a></li>
+<li><a class="reference internal" href="#ui.main_window.MainWindow.send_selected_pixels"><code class="docutils literal notranslate">send_selected_pixels</span></code></a></li>
+<li><a class="reference internal" href="#ui.main_window.MainWindow.set_label"><code class="docutils literal notranslate">set_label()</span></code></a></li>
+<li><a class="reference internal" href="#ui.main_window.MainWindow.set_large"><code class="docutils literal notranslate">set_large()</span></code></a></li>
+<li><a class="reference internal" href="#ui.main_window.MainWindow.set_rle"><code class="docutils literal notranslate">set_rle()</span></code></a></li>
+<li><a class="reference internal" href="#ui.main_window.MainWindow.set_settings"><code class="docutils literal notranslate">set_settings()</span></code></a></li>
+<li><a class="reference internal" href="#ui.main_window.MainWindow.set_small"><code class="docutils literal notranslate">set_small()</span></code></a></li>
+<li><a class="reference internal" href="#ui.main_window.MainWindow.staticMetaObject"><code class="docutils literal notranslate">staticMetaObject</span></code></a></li>
+<li><a class="reference internal" href="#ui.main_window.MainWindow.text_update"><code class="docutils literal notranslate">text_update()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-ui.pixel_editor">ui.pixel_editor module</a><ul>
+<li><a class="reference internal" href="#ui.pixel_editor.PixelEditor"><code class="docutils literal notranslate"><span class="pre">PixelEditor</span></code></a><ul>
+<li><a class="reference internal" href="#ui.pixel_editor.PixelEditor.mousePressEvent"><code class="docutils literal notranslate">mousePressEvent()</span></code></a></li>
+<li><a class="reference internal" href="#ui.pixel_editor.PixelEditor.paintEvent"><code class="docutils literal notranslate">paintEvent()</span></code></a></li>
+<li><a class="reference internal" href="#ui.pixel_editor.PixelEditor.send_painted_pixel"><code class="docutils literal notranslate">send_painted_pixel</span></code></a></li>
+<li><a class="reference internal" href="#ui.pixel_editor.PixelEditor.send_selected_pixel"><code class="docutils literal notranslate">send_selected_pixel</span></code></a></li>
+<li><a class="reference internal" href="#ui.pixel_editor.PixelEditor.set_preset"><code class="docutils literal notranslate">set_preset()</span></code></a></li>
+<li><a class="reference internal" href="#ui.pixel_editor.PixelEditor.set_selected_pixels"><code class="docutils literal notranslate">set_selected_pixels()</span></code></a></li>
+<li><a class="reference internal" href="#ui.pixel_editor.PixelEditor.staticMetaObject"><code class="docutils literal notranslate">staticMetaObject</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-ui">Module contents</a></li>
+</ul>
+</div><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
+  </aside>
+  <div class="rside-overlay js-menu" role="button" aria-label="Close Table of Contents" aria-controls="rside" aria-expanded="false"></div>
+  <main class="sy-main w-full max-sm:max-w-full print:pt-6">
+<div class="sy-breadcrumbs" role="navigation">
+  <div class="sy-breadcrumbs-inner flex items-center">
+    <div class="md:hidden mr-3">
+      <button class="js-menu" aria-label="Menu" type="button" aria-controls="lside" aria-expanded="false">
+        <i class="i-lucide menu"></i>
+      </button>
+    </div>
+    <ol class="flex-1" itemscope itemtype="https://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="index.html"><span itemprop="name">Komprimierung-Tool</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="1" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="modules.html"><span itemprop="name">src</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="2" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <strong itemprop="name">ui package</strong>
+        <meta itemprop="position" content="3" />
+      </li></ol>
+    <div class="xl:hidden ml-1">
+      <button class="js-menu" aria-label="Show table of contents" type="button" aria-controls="rside"
+        aria-expanded="false">
+        <i class="i-lucide outdent"></i>
+      </button>
+    </div>
+  </div>
+</div><div class="flex flex-col break-words justify-between">
+      <div class="relative min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
+  <article class="yue" role="main">
+          <section id="ui-package">
+<h1>ui package<a class="headerlink" href="#ui-package" title="Link to this heading">#</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">#</a></h2>
+</section>
+<section id="module-ui.color_picker">
+<span id="ui-color-picker-module"></span><h2>ui.color_picker module<a class="headerlink" href="#module-ui.color_picker" title="Link to this heading">#</a></h2>
+<p>Erstellt das Color-Picker-Widget zur Auswahl von Farben.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="ui.color_picker.ColorPicker">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ui.color_picker.</span></span><span class="sig-name descname"><span class="pre">ColorPicker</span></span><a class="reference internal" href="_modules/ui/color_picker.html#ColorPicker"><span class="viewcode-link"><span class="pre">[Quellcode]</span></span></a><a class="headerlink" href="#ui.color_picker.ColorPicker" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QWidget</span></code></p>
+<p>Widget zur Auswahl von Farben.</p>
+<p>Zeigt ein vorgefärtigtes Raster an Farben, welche angeklickt werden können.
+Die ausgewählte Farbe wird an das System weitergegeben.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ui.color_picker.ColorPicker.mousePressEvent">
+<span class="sig-name descname"><span class="pre">mousePressEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">paint_event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QPaintEvent</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/ui/color_picker.html#ColorPicker.mousePressEvent"><span class="viewcode-link"><span class="pre">[Quellcode]</span></span></a><a class="headerlink" href="#ui.color_picker.ColorPicker.mousePressEvent" title="Link to this definition">#</a></dt>
+<dd><p>Ermittelt die angeklickte Farbe und gibt diese an main_window weiter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameter<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>paint_event</strong> – Informationen über aktuelles Zeichenereignis.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ui.color_picker.ColorPicker.paintEvent">
+<span class="sig-name descname"><span class="pre">paintEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">paint_event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QPaintEvent</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/ui/color_picker.html#ColorPicker.paintEvent"><span class="viewcode-link"><span class="pre">[Quellcode]</span></span></a><a class="headerlink" href="#ui.color_picker.ColorPicker.paintEvent" title="Link to this definition">#</a></dt>
+<dd><p>Zeichnet die Farb-Auswahl.
+Farben werden als eine Reihe von farbigen Kacheln dargestellt.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameter<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>paint_event</strong> – Informationen über aktuelles Zeichenereignis.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ui.color_picker.ColorPicker.send_new_color">
+<span class="sig-name descname"><span class="pre">send_new_color</span></span><a class="headerlink" href="#ui.color_picker.ColorPicker.send_new_color" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ui.color_picker.ColorPicker.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;ColorPicker&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QWidget&quot;:</span> <span class="pre">Methods:</span>&#160;&#160; <span class="pre">#33</span> <span class="pre">type=Signal,</span> <span class="pre">signature=send_new_color(int),</span> <span class="pre">parameters=int</span> <span class="pre">)</span></span><a class="headerlink" href="#ui.color_picker.ColorPicker.staticMetaObject" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-ui.main_window">
+<span id="ui-main-window-module"></span><h2>ui.main_window module<a class="headerlink" href="#module-ui.main_window" title="Link to this heading">#</a></h2>
+<p>Führt alle Widgets im Hauptfenster zusammen.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="ui.main_window.MainWindow">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ui.main_window.</span></span><span class="sig-name descname"><span class="pre">MainWindow</span></span><a class="reference internal" href="_modules/ui/main_window.html#MainWindow"><span class="viewcode-link"><span class="pre">[Quellcode]</span></span></a><a class="headerlink" href="#ui.main_window.MainWindow" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QWidget</span></code></p>
+<p>Hauptfenster der Anwendung.</p>
+<p>Koordiniert die UI-Komponenten und steuert die aktive Codierung
+sowie Benutzerinteraktion.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ui.main_window.MainWindow.activate_select_mode">
+<span class="sig-name descname"><span class="pre">activate_select_mode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/ui/main_window.html#MainWindow.activate_select_mode"><span class="viewcode-link"><span class="pre">[Quellcode]</span></span></a><a class="headerlink" href="#ui.main_window.MainWindow.activate_select_mode" title="Link to this definition">#</a></dt>
+<dd><p>De-/aktiviert den Select-Modus.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ui.main_window.MainWindow.change_color">
+<span class="sig-name descname"><span class="pre">change_color</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/ui/main_window.html#MainWindow.change_color"><span class="viewcode-link"><span class="pre">[Quellcode]</span></span></a><a class="headerlink" href="#ui.main_window.MainWindow.change_color" title="Link to this definition">#</a></dt>
+<dd><p>Wechselt zur neu ausgewählten Farbe.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameter<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>color</strong> – Farbindex der aktuell ausgewählten Farbe.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ui.main_window.MainWindow.clr_clicked">
+<span class="sig-name descname"><span class="pre">clr_clicked</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/ui/main_window.html#MainWindow.clr_clicked"><span class="viewcode-link"><span class="pre">[Quellcode]</span></span></a><a class="headerlink" href="#ui.main_window.MainWindow.clr_clicked" title="Link to this definition">#</a></dt>
+<dd><p>Zeigt die Indizierten-Farben-Codierung an.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ui.main_window.MainWindow.load_image">
+<span class="sig-name descname"><span class="pre">load_image</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/ui/main_window.html#MainWindow.load_image"><span class="viewcode-link"><span class="pre">[Quellcode]</span></span></a><a class="headerlink" href="#ui.main_window.MainWindow.load_image" title="Link to this definition">#</a></dt>
+<dd><p>Zeigt eine PixelWerkstatt-Datei im Editor an.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ui.main_window.MainWindow.new_image">
+<span class="sig-name descname"><span class="pre">new_image</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/ui/main_window.html#MainWindow.new_image"><span class="viewcode-link"><span class="pre">[Quellcode]</span></span></a><a class="headerlink" href="#ui.main_window.MainWindow.new_image" title="Link to this definition">#</a></dt>
+<dd><p>Stellt ein weißes Bild im ausgewähltem Format her.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ui.main_window.MainWindow.rgb_clicked">
+<span class="sig-name descname"><span class="pre">rgb_clicked</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/ui/main_window.html#MainWindow.rgb_clicked"><span class="viewcode-link"><span class="pre">[Quellcode]</span></span></a><a class="headerlink" href="#ui.main_window.MainWindow.rgb_clicked" title="Link to this definition">#</a></dt>
+<dd><p>Zeigt die RGB-Codierung an.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ui.main_window.MainWindow.rle_clicked">
+<span class="sig-name descname"><span class="pre">rle_clicked</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/ui/main_window.html#MainWindow.rle_clicked"><span class="viewcode-link"><span class="pre">[Quellcode]</span></span></a><a class="headerlink" href="#ui.main_window.MainWindow.rle_clicked" title="Link to this definition">#</a></dt>
+<dd><p>Zeigt die Lauflängen-Codierungan an.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ui.main_window.MainWindow.save_image">
+<span class="sig-name descname"><span class="pre">save_image</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/ui/main_window.html#MainWindow.save_image"><span class="viewcode-link"><span class="pre">[Quellcode]</span></span></a><a class="headerlink" href="#ui.main_window.MainWindow.save_image" title="Link to this definition">#</a></dt>
+<dd><p>Speichert das Bild als Screenshot.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ui.main_window.MainWindow.send_selected_pixels">
+<span class="sig-name descname"><span class="pre">send_selected_pixels</span></span><a class="headerlink" href="#ui.main_window.MainWindow.send_selected_pixels" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ui.main_window.MainWindow.set_label">
+<span class="sig-name descname"><span class="pre">set_label</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bit_label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/ui/main_window.html#MainWindow.set_label"><span class="viewcode-link"><span class="pre">[Quellcode]</span></span></a><a class="headerlink" href="#ui.main_window.MainWindow.set_label" title="Link to this definition">#</a></dt>
+<dd><p>Setzt die jeweiligen Strings auf die Label der Datenanzeige.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameter<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>bit_label</strong> – Tupel aller Strings die als Label angezeigt werden sollen.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ui.main_window.MainWindow.set_large">
+<span class="sig-name descname"><span class="pre">set_large</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/ui/main_window.html#MainWindow.set_large"><span class="viewcode-link"><span class="pre">[Quellcode]</span></span></a><a class="headerlink" href="#ui.main_window.MainWindow.set_large" title="Link to this definition">#</a></dt>
+<dd><p>Setzt das Format auf „l“.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ui.main_window.MainWindow.set_rle">
+<span class="sig-name descname"><span class="pre">set_rle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">checked</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/ui/main_window.html#MainWindow.set_rle"><span class="viewcode-link"><span class="pre">[Quellcode]</span></span></a><a class="headerlink" href="#ui.main_window.MainWindow.set_rle" title="Link to this definition">#</a></dt>
+<dd><p>Ändert den Zeilenübergriff der RLE-Codierung.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameter<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>checked</strong> – True -&gt; Zeilenübergriff, False -&gt; kein Zeilenübergriff.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ui.main_window.MainWindow.set_settings">
+<span class="sig-name descname"><span class="pre">set_settings</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/ui/main_window.html#MainWindow.set_settings"><span class="viewcode-link"><span class="pre">[Quellcode]</span></span></a><a class="headerlink" href="#ui.main_window.MainWindow.set_settings" title="Link to this definition">#</a></dt>
+<dd><p>Ausgewählte Einstellungen können angepasst werden.</p>
+<ul class="simple">
+<li><p>6:8 Raster</p></li>
+<li><p>9:12 Raster</p></li>
+<li><p>RLE Zeilenübergreifend an/aus</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ui.main_window.MainWindow.set_small">
+<span class="sig-name descname"><span class="pre">set_small</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/ui/main_window.html#MainWindow.set_small"><span class="viewcode-link"><span class="pre">[Quellcode]</span></span></a><a class="headerlink" href="#ui.main_window.MainWindow.set_small" title="Link to this definition">#</a></dt>
+<dd><p>Setzt das Format auf „s“.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ui.main_window.MainWindow.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;MainWindow&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QWidget&quot;:</span> <span class="pre">Methods:</span>&#160;&#160; <span class="pre">#33</span> <span class="pre">type=Signal,</span> <span class="pre">signature=send_selected_pixels(QVariantList),</span> <span class="pre">parameters=QVariantList</span> <span class="pre">)</span></span><a class="headerlink" href="#ui.main_window.MainWindow.staticMetaObject" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ui.main_window.MainWindow.text_update">
+<span class="sig-name descname"><span class="pre">text_update</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/ui/main_window.html#MainWindow.text_update"><span class="viewcode-link"><span class="pre">[Quellcode]</span></span></a><a class="headerlink" href="#ui.main_window.MainWindow.text_update" title="Link to this definition">#</a></dt>
+<dd><p>Updatet gesammten Text. Simuliert einen Klick auf aktuelle Codierung.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-ui.pixel_editor">
+<span id="ui-pixel-editor-module"></span><h2>ui.pixel_editor module<a class="headerlink" href="#module-ui.pixel_editor" title="Link to this heading">#</a></h2>
+<p>Erstellt das Pixel-Editor-Widget zur Bearbeitung von Bildern.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="ui.pixel_editor.PixelEditor">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ui.pixel_editor.</span></span><span class="sig-name descname"><span class="pre">PixelEditor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">preset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'s'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ui/pixel_editor.html#PixelEditor"><span class="viewcode-link"><span class="pre">[Quellcode]</span></span></a><a class="headerlink" href="#ui.pixel_editor.PixelEditor" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QWidget</span></code></p>
+<p>Widget zum erstellen eines Bildes.</p>
+<p>Zeigt ein vorgefärtigtes Raster mit Kacheln die angeklickt werden können.
+Beim klicken ändert sich die Farbe des Rasters.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ui.pixel_editor.PixelEditor.mousePressEvent">
+<span class="sig-name descname"><span class="pre">mousePressEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mouse_event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QMouseEvent</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/ui/pixel_editor.html#PixelEditor.mousePressEvent"><span class="viewcode-link"><span class="pre">[Quellcode]</span></span></a><a class="headerlink" href="#ui.pixel_editor.PixelEditor.mousePressEvent" title="Link to this definition">#</a></dt>
+<dd><p>Ermittelt das angeklickte Feld und sendet dieses an MainWindow.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameter<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>mouse_event</strong> – Enthält Informationen über den Mausklick.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ui.pixel_editor.PixelEditor.paintEvent">
+<span class="sig-name descname"><span class="pre">paintEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">paint_event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QPaintEvent</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/ui/pixel_editor.html#PixelEditor.paintEvent"><span class="viewcode-link"><span class="pre">[Quellcode]</span></span></a><a class="headerlink" href="#ui.pixel_editor.PixelEditor.paintEvent" title="Link to this definition">#</a></dt>
+<dd><p>Zeichnet/Updatet den Pixel-Editor.
+Das Raster wird durch die Informationen in pixel_data gezeichnet.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameter<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>paint_event</strong> – Informationen über aktuelles Zeichenereignis.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ui.pixel_editor.PixelEditor.send_painted_pixel">
+<span class="sig-name descname"><span class="pre">send_painted_pixel</span></span><a class="headerlink" href="#ui.pixel_editor.PixelEditor.send_painted_pixel" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ui.pixel_editor.PixelEditor.send_selected_pixel">
+<span class="sig-name descname"><span class="pre">send_selected_pixel</span></span><a class="headerlink" href="#ui.pixel_editor.PixelEditor.send_selected_pixel" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ui.pixel_editor.PixelEditor.set_preset">
+<span class="sig-name descname"><span class="pre">set_preset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">preset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pixel_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/ui/pixel_editor.html#PixelEditor.set_preset"><span class="viewcode-link"><span class="pre">[Quellcode]</span></span></a><a class="headerlink" href="#ui.pixel_editor.PixelEditor.set_preset" title="Link to this definition">#</a></dt>
+<dd><p>Setzt/Updatet die Voreinstellungen für das Raster.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameter<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>preset</strong> – Key für die Auswahl der richtigen Voreinstellungen.</p></li>
+<li><p><strong>pixel_data</strong> – Array, dass das Bild durch Farbindizes abbildet.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ui.pixel_editor.PixelEditor.set_selected_pixels">
+<span class="sig-name descname"><span class="pre">set_selected_pixels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">selected_pixels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/ui/pixel_editor.html#PixelEditor.set_selected_pixels"><span class="viewcode-link"><span class="pre">[Quellcode]</span></span></a><a class="headerlink" href="#ui.pixel_editor.PixelEditor.set_selected_pixels" title="Link to this definition">#</a></dt>
+<dd><p>Setzt die ausgewählten Pixel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameter<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>selected_pixels</strong> – Liste mit allen ausgewählten Pixeln (Reihe, Spalte).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ui.pixel_editor.PixelEditor.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;PixelEditor&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QWidget&quot;:</span> <span class="pre">Methods:</span>&#160;&#160; <span class="pre">#33</span> <span class="pre">type=Signal,</span> <span class="pre">signature=send_selected_pixel()</span>&#160;&#160; <span class="pre">#34</span> <span class="pre">type=Signal,</span> <span class="pre">signature=send_painted_pixel()</span> <span class="pre">)</span></span><a class="headerlink" href="#ui.pixel_editor.PixelEditor.staticMetaObject" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-ui">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ui" title="Link to this heading">#</a></h2>
+</section>
+</section>
+
+        </article><button class="back-to-top" type="button">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+  </svg>
+  <span>Zurück nach oben</span>
+</button><div class="navigation flex print:hidden"><div class="navigation-prev">
+    <a href="main.html">
+      <i class="i-lucide chevron-left"></i>
+      <div class="page-info">
+        <span>Zurück</span><div class="title">main module</div></div>
+    </a>
+  </div></div></div>
+    </div>
+  </main>
+</div>
+<footer class="sy-foot">
+  <div class="sy-foot-inner sy-container mx-auto">
+    <div class="sy-foot-reserved md:flex justify-between items-center">
+      <div class="sy-foot-copyright"><p>2026, Maxim Hartmann</p>
+  
+  <p>
+    Made with
+    
+    <a href="https://www.sphinx-doc.org/">Sphinx</a> and
+    
+    <a href="https://shibuya.lepture.com">Shibuya theme</a>.
+  </p>
+</div>
+      <div class="sy-foot-socials"></div>
+    </div>
+  </div>
+</footer>
+      <script src="_static/documentation_options.js?v=a6073c4c"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=9bf55d28"></script>
+      <script src="_static/shibuya.js?v=50760d75"></script></body>
+</html>

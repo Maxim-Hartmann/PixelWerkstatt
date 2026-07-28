@@ -5,4 +5,6 @@ src
    :maxdepth: 4
 
    config
+   core
    main
+   ui

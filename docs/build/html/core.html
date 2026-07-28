@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="de" data-accent-color="violet" data-content_root="./">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>core package - Komprimierung-Tool 0.5 Dokumentation</title><link rel="index" title="Stichwortverzeichnis" href="genindex.html" /><link rel="search" title="Suche" href="search.html" /><link rel="next" title="main module" href="main.html" /><link rel="prev" title="config module" href="config.html" /><script>
+    function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
+    setColorMode(localStorage._theme||"auto");
+  </script><link rel="stylesheet" type="text/css" href="_static/pygments.css?v=e1a1ceaf" />
+    <link rel="stylesheet" type="text/css" href="_static/shibuya.css?v=70423902" />
+    <link media="print" rel="stylesheet" type="text/css" href="_static/print.css?v=20ff2c19" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sy-f-text: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+  --sy-f-heading: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+}
+</style>
+    
+  <meta property="og:type" content="website"/><meta property="og:title" content="core package"/>
+    <meta name="twitter:card" content="summary"/>
+  </head>
+<body><div class="sy-head">
+  <div class="sy-head-blur"></div>
+  <div class="sy-head-inner sy-container mx-auto">
+    <a class="sy-head-brand" href="index.html">
+      
+      
+      <strong>Komprimierung-Tool</strong>
+    </a>
+    <div class="sy-head-nav" id="head-nav">
+      <nav class="sy-head-links"></nav>
+      <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="search.html" method="get">
+  <input type="text" name="q" placeholder="Suche" />
+  <kbd>/</kbd>
+</form><div class="sy-head-socials"></div></div>
+    </div>
+    <div class="sy-head-actions flex items-center shrink-0 print:hidden"><button class="js-theme theme-switch flex items-center"
+data-aria-auto="In den Hellmodus wechseln"
+data-aria-light="In den Dunkelmodus wechseln"
+data-aria-dark="In den automatischen wechseln">
+<i class="i-lucide theme-icon"></i>
+</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="head-nav" aria-expanded="false">
+        <div class="hamburger">
+          <span class="hamburger_1"></span>
+          <span class="hamburger_2"></span>
+          <span class="hamburger_3"></span>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+<div class="sy-page sy-container flex mx-auto">
+  <aside id="lside" class="sy-lside md:w-72 md:shrink-0 print:hidden">
+    <div class="sy-lside-inner md:sticky">
+      <div class="sy-scrollbar p-6">
+        <div class="globaltoc" data-expand-depth="0"><p class="caption" role="heading" aria-level="3"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">src</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="config.html">config module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">core package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.html">main module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ui.html">ui package</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="lside-overlay js-menu" role="button" aria-label="Close left sidebar" aria-controls="lside" aria-expanded="false"></div>
+  <aside id="rside" class="sy-rside pb-3 w-64 shrink-0 order-last">
+    <button class="rside-close js-menu xl:hidden" aria-label="Close Table of Contents" type="button" aria-controls="rside" aria-expanded="false">
+      <i class="i-lucide close"></i>
+    </button>
+    <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div class="localtoc"><h3>Auf dieser Seite</h3><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-core.bit_analysis">core.bit_analysis module</a><ul>
+<li><a class="reference internal" href="#core.bit_analysis.bit_to_bar"><code class="docutils literal notranslate"><span class="pre">bit_to_bar()</span></code></a></li>
+<li><a class="reference internal" href="#core.bit_analysis.bit_to_comp"><code class="docutils literal notranslate"><span class="pre">bit_to_comp()</span></code></a></li>
+<li><a class="reference internal" href="#core.bit_analysis.bit_to_percent"><code class="docutils literal notranslate"><span class="pre">bit_to_percent()</span></code></a></li>
+<li><a class="reference internal" href="#core.bit_analysis.bit_to_pixel"><code class="docutils literal notranslate"><span class="pre">bit_to_pixel()</span></code></a></li>
+<li><a class="reference internal" href="#core.bit_analysis.bit_to_size"><code class="docutils literal notranslate"><span class="pre">bit_to_size()</span></code></a></li>
+<li><a class="reference internal" href="#core.bit_analysis.clr_to_bit"><code class="docutils literal notranslate"><span class="pre">clr_to_bit()</span></code></a></li>
+<li><a class="reference internal" href="#core.bit_analysis.rgb_to_bit"><code class="docutils literal notranslate"><span class="pre">rgb_to_bit()</span></code></a></li>
+<li><a class="reference internal" href="#core.bit_analysis.rle_to_bit"><code class="docutils literal notranslate"><span class="pre">rle_to_bit()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-core.encoding">core.encoding module</a><ul>
+<li><a class="reference internal" href="#core.encoding.array_to_list"><code class="docutils literal notranslate"><span class="pre">array_to_list()</span></code></a></li>
+<li><a class="reference internal" href="#core.encoding.clr_to_string"><code class="docutils literal notranslate"><span class="pre">clr_to_string()</span></code></a></li>
+<li><a class="reference internal" href="#core.encoding.encode_clr"><code class="docutils literal notranslate"><span class="pre">encode_clr()</span></code></a></li>
+<li><a class="reference internal" href="#core.encoding.encode_rle"><code class="docutils literal notranslate"><span class="pre">encode_rle()</span></code></a></li>
+<li><a class="reference internal" href="#core.encoding.rgb_to_string"><code class="docutils literal notranslate"><span class="pre">rgb_to_string()</span></code></a></li>
+<li><a class="reference internal" href="#core.encoding.rle_to_string"><code class="docutils literal notranslate"><span class="pre">rle_to_string()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-core.file_io">core.file_io module</a><ul>
+<li><a class="reference internal" href="#core.file_io.clean_all"><code class="docutils literal notranslate"><span class="pre">clean_all()</span></code></a></li>
+<li><a class="reference internal" href="#core.file_io.clean_html"><code class="docutils literal notranslate"><span class="pre">clean_html()</span></code></a></li>
+<li><a class="reference internal" href="#core.file_io.read_file"><code class="docutils literal notranslate"><span class="pre">read_file()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-core">Module contents</a></li>
+</ul>
+</div><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
+  </aside>
+  <div class="rside-overlay js-menu" role="button" aria-label="Close Table of Contents" aria-controls="rside" aria-expanded="false"></div>
+  <main class="sy-main w-full max-sm:max-w-full print:pt-6">
+<div class="sy-breadcrumbs" role="navigation">
+  <div class="sy-breadcrumbs-inner flex items-center">
+    <div class="md:hidden mr-3">
+      <button class="js-menu" aria-label="Menu" type="button" aria-controls="lside" aria-expanded="false">
+        <i class="i-lucide menu"></i>
+      </button>
+    </div>
+    <ol class="flex-1" itemscope itemtype="https://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="index.html"><span itemprop="name">Komprimierung-Tool</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="1" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="modules.html"><span itemprop="name">src</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="2" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <strong itemprop="name">core package</strong>
+        <meta itemprop="position" content="3" />
+      </li></ol>
+    <div class="xl:hidden ml-1">
+      <button class="js-menu" aria-label="Show table of contents" type="button" aria-controls="rside"
+        aria-expanded="false">
+        <i class="i-lucide outdent"></i>
+      </button>
+    </div>
+  </div>
+</div><div class="flex flex-col break-words justify-between">
+      <div class="relative min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
+  <article class="yue" role="main">
+          <section id="core-package">
+<h1>core package<a class="headerlink" href="#core-package" title="Link to this heading">#</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">#</a></h2>
+</section>
+<section id="module-core.bit_analysis">
+<span id="core-bit-analysis-module"></span><h2>core.bit_analysis module<a class="headerlink" href="#module-core.bit_analysis" title="Link to this heading">#</a></h2>
+<p>Enthält Funktionen zur Berechnung und Darstellung von Bits.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="core.bit_analysis.bit_to_bar">
+<span class="sig-prename descclassname"><span class="pre">core.bit_analysis.</span></span><span class="sig-name descname"><span class="pre">bit_to_bar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">percent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/core/bit_analysis.html#bit_to_bar"><span class="viewcode-link"><span class="pre">[Quellcode]</span></span></a><a class="headerlink" href="#core.bit_analysis.bit_to_bar" title="Link to this definition">#</a></dt>
+<dd><p>Wandelt prozentuale Datenersparnis in eine visuelle Kompressionsanzeige um.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameter<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>percent</strong> – prozentuale Datenersparnis.</p>
+</dd>
+<dt class="field-even">Rückgabe<span class="colon">:</span></dt>
+<dd class="field-even"><p>Visuelle Kompressionsanzeige.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="core.bit_analysis.bit_to_comp">
+<span class="sig-prename descclassname"><span class="pre">core.bit_analysis.</span></span><span class="sig-name descname"><span class="pre">bit_to_comp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">comp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_bits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp_bits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/core/bit_analysis.html#bit_to_comp"><span class="viewcode-link"><span class="pre">[Quellcode]</span></span></a><a class="headerlink" href="#core.bit_analysis.bit_to_comp" title="Link to this definition">#</a></dt>
+<dd><p>Wandelt Kompressionsverhältnis in einen lesbaren String um.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameter<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>comp</strong> – Kompressionsverhältnis</p></li>
+<li><p><strong>comp_help</strong> – (RGB-Codierung / komprimierte Codierung) = x -&gt; 1:x.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Rückgabe<span class="colon">:</span></dt>
+<dd class="field-even"><p>Informationen über das Kompressionsverhältnis.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="core.bit_analysis.bit_to_percent">
+<span class="sig-prename descclassname"><span class="pre">core.bit_analysis.</span></span><span class="sig-name descname"><span class="pre">bit_to_percent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">percent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/core/bit_analysis.html#bit_to_percent"><span class="viewcode-link"><span class="pre">[Quellcode]</span></span></a><a class="headerlink" href="#core.bit_analysis.bit_to_percent" title="Link to this definition">#</a></dt>
+<dd><p>Wandelt prozentuale Datenersparnis in einen lesbaren String um.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameter<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>percent</strong> – prozentuale Datenersparnis.</p>
+</dd>
+<dt class="field-even">Rückgabe<span class="colon">:</span></dt>
+<dd class="field-even"><p>Informationen über die prozentuale Datenersparnis.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="core.bit_analysis.bit_to_pixel">
+<span class="sig-prename descclassname"><span class="pre">core.bit_analysis.</span></span><span class="sig-name descname"><span class="pre">bit_to_pixel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/core/bit_analysis.html#bit_to_pixel"><span class="viewcode-link"><span class="pre">[Quellcode]</span></span></a><a class="headerlink" href="#core.bit_analysis.bit_to_pixel" title="Link to this definition">#</a></dt>
+<dd><p>Wandelt Bitanzahl pro Pixel in einen lesbaren String um.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameter<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>bits</strong> – Bitanzahl pro Pixel.</p>
+</dd>
+<dt class="field-even">Rückgabe<span class="colon">:</span></dt>
+<dd class="field-even"><p>Informationen über die Bitanzahl pro Pixel.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="core.bit_analysis.bit_to_size">
+<span class="sig-prename descclassname"><span class="pre">core.bit_analysis.</span></span><span class="sig-name descname"><span class="pre">bit_to_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">comp_bits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/core/bit_analysis.html#bit_to_size"><span class="viewcode-link"><span class="pre">[Quellcode]</span></span></a><a class="headerlink" href="#core.bit_analysis.bit_to_size" title="Link to this definition">#</a></dt>
+<dd><p>Wandelt Dateigröße in einen lesbaren String um.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameter<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>comp_bits</strong> – Größe des Bildes in Bits in der jeweiligen komprimierten Codierung.</p>
+</dd>
+<dt class="field-even">Rückgabe<span class="colon">:</span></dt>
+<dd class="field-even"><p>Informationen über die Dateigröße.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="core.bit_analysis.clr_to_bit">
+<span class="sig-prename descclassname"><span class="pre">core.bit_analysis.</span></span><span class="sig-name descname"><span class="pre">clr_to_bit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image_bits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code_length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rows</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/core/bit_analysis.html#clr_to_bit"><span class="viewcode-link"><span class="pre">[Quellcode]</span></span></a><a class="headerlink" href="#core.bit_analysis.clr_to_bit" title="Link to this definition">#</a></dt>
+<dd><p>Erzeugt lesbare Informationen der CLR-Codierung für die Datenanzeige.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameter<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>image_bits</strong> – Größe des Bildes in Bits in der RGB-Codierung.</p></li>
+<li><p><strong>color_count</strong> – Anzahl der verwendeten Farben.</p></li>
+<li><p><strong>code_length</strong> – Anzahl der benötigten Bits der einzelnen Farbcodierungen.</p></li>
+<li><p><strong>rows</strong> – Anzahl der Reihen des Bildes.</p></li>
+<li><p><strong>cols</strong> – Anzahl der Spalten des Bildes.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Rückgabe<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>Formatierte Informationen zur CLR-Codierung.</p>
+<ul class="simple">
+<li><p>Kompressionsanzeige</p></li>
+<li><p>prozentuale Datenersparnis</p></li>
+<li><p>Kompressionsverhältnis</p></li>
+<li><p>Dateigröße</p></li>
+<li><p>Bit pro Pixel</p></li>
+<li><p>Anzahl der verwendeten Farbe</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="core.bit_analysis.rgb_to_bit">
+<span class="sig-prename descclassname"><span class="pre">core.bit_analysis.</span></span><span class="sig-name descname"><span class="pre">rgb_to_bit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image_bits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rows</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/core/bit_analysis.html#rgb_to_bit"><span class="viewcode-link"><span class="pre">[Quellcode]</span></span></a><a class="headerlink" href="#core.bit_analysis.rgb_to_bit" title="Link to this definition">#</a></dt>
+<dd><p>Erzeugt lesbare Informationen der CLR-Codierung für die Datenanzeige.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameter<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>image_bits</strong> – Größe des Bildes in Bits in der RGB-Codierung.</p></li>
+<li><p><strong>rows</strong> – Anzahl der Reihen des Bildes.</p></li>
+<li><p><strong>cols</strong> – Anzahl der Spalten des Bildes.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Rückgabe<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>Formatierte Informationen zur CLR-Codierung.</p>
+<ul class="simple">
+<li><p>Kompressionsanzeige</p></li>
+<li><p>prozentuale Datenersparnis</p></li>
+<li><p>Kompressionsverhältnis</p></li>
+<li><p>Dateigröße</p></li>
+<li><p>Bit pro Pixel</p></li>
+<li><p>Anzahl der Pixel des Bildes</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="core.bit_analysis.rle_to_bit">
+<span class="sig-prename descclassname"><span class="pre">core.bit_analysis.</span></span><span class="sig-name descname"><span class="pre">rle_to_bit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image_bits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_length_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_length_length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rows</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/core/bit_analysis.html#rle_to_bit"><span class="viewcode-link"><span class="pre">[Quellcode]</span></span></a><a class="headerlink" href="#core.bit_analysis.rle_to_bit" title="Link to this definition">#</a></dt>
+<dd><p>Erzeugt lesbare Informationen der RLE-Codierung für die Datenanzeige.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameter<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>image_bits</strong> – Größe des Bildes in Bits in der RGB-Codierung.</p></li>
+<li><p><strong>run_length_count</strong> – Anzahl der vorkommenden Lauflängen.</p></li>
+<li><p><strong>run_length_length</strong> – Längen der vorkommenden Lauflängen.</p></li>
+<li><p><strong>rows</strong> – Anzahl der Reihen des Bildes.</p></li>
+<li><p><strong>cols</strong> – Anzahl der Spalten des Bildes.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Rückgabe<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>Formatierte Informationen zur RLE-Codierung.</p>
+<ul class="simple">
+<li><p>Kompressionsanzeige</p></li>
+<li><p>prozentuale Datenersparnis</p></li>
+<li><p>Kompressionsverhältnis</p></li>
+<li><p>Dateigröße</p></li>
+<li><p>Bit pro Pixel</p></li>
+<li><p>durchschnittlische Lauflänge</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-core.encoding">
+<span id="core-encoding-module"></span><h2>core.encoding module<a class="headerlink" href="#module-core.encoding" title="Link to this heading">#</a></h2>
+<p>Enthält Funktionen zur Codierung und Darstellung von Bild-Daten.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="core.encoding.array_to_list">
+<span class="sig-prename descclassname"><span class="pre">core.encoding.</span></span><span class="sig-name descname"><span class="pre">array_to_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">array</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/core/encoding.html#array_to_list"><span class="viewcode-link"><span class="pre">[Quellcode]</span></span></a><a class="headerlink" href="#core.encoding.array_to_list" title="Link to this definition">#</a></dt>
+<dd><p>Nimmt ein 2D-Array und strukturiert es in eine Liste</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameter<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>array</strong> – 2D-Array</p>
+</dd>
+<dt class="field-even">Rückgabe<span class="colon">:</span></dt>
+<dd class="field-even"><p>Liste</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="core.encoding.clr_to_string">
+<span class="sig-prename descclassname"><span class="pre">core.encoding.</span></span><span class="sig-name descname"><span class="pre">clr_to_string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rows</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clr_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clr_codes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">QColor</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pixel_row_col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/core/encoding.html#clr_to_string"><span class="viewcode-link"><span class="pre">[Quellcode]</span></span></a><a class="headerlink" href="#core.encoding.clr_to_string" title="Link to this definition">#</a></dt>
+<dd><p>Konvertiert clr_data in einen String.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameter<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rows</strong> – Anzahl der Reihen.</p></li>
+<li><p><strong>cols</strong> – Anzahl der Spalten.</p></li>
+<li><p><strong>clr_data</strong> – 2D-Array mit Farbcodes.</p></li>
+<li><p><strong>color_codes</strong> – Mapt Farbindex -&gt; Farbcode.</p></li>
+<li><p><strong>color_index</strong> – Mapt Farbindex -&gt; (Qcolor, Farbname).</p></li>
+<li><p><strong>pixel_row_col</strong> – Reihe und Spalte des ausgewählten Pixels.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Rückgabe<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>Informationen zur CLR-Codierung als String.</p>
+<ul class="simple">
+<li><p>Farbcode-Tabelle (Farbcode | RGB-Wert (Binär, Dezi), Farbname).</p></li>
+<li><p>Farbcodes.</p></li>
+<li><p>RGB-Werte (Dezi).</p></li>
+<li><p>Farbnamen.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="core.encoding.encode_clr">
+<span class="sig-prename descclassname"><span class="pre">core.encoding.</span></span><span class="sig-name descname"><span class="pre">encode_clr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pixel_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/core/encoding.html#encode_clr"><span class="viewcode-link"><span class="pre">[Quellcode]</span></span></a><a class="headerlink" href="#core.encoding.encode_clr" title="Link to this definition">#</a></dt>
+<dd><p>Setzt die CLR-Codierung (indizierte-Farben) auf das Bild an.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameter<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>pixel_data</strong> – 2D-Array mit Farbindizes.</p>
+</dd>
+<dt class="field-even">Rückgabe<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>Informationen zur CLR-Codierung.</p>
+<ul class="simple">
+<li><p>pixel_data-Kopie mit Farbcodes</p></li>
+<li><p>Dictionary mit (Farbindex, Farbcode)</p></li>
+<li><p>Anzahl benötigter Bits pro Pixel</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="core.encoding.encode_rle">
+<span class="sig-prename descclassname"><span class="pre">core.encoding.</span></span><span class="sig-name descname"><span class="pre">encode_rle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pixel_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rle_lines_on</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/core/encoding.html#encode_rle"><span class="viewcode-link"><span class="pre">[Quellcode]</span></span></a><a class="headerlink" href="#core.encoding.encode_rle" title="Link to this definition">#</a></dt>
+<dd><p>Setzt die RLE-Codierung (Lauflängen) auf das Bild an.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameter<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pixel_data</strong> – 2D-Array mit Farbindizes.</p></li>
+<li><p><strong>rle_lines_on</strong> – True -&gt; Zeilenübergriff, False -&gt; kein Zeilenübergriff.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Rückgabe<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>Informationen zur RLE-Codierung.</p>
+<ul class="simple">
+<li><p>Liste mit Tupeln (Lauflänge, Farbindex).</p></li>
+<li><p>Dictionary (Reihe, Spalte -&gt; Lauflängen-Nummer).</p></li>
+<li><p>Dictionary (Lauflängen-Nummer -&gt; list(Reihe, Spalte)).</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="core.encoding.rgb_to_string">
+<span class="sig-prename descclassname"><span class="pre">core.encoding.</span></span><span class="sig-name descname"><span class="pre">rgb_to_string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rows</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rgb_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">QColor</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pixel_row_col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/core/encoding.html#rgb_to_string"><span class="viewcode-link"><span class="pre">[Quellcode]</span></span></a><a class="headerlink" href="#core.encoding.rgb_to_string" title="Link to this definition">#</a></dt>
+<dd><p>Konvertiert pixel_data in einen String.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameter<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rows</strong> – Anzahl der Reihen.</p></li>
+<li><p><strong>cols</strong> – Anzahl der Spalten.</p></li>
+<li><p><strong>rgb_data</strong> – 2D-Array mit Farbindizes (pixel_data).</p></li>
+<li><p><strong>color_index</strong> – Mapt Farbindex -&gt; (Qcolor, Farbname).</p></li>
+<li><p><strong>pixel_row_col</strong> – Reihe und Spalte des ausgewählten Pixels.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Rückgabe<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>Informationen zur RGB-Codierung als String.</p>
+<ul class="simple">
+<li><p>RGB-Werte (Binär, Dezi).</p></li>
+<li><p>Farbnamen.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="core.encoding.rle_to_string">
+<span class="sig-prename descclassname"><span class="pre">core.encoding.</span></span><span class="sig-name descname"><span class="pre">rle_to_string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rows</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rle_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">QColor</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pixel_row_col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos_to_number</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/core/encoding.html#rle_to_string"><span class="viewcode-link"><span class="pre">[Quellcode]</span></span></a><a class="headerlink" href="#core.encoding.rle_to_string" title="Link to this definition">#</a></dt>
+<dd><p>Konvertiert rle_data in einen String.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameter<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rows</strong> – Anzahl der Reihen.</p></li>
+<li><p><strong>cols</strong> – Anzahl der Spalten.</p></li>
+<li><p><strong>rle_data</strong> – Liste mit Tupeln (Lauflänge, Farbindex).</p></li>
+<li><p><strong>color_index</strong> – Mapt Farbindex -&gt; (Qcolor, Farbname).</p></li>
+<li><p><strong>pixel_row_col</strong> – Reihe und Spalte des ausgewählten Pixels.</p></li>
+<li><p><strong>pos_to_number</strong> – Dictionary (Reihe, Spalte -&gt; Lauflängen-Nummer).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Rückgabe<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>Informationen zur RLE-Codierung als String.</p>
+<ul class="simple">
+<li><p>Anzahl der Pixel innerhalb der Lauflänge.</p></li>
+<li><p>RGB-Werte (Binär, Dezi).</p></li>
+<li><p>Farbnamen.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-core.file_io">
+<span id="core-file-io-module"></span><h2>core.file_io module<a class="headerlink" href="#module-core.file_io" title="Link to this heading">#</a></h2>
+<p>Enthält Funktionen um PixelWerkstatt-Datein zu speichern und laden.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="core.file_io.clean_all">
+<span class="sig-prename descclassname"><span class="pre">core.file_io.</span></span><span class="sig-name descname"><span class="pre">clean_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/core/file_io.html#clean_all"><span class="viewcode-link"><span class="pre">[Quellcode]</span></span></a><a class="headerlink" href="#core.file_io.clean_all" title="Link to this definition">#</a></dt>
+<dd><p>Entfernt Kommentare, HTML-Syntax, Tabellen (CLR) und Whitespaces.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameter<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>text</strong> – Eingabetext.</p>
+</dd>
+<dt class="field-even">Rückgabe<span class="colon">:</span></dt>
+<dd class="field-even"><p>Bereinigter Text.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="core.file_io.clean_html">
+<span class="sig-prename descclassname"><span class="pre">core.file_io.</span></span><span class="sig-name descname"><span class="pre">clean_html</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/core/file_io.html#clean_html"><span class="viewcode-link"><span class="pre">[Quellcode]</span></span></a><a class="headerlink" href="#core.file_io.clean_html" title="Link to this definition">#</a></dt>
+<dd><p>Entfernt HTML-Syntax.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameter<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>text</strong> – Eingabetext.</p>
+</dd>
+<dt class="field-even">Rückgabe<span class="colon">:</span></dt>
+<dd class="field-even"><p>Bereinigter Text.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="core.file_io.read_file">
+<span class="sig-prename descclassname"><span class="pre">core.file_io.</span></span><span class="sig-name descname"><span class="pre">read_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/core/file_io.html#read_file"><span class="viewcode-link"><span class="pre">[Quellcode]</span></span></a><a class="headerlink" href="#core.file_io.read_file" title="Link to this definition">#</a></dt>
+<dd><p>Liest und wertet die ausgewählte RGB-Datei aus.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameter<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> – Pfad der ausgewählten Datei.</p>
+</dd>
+<dt class="field-even">Rückgabe<span class="colon">:</span></dt>
+<dd class="field-even"><p>Format und Array-Darstellung der geladenen Datei.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-core">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-core" title="Link to this heading">#</a></h2>
+</section>
+</section>
+
+        </article><button class="back-to-top" type="button">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+  </svg>
+  <span>Zurück nach oben</span>
+</button><div class="navigation flex print:hidden"><div class="navigation-prev">
+    <a href="config.html">
+      <i class="i-lucide chevron-left"></i>
+      <div class="page-info">
+        <span>Zurück</span><div class="title">config module</div></div>
+    </a>
+  </div><div class="navigation-next">
+    <a href="main.html">
+      <div class="page-info">
+        <span>Weiter</span>
+        <div class="title">main module</div>
+      </div>
+      <i class="i-lucide chevron-right"></i>
+    </a>
+  </div></div></div>
+    </div>
+  </main>
+</div>
+<footer class="sy-foot">
+  <div class="sy-foot-inner sy-container mx-auto">
+    <div class="sy-foot-reserved md:flex justify-between items-center">
+      <div class="sy-foot-copyright"><p>2026, Maxim Hartmann</p>
+  
+  <p>
+    Made with
+    
+    <a href="https://www.sphinx-doc.org/">Sphinx</a> and
+    
+    <a href="https://shibuya.lepture.com">Shibuya theme</a>.
+  </p>
+</div>
+      <div class="sy-foot-socials"></div>
+    </div>
+  </div>
+</footer>
+      <script src="_static/documentation_options.js?v=a6073c4c"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=9bf55d28"></script>
+      <script src="_static/shibuya.js?v=50760d75"></script></body>
+</html>

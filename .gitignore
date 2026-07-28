@@ -7,6 +7,3 @@
 # Python
 __pycache__/
 *.py[cod]
-
-# erstellte Sphinx Doc
-docs/build/

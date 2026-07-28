@@ -14,7 +14,7 @@ sys.path.insert(0, os.path.abspath("../../src"))
 project = "Komprimierung-Tool"
 copyright = "2026, Maxim Hartmann"
 author = "Maxim Hartmann"
-release = "1.0"
+release = "0.5"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -23,7 +23,6 @@ extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.napoleon",
     "sphinx.ext.viewcode",
-    "sphinx.ext.autosummary",
 ]
 
 templates_path = ["_templates"]

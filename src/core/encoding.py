@@ -154,6 +154,8 @@ def array_to_list(array) -> list[int]:
 
 
 def rgb_to_string(
+    rows: int,
+    cols: int,
     rgb_data: list[list[int]],
     color_index: dict[int, tuple[QColor, str]],
     pixel_row_col: tuple[int, int] | None,
@@ -162,6 +164,8 @@ def rgb_to_string(
     Konvertiert pixel_data in einen String.
 
     Args:
+        rows: Anzahl der Reihen.
+        cols: Anzahl der Spalten.
         rgb_data: 2D-Array mit Farbindizes (pixel_data).
         color_index: Mapt Farbindex -> (Qcolor, Farbname).
         pixel_row_col: Reihe und Spalte des ausgewählten Pixels.
@@ -172,7 +176,10 @@ def rgb_to_string(
         - RGB-Werte (Binär, Dezi).
         - Farbnamen.
     """
-    rgb_text = ""
+    rgb_text = (
+        f"{rows:08b} <span style='color:gray'>(Höhe) </span>"
+        f"{cols:08b} <span style='color:gray'>(Breite)</span><br>"
+    )
     for row_pos, row in enumerate(rgb_data):
         for col_pos, index in enumerate(row):
             rgb_color = color_index[index][0]
@@ -196,6 +203,8 @@ def rgb_to_string(
 
 
 def rle_to_string(
+    rows: int,
+    cols: int,
     rle_data: list[tuple[int, int]],
     color_index: dict[int, tuple[QColor, str]],
     pixel_row_col: tuple[int, int] | None,
@@ -205,6 +214,8 @@ def rle_to_string(
     Konvertiert rle_data in einen String.
 
     Args:
+        rows: Anzahl der Reihen.
+        cols: Anzahl der Spalten.
         rle_data: Liste mit Tupeln (Lauflänge, Farbindex).
         color_index: Mapt Farbindex -> (Qcolor, Farbname).
         pixel_row_col: Reihe und Spalte des ausgewählten Pixels.
@@ -217,7 +228,10 @@ def rle_to_string(
         - RGB-Werte (Binär, Dezi).
         - Farbnamen.
     """
-    rle_text = ""
+    rle_text = (
+        f"{rows:08b} <span style='color:gray'>(Höhe) </span>"
+        f"{cols:08b} <span style='color:gray'>(Breite)</span><br>"
+    )
     selected_rle = None
     if pixel_row_col is not None:
         selected_rle = pos_to_number[pixel_row_col]
@@ -248,8 +262,10 @@ def rle_to_string(
 
 
 def clr_to_string(
+    rows: int,
+    cols: int,
     clr_data: list[list[str]],
-    color_codes: dict[int, str],
+    clr_codes: dict[int, str],
     color_index: dict[int, tuple[QColor, str]],
     pixel_row_col: tuple[int, int] | None,
 ) -> str:
@@ -257,6 +273,8 @@ def clr_to_string(
     Konvertiert clr_data in einen String.
 
     Args:
+        rows: Anzahl der Reihen.
+        cols: Anzahl der Spalten.
         clr_data: 2D-Array mit Farbcodes.
         color_codes: Mapt Farbindex -> Farbcode.
         color_index: Mapt Farbindex -> (Qcolor, Farbname).
@@ -272,10 +290,13 @@ def clr_to_string(
     """
     rgb_codes = {}
     clr_text = (
+        f"{rows:08b} <span style='color:gray'>(Höhe) </span>"
+        f"{cols:08b} <span style='color:gray'>(Breite) </span>"
+        f"{len(clr_codes):08b} <span style='color:gray'>(Farb-Anzahl)</span><br><br>"
         "<span style='color:gray'>(Code) | (Farbe)"
         "<br>-----------------------------------<br></span>"
     )
-    for index, code in color_codes.items():
+    for index, code in clr_codes.items():
         rgb_color = color_index[index][0]
         str_color = color_index[index][1]
         rgb_codes[code] = (rgb_color, str_color)
