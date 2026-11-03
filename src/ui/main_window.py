@@ -42,16 +42,16 @@ class MainWindow(QWidget):
         # RLE Zeilenübergreifend
         self.rle_lines_on = True
 
-        # ----------------------------------------
+        # ------------------------------------------------------------------------------
         # Fenstereinstellungen
-        # ----------------------------------------
+        # ------------------------------------------------------------------------------
 
         self.setWindowTitle("PixelWerkstatt")
         self.setWindowIcon(QIcon("assets/Icon_chess.png"))
 
-        # ----------------------------------------
+        # ------------------------------------------------------------------------------
         # Layouts
-        # ----------------------------------------
+        # ------------------------------------------------------------------------------
 
         # Haupt-Layout
         self.main_layout = QHBoxLayout()
@@ -93,9 +93,9 @@ class MainWindow(QWidget):
         self.right_down_layout.setSpacing(10)
         self.right_down_layout.setAlignment(Qt.AlignCenter)
 
-        # ----------------------------------------
+        # ------------------------------------------------------------------------------
         # Buttons
-        # ----------------------------------------
+        # ------------------------------------------------------------------------------
 
         self.button_settings = QPushButton("⚙️")
         self.button_settings.setToolTip("Einstellungen")
@@ -126,9 +126,9 @@ class MainWindow(QWidget):
         self.encode_buttons.addButton(self.button_clr)
         self.encode_buttons.setExclusive(True)
 
-        # ----------------------------------------
+        # ------------------------------------------------------------------------------
         # Button-Aufrufe
-        # ----------------------------------------
+        # ------------------------------------------------------------------------------
 
         self.button_settings.clicked.connect(self.set_settings)
         self.button_detective.clicked.connect(self.activate_select_mode)
@@ -139,9 +139,9 @@ class MainWindow(QWidget):
         self.button_rle.clicked.connect(self.rle_clicked)
         self.button_clr.clicked.connect(self.clr_clicked)
 
-        # ----------------------------------------
+        # ------------------------------------------------------------------------------
         # Textfelder und Labels
-        # ----------------------------------------
+        # ------------------------------------------------------------------------------
 
         self.text_sim = QTextEdit(f"<span style ={text_style}>Male etwas ...</span>")
         self.text_sim.setReadOnly(True)
@@ -154,16 +154,16 @@ class MainWindow(QWidget):
         self.label_bits_opt_a = QLabel()
         self.label_byte_opt_b = QLabel()
 
-        # ----------------------------------------
+        # ------------------------------------------------------------------------------
         # UI-Elemente
-        # ----------------------------------------
+        # ------------------------------------------------------------------------------
 
         self.pixel_editor = PixelEditor()
         self.color_picker = ColorPicker()
 
-        # ----------------------------------------
+        # ------------------------------------------------------------------------------
         # Widgets dem Layout hinzufügen
-        # ----------------------------------------
+        # ------------------------------------------------------------------------------
 
         self.left_up_layout.addWidget(self.pixel_editor)
         self.left_middle_layout.addWidget(self.color_picker)
@@ -186,9 +186,9 @@ class MainWindow(QWidget):
         self.right_down_layout.addWidget(self.label_bits_opt_a)
         self.right_down_layout.addWidget(self.label_byte_opt_b)
 
-        # ----------------------------------------
+        # ------------------------------------------------------------------------------
         # Layouts zuweisen
-        # ----------------------------------------
+        # ------------------------------------------------------------------------------
 
         self.left_layout.addLayout(self.left_up_layout, 9)
         self.left_layout.addLayout(self.left_middle_layout, 1)
@@ -199,18 +199,18 @@ class MainWindow(QWidget):
         self.main_layout.addLayout(self.right_layout, 2)
         self.setLayout(self.main_layout)
 
-        # ----------------------------------------
+        # ------------------------------------------------------------------------------
         # UI-Vermittlung
-        # ----------------------------------------
+        # ------------------------------------------------------------------------------
 
         self.color_picker.send_new_color.connect(self.change_color)
         self.pixel_editor.send_selected_pixel.connect(self.text_update)
         self.pixel_editor.send_painted_pixel.connect(self.text_update)
         self.send_selected_pixels.connect(self.pixel_editor.set_selected_pixels)
 
-        # ----------------------------------------
+        # ------------------------------------------------------------------------------
         # Stylesheet
-        # ----------------------------------------
+        # ------------------------------------------------------------------------------
 
         self.setStyleSheet("""
             QPushButton {
@@ -239,9 +239,9 @@ class MainWindow(QWidget):
             }
             """)
 
-    # ----------------------------------------
+    # ----------------------------------------------------------------------------------
     # Funktionen der UI-Vermittlung
-    # ----------------------------------------
+    # ----------------------------------------------------------------------------------
 
     def change_color(self, color: int) -> None:
         """
@@ -258,9 +258,9 @@ class MainWindow(QWidget):
             self.pixel_editor.update()
             self.text_update()
 
-    # ----------------------------------------
+    # ----------------------------------------------------------------------------------
     # Funktionen für Button-Aufrufe
-    # ----------------------------------------
+    # ----------------------------------------------------------------------------------
 
     def set_settings(self) -> None:
         """
