@@ -2,59 +2,64 @@
 Erstellt das Color-Picker-Widget zur Auswahl von Farben.
 """
 
-from PySide6.QtWidgets import QWidget
-from PySide6.QtGui import QPainter, QPaintEvent
 from PySide6.QtCore import Signal
-from config import colors, picker_grid_size
+from PySide6.QtGui import QMouseEvent, QPainter, QPaintEvent
+from PySide6.QtWidgets import QWidget
+
+from config import COLORS, PICKER_GRID_SIZE
 
 
 class ColorPicker(QWidget):
     """
     Widget zur Auswahl von Farben.
 
-    Zeigt ein vorgefärtigtes Raster an Farben, welche angeklickt werden können.
-    Die ausgewählte Farbe wird an das System weitergegeben.
+    Zeigt ein vorgefertigtes Raster an Farben, welche angeklickt werden können.
+    Die ausgewählte Farbe wird als Signal emittiert.
     """
 
-    # Sendet einen ausgewählten Farbindex an MainWindow.
+    # Sendet einen ausgewählten Farbindex.
     send_new_color = Signal(int)
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent: QWidget | None = None) -> None:
+        super().__init__(parent)
 
-        self.pixel_size = picker_grid_size["pixel_size"]
-        self.pixel_gap = picker_grid_size["pixel_gap"]
+        self.pixel_size = PICKER_GRID_SIZE["pixel_size"]
+        self.pixel_gap = PICKER_GRID_SIZE["pixel_gap"]
 
         self.setFixedSize(
-            len(colors) * (self.pixel_size + self.pixel_gap) - self.pixel_gap,
+            len(COLORS) * (self.pixel_size + self.pixel_gap) - self.pixel_gap,
             self.pixel_size,
         )
 
     def paintEvent(self, paint_event: QPaintEvent) -> None:
         """
-        Zeichnet die Farb-Auswahl.
+        Zeichnet die Farbauswahl.
+
         Farben werden als eine Reihe von farbigen Kacheln dargestellt.
 
         Args:
-            paint_event: Informationen über aktuelles Zeichenereignis.
+            paint_event: Informationen über das aktuelle Zeichenereignis.
         """
-        painter = QPainter(self)
-        for i, (color, _) in enumerate(colors):
-            painter.fillRect(
-                i * (self.pixel_size + self.pixel_gap),
-                0,
-                self.pixel_size,
-                self.pixel_size,
-                color,
-            )
+        with QPainter(self) as painter:
+            for i, (color, _) in enumerate(COLORS):
+                painter.fillRect(
+                    i * (self.pixel_size + self.pixel_gap),
+                    0,
+                    self.pixel_size,
+                    self.pixel_size,
+                    color,
+                )
 
-    def mousePressEvent(self, paint_event: QPaintEvent) -> None:
+    def mousePressEvent(self, event: QMouseEvent) -> None:
         """
-        Ermittelt die angeklickte Farbe und gibt diese an main_window weiter.
+        Ermittelt die angeklickte Farbe und sendet deren Index per Signal.
 
         Args:
-            paint_event: Informationen über aktuelles Zeichenereignis.
+            event: Informationen über das aktuelle Mausereignis.
         """
-        pos = paint_event.position().toPoint()
+        pos = event.position().toPoint()
         color_pos = pos.x() // (self.pixel_size + self.pixel_gap)
-        self.send_new_color.emit(color_pos)
+
+        # Sicherstellen, dass nur gültige Farbindizes emittiert werden.
+        if 0 <= color_pos < len(COLORS):
+            self.send_new_color.emit(color_pos)

@@ -1,3 +1,2 @@
 Sphinx
 shibuya
-sphinxcontrib-napoleon

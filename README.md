@@ -1,6 +1,6 @@
 # PixelWerkstatt
 
-Ein Tool zur Veranschaulichung von ausgewählten verlusstfreien
+Ein Tool zur Veranschaulichung von ausgewählten verlustfreien
 Bildkompressionsalgorithmen.
 
 Das Tool erlaubt das Malen von Pixelbildern in einem 6x8 oder 9x12 Raster mit

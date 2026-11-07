@@ -2,25 +2,42 @@
 Führt alle Widgets im Hauptfenster zusammen.
 """
 
+from pathlib import Path
+
+from PySide6.QtCore import Qt, Signal
+from PySide6.QtGui import QAction, QIcon
 from PySide6.QtWidgets import (
-    QFileDialog,
-    QMenu,
-    QHBoxLayout,
-    QPushButton,
     QButtonGroup,
+    QFileDialog,
+    QHBoxLayout,
+    QLabel,
+    QMenu,
+    QPushButton,
+    QTextEdit,
     QVBoxLayout,
     QWidget,
-    QLabel,
-    QTextEdit,
 )
-from PySide6.QtGui import QAction, QIcon
-from PySide6.QtCore import Qt, Signal
+
+from config import TEXT_STYLE
+from core.bit_analysis import clr_to_bit, rgb_to_bit, rle_to_bit
+from core.encoding import (
+    clr_to_string,
+    encode_clr,
+    encode_rle,
+    rgb_to_string,
+    rle_to_string,
+)
+from core.file_io import clean_html, read_file
 from ui.color_picker import ColorPicker
 from ui.pixel_editor import PixelEditor
-from core.encoding import *
-from core.bit_analysis import *
-from core.file_io import read_file, clean_html
-from config import text_style, select_color
+
+# --------------------------------------------------------------------------------------
+# Pfad-Konstanten
+# --------------------------------------------------------------------------------------
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+ASSETS_DIR = BASE_DIR / "assets"
+EXAMPLES_DIR = BASE_DIR.parent / "examples"
 
 
 class MainWindow(QWidget):
@@ -34,12 +51,12 @@ class MainWindow(QWidget):
     # Sendet alle Pixel einer ausgewählten Lauflänge an PixelEditor.
     send_selected_pixels = Signal(list)
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent: QWidget | None = None) -> None:
+        super().__init__(parent)
 
-        # aktive Codierung
+        # Aktive Codierung: "rgb", "rle" oder "clr"
         self.active_encode = "rgb"
-        # RLE Zeilenübergreifend
+        # RLE zeilenübergreifend aktivieren/deaktivieren
         self.rle_lines_on = True
 
         # ------------------------------------------------------------------------------
@@ -47,7 +64,9 @@ class MainWindow(QWidget):
         # ------------------------------------------------------------------------------
 
         self.setWindowTitle("PixelWerkstatt")
-        self.setWindowIcon(QIcon("assets/Icon_chess.png"))
+
+        ASSETS_DIR = Path(__file__).resolve().parent.parent / "assets"
+        self.setWindowIcon(QIcon(str(ASSETS_DIR / "Icon_chess.png")))
 
         # ------------------------------------------------------------------------------
         # Layouts
@@ -58,7 +77,7 @@ class MainWindow(QWidget):
         self.main_layout.setContentsMargins(10, 10, 10, 10)
         self.main_layout.setSpacing(10)
 
-        # Layout für linke Seite
+        # Layout für die linke Seite
         self.left_layout = QVBoxLayout()
         self.left_layout.setContentsMargins(0, 0, 0, 0)
         self.left_layout.setSpacing(0)
@@ -66,19 +85,19 @@ class MainWindow(QWidget):
         self.left_up_layout = QVBoxLayout()
         self.left_up_layout.setContentsMargins(0, 0, 0, 0)
         self.left_up_layout.setSpacing(10)
-        self.left_up_layout.setAlignment(Qt.AlignCenter)
+        self.left_up_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.left_middle_layout = QVBoxLayout()
         self.left_middle_layout.setContentsMargins(10, 10, 10, 10)
         self.left_middle_layout.setSpacing(0)
-        self.left_middle_layout.setAlignment(Qt.AlignCenter)
+        self.left_middle_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.left_down_layout = QHBoxLayout()
         self.left_down_layout.setContentsMargins(0, 0, 0, 0)
         self.left_down_layout.setSpacing(10)
-        self.left_down_layout.setAlignment(Qt.AlignCenter)
+        self.left_down_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        # Layout für rechte Seite
+        # Layout für die rechte Seite
         self.right_layout = QVBoxLayout()
         self.right_layout.setContentsMargins(0, 0, 0, 0)
         self.right_layout.setSpacing(0)
@@ -86,12 +105,12 @@ class MainWindow(QWidget):
         self.right_up_layout = QVBoxLayout()
         self.right_up_layout.setContentsMargins(10, 10, 10, 10)
         self.right_up_layout.setSpacing(10)
-        self.right_up_layout.setAlignment(Qt.AlignCenter)
+        self.right_up_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.right_down_layout = QVBoxLayout()
         self.right_down_layout.setContentsMargins(10, 10, 10, 10)
         self.right_down_layout.setSpacing(10)
-        self.right_down_layout.setAlignment(Qt.AlignCenter)
+        self.right_down_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         # ------------------------------------------------------------------------------
         # Buttons
@@ -127,7 +146,7 @@ class MainWindow(QWidget):
         self.encode_buttons.setExclusive(True)
 
         # ------------------------------------------------------------------------------
-        # Button-Aufrufe
+        # Button-Verbindungen (Signals & Slots)
         # ------------------------------------------------------------------------------
 
         self.button_settings.clicked.connect(self.set_settings)
@@ -143,7 +162,7 @@ class MainWindow(QWidget):
         # Textfelder und Labels
         # ------------------------------------------------------------------------------
 
-        self.text_sim = QTextEdit(f"<span style ={text_style}>Male etwas ...</span>")
+        self.text_sim = QTextEdit(f'<span style="{TEXT_STYLE}">Male etwas ...</span>')
         self.text_sim.setReadOnly(True)
         self.label_byte_bar = QLabel(
             "[________________________________________________]"
@@ -162,7 +181,7 @@ class MainWindow(QWidget):
         self.color_picker = ColorPicker()
 
         # ------------------------------------------------------------------------------
-        # Widgets dem Layout hinzufügen
+        # Widgets den Layouts hinzufügen
         # ------------------------------------------------------------------------------
 
         self.left_up_layout.addWidget(self.pixel_editor)
@@ -178,6 +197,7 @@ class MainWindow(QWidget):
         self.left_down_layout.addWidget(self.button_new)
         self.left_down_layout.addWidget(self.button_save)
         self.left_down_layout.addWidget(self.button_load)
+
         self.right_up_layout.addWidget(self.text_sim)
         self.right_down_layout.addWidget(self.label_byte_bar)
         self.right_down_layout.addWidget(self.label_byte_percent)
@@ -228,13 +248,13 @@ class MainWindow(QWidget):
                 background-color: rgb(20, 20, 20);
             }
             QPushButton:checked {
-            background-color: rgb(80, 80, 80);
-            border: 2px solid rgb(180, 180, 180);
+                background-color: rgb(80, 80, 80);
+                border: 2px solid rgb(180, 180, 180);
             }
             QLabel {
                 color: gray;
                 font-size: 11pt;
-                font-family: Cascadia Code, Consolas, monospace;
+                font-family: 'Cascadia Code', Consolas, monospace;
                 padding: 5px;
             }
             """)
@@ -264,16 +284,12 @@ class MainWindow(QWidget):
 
     def set_settings(self) -> None:
         """
-        Ausgewählte Einstellungen können angepasst werden.
-
-        - 6:8 Raster
-        - 9:12 Raster
-        - RLE Zeilenübergreifend an/aus
+        Öffnet das Einstellungsmenü zur Anpassung von Rastergröße und RLE-Modus.
         """
         settings_menu = QMenu(self)
-        action_s = QAction("6:8", self)
-        action_l = QAction("9:12", self)
-        action_rle = QAction("RLE Zeilenübergriff")
+        action_s = QAction("6:8 Raster", self)
+        action_l = QAction("9:12 Raster", self)
+        action_rle = QAction("RLE Zeilenübergriff", self)
         action_rle.setCheckable(True)
         action_rle.setChecked(self.rle_lines_on)
 
@@ -294,7 +310,7 @@ class MainWindow(QWidget):
         Ändert den Zeilenübergriff der RLE-Codierung.
 
         Args:
-            checked: True -> Zeilenübergriff, False -> kein Zeilenübergriff.
+            checked: True für zeilenübergreifend, False für zeilenweise Codierung.
         """
         self.rle_lines_on = checked
         self.pixel_editor.update()
@@ -302,7 +318,7 @@ class MainWindow(QWidget):
 
     def activate_select_mode(self) -> None:
         """
-        De-/aktiviert den Select-Modus.
+        Aktiviert bzw. deaktiviert den Auswahllink-/Pixel-Detektiv-Modus.
         """
         if self.pixel_editor.mode == "paint":
             self.button_detective.setChecked(True)
@@ -316,7 +332,7 @@ class MainWindow(QWidget):
 
     def new_image(self) -> None:
         """
-        Stellt ein weißes Bild im ausgewähltem Format her.
+        Erstellt ein neues, weißes Bild im aktuell ausgewählten Format.
         """
         if self.pixel_editor.preset == "s":
             self.pixel_editor.set_preset("s")
@@ -329,7 +345,7 @@ class MainWindow(QWidget):
 
     def set_small(self) -> None:
         """
-        Setzt das Format auf "s".
+        Setzt das Rasterformat auf "s" (6x8).
         """
         self.pixel_editor.set_preset("s")
         self.button_detective.setChecked(False)
@@ -339,7 +355,7 @@ class MainWindow(QWidget):
 
     def set_large(self) -> None:
         """
-        Setzt das Format auf "l".
+        Setzt das Rasterformat auf "l" (9x12).
         """
         self.pixel_editor.set_preset("l")
         self.button_detective.setChecked(False)
@@ -349,12 +365,12 @@ class MainWindow(QWidget):
 
     def save_image(self) -> None:
         """
-        Speichert das Bild als Screenshot.
+        Speichert das aktuelle Bild als PNG-Screenshot oder als .rgb-Datei.
         """
         path, _ = QFileDialog.getSaveFileName(
             self,
             "Pixel-Bild speichern",
-            "Mein_Bild",
+            str(EXAMPLES_DIR),
             "PixelWerkstatt-Datei (*.rgb);;PNG (*.png)",
         )
         if path:
@@ -376,10 +392,10 @@ class MainWindow(QWidget):
 
     def load_image(self) -> None:
         """
-        Zeigt eine PixelWerkstatt-Datei im Editor an.
+        Lädt eine PixelWerkstatt-Datei (*.rgb) und zeigt diese im Editor an.
         """
         path, _ = QFileDialog.getOpenFileName(
-            self, "Datei öffnen", "", "PixelWerkstatt-Datei (*.rgb)"
+            self, "Datei öffnen", str(EXAMPLES_DIR), "PixelWerkstatt-Datei (*.rgb)"
         )
         if path:
             preset, pixel_data = read_file(path)
@@ -390,7 +406,7 @@ class MainWindow(QWidget):
 
     def rgb_clicked(self) -> None:
         """
-        Zeigt die RGB-Codierung an.
+        Zeigt die unkomprimierte RGB-Codierung an.
         """
         self.active_encode = "rgb"
         self.button_rgb.setChecked(True)
@@ -402,16 +418,18 @@ class MainWindow(QWidget):
             self.pixel_editor.color_index,
             self.pixel_editor.pixel_row_col,
         )
-        self.text_sim.setHtml(f"<span style ={text_style}>{rgb_text}</span>")
+        self.text_sim.setHtml(f'<span style="{TEXT_STYLE}">{rgb_text}</span>')
 
         rgb_bit_label = rgb_to_bit(
-            self.pixel_editor.image_bits, self.pixel_editor.rows, self.pixel_editor.cols
+            self.pixel_editor.image_bits,
+            self.pixel_editor.rows,
+            self.pixel_editor.cols,
         )
         self.set_label(rgb_bit_label)
 
     def rle_clicked(self) -> None:
         """
-        Zeigt die Lauflängen-Codierungan an.
+        Zeigt die Lauflängen-Codierung (RLE) an.
         """
         self.active_encode = "rle"
         self.button_rle.setChecked(True)
@@ -424,9 +442,10 @@ class MainWindow(QWidget):
             self.pixel_editor.mode == "select"
             and self.pixel_editor.pixel_row_col is not None
         ):
-            selected_rle = pos_to_number[self.pixel_editor.pixel_row_col]
-            selected_pixels = number_to_pos[selected_rle]
-            self.send_selected_pixels.emit(selected_pixels)
+            selected_rle = pos_to_number.get(self.pixel_editor.pixel_row_col)
+            if selected_rle is not None:
+                selected_pixels = number_to_pos[selected_rle]
+                self.send_selected_pixels.emit(selected_pixels)
 
         rle_text = rle_to_string(
             self.pixel_editor.rows,
@@ -436,7 +455,7 @@ class MainWindow(QWidget):
             self.pixel_editor.pixel_row_col,
             pos_to_number,
         )
-        self.text_sim.setHtml(f"<span style ={text_style}>{rle_text}</span>")
+        self.text_sim.setHtml(f'<span style="{TEXT_STYLE}">{rle_text}</span>')
 
         run_length_count = len(rle_data)
         run_length_length = [count for count, _ in rle_data]
@@ -451,7 +470,7 @@ class MainWindow(QWidget):
 
     def clr_clicked(self) -> None:
         """
-        Zeigt die Indizierten-Farben-Codierung an.
+        Zeigt die Indizierte-Farben-Codierung (CLR) an.
         """
         self.active_encode = "clr"
         self.button_clr.setChecked(True)
@@ -466,7 +485,7 @@ class MainWindow(QWidget):
             self.pixel_editor.color_index,
             self.pixel_editor.pixel_row_col,
         )
-        self.text_sim.setHtml(f"<span style ={text_style}>{clr_text}</span>")
+        self.text_sim.setHtml(f'<span style="{TEXT_STYLE}">{clr_text}</span>')
 
         color_count = len(clr_codes)
         clr_bit_label = clr_to_bit(
@@ -480,7 +499,7 @@ class MainWindow(QWidget):
 
     def text_update(self) -> None:
         """
-        Updatet gesammten Text. Simuliert einen Klick auf aktuelle Codierung.
+        Aktualisiert die gesamte Textdarstellung basierend auf der aktiven Codierung.
         """
         if self.active_encode == "rgb":
             self.rgb_clicked()
@@ -491,10 +510,10 @@ class MainWindow(QWidget):
 
     def set_label(self, bit_label: tuple[str, str, str, str, str, str]) -> None:
         """
-        Setzt die jeweiligen Strings auf die Label der Datenanzeige.
+        Setzt die berechneten Strings auf die Labels der Kennzahlenanzeige.
 
         Args:
-            bit_label: Tupel aller Strings die als Label angezeigt werden sollen.
+            bit_label: Tupel mit Strings für die Status- und Kennzahlen-Labels.
         """
         self.label_byte_bar.setText(bit_label[0])
         self.label_byte_percent.setText(bit_label[1])

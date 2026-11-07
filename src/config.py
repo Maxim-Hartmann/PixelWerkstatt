@@ -2,7 +2,6 @@
 Konfigurationsdatei.
 
 Enthält zentrale Konfigurationen für:
-
 - Farbauswahl
 - Pixelraster
 - HTML-Darstellung
@@ -11,15 +10,14 @@ Enthält zentrale Konfigurationen für:
 from PySide6.QtGui import QColor
 
 # --------------------------------------------------------------------------------------
-# color_picker Konfiguration
+# Color-Picker-Konfiguration
 # --------------------------------------------------------------------------------------
 
 # Größe des Farbwählers.
-picker_grid_size = {"pixel_size": 40, "pixel_gap": 6}
+PICKER_GRID_SIZE = {"pixel_size": 40, "pixel_gap": 6}
 
 # Im System verfügbare Farben als QColor (RGB) und String (Farbname).
-# Diese werden im Anschluss im dictionary color_index gespeichert.
-colors = [
+COLORS = [
     (QColor(255, 255, 255), "weiß"),  # (0)
     (QColor(0, 0, 0), "schwarz"),  # (1)
     (QColor(140, 140, 140), "grau"),  # (2)
@@ -38,11 +36,11 @@ colors = [
     (QColor(150, 140, 190), "lavendel"),  # (15)
 ]
 
-# Mapping: Farbindex → (QColor, Farbname).
-color_index = dict(enumerate(colors))
+# Mapping: Farbindex → (QColor, Farbname)
+COLOR_INDEX = dict(enumerate(COLORS))
 
-# Mapping: RGB-Binär-String -> Farbindex.
-binary_index = {
+# Mapping: RGB-Binär-String → Farbindex
+BINARY_INDEX = {
     "111111111111111111111111": 0,
     "000000000000000000000000": 1,
     "100011001000110010001100": 2,
@@ -62,30 +60,28 @@ binary_index = {
 }
 
 # --------------------------------------------------------------------------------------
-# pixel_editor Konfiguration
+# Pixel-Editor-Konfiguration
 # --------------------------------------------------------------------------------------
 
-# Größen des Pixelrasters: Reihen, Spalten, Pixelgröße, Pixelabstand.
-editor_grid_size = {
+# Größen des Pixelrasters: Zeilen, Spalten, Pixelgröße, Pixelabstand.
+EDITOR_GRID_SIZE = {
     "s": {"rows": 6, "cols": 8, "pixel_size": 90, "pixel_gap": 2},
     "l": {"rows": 9, "cols": 12, "pixel_size": 60, "pixel_gap": 2},
 }
 
 # Standardfarbe, bevor eine Farbe gewählt wurde.
-standard_color = 1
+STANDARD_COLOR = 1
 
-# Farbe für das Markieren (QColor, String(HTML)).
-select_color = (QColor(180, 180, 50), "rgb(180, 180, 50)")
+# Farbe für die Auswahl/Markierung: (QColor, HTML-RGB-String)
+SELECT_COLOR = (QColor(180, 180, 50), "rgb(180, 180, 50)")
 
 # --------------------------------------------------------------------------------------
-# HTML Konfiguration
+# HTML-Konfiguration
 # --------------------------------------------------------------------------------------
 
-# Standard Text-Formatierung: Schriftart, Leerzeichen-Verhalten, Schriftgröße.
-text_style = """
-\"
-font-family: Cascadia Code, Consolas, monospace;
+# Standard-Textformatierung: Schriftart, Leerzeichen-Verhalten, Schriftgröße.
+TEXT_STYLE = """
+font-family: 'Cascadia Code', Consolas, monospace;
 white-space: pre;
 font-size: 11pt;
-\"
 """

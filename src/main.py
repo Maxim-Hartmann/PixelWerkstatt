@@ -6,21 +6,27 @@ und startet die Ereignisschleife.
 """
 
 import sys
+
 from PySide6.QtWidgets import QApplication
+
 from ui.main_window import MainWindow
 
 
 def main() -> None:
-    # Jede PySide6 Anwendung braucht genau eine QApplication Instanz.
+    # Jede PySide6-Anwendung braucht genau eine QApplication-Instanz.
     app = QApplication(sys.argv)
-    # Hauptfenster erzeugen.
+
+    # Hauptfenster erzeugen und maximiert anzeigen.
     window = MainWindow()
+
+    # als Fenster
     window.show()
-    window.showMaximized()
-    # Event Loop starten: Fenster bleibt geöffnet und kann sauber geschlossen werden.
+    # als maximiertes Fenster
+    # window.showMaximized()
+
+    # Ereignisschleife (Event Loop) starten.
     sys.exit(app.exec())
 
 
-# Verhindert das automatische Starten beim Import des Moduls.
 if __name__ == "__main__":
     main()
