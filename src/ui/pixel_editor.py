@@ -16,27 +16,27 @@ class PixelEditor(QWidget):
     Beim klicken ändert sich die Farbe des Rasters.
     """
 
-    # Sendet einen ausgewählten Pixel an MainWindow.
+    # Sendet den ausgewählten Pixel an MainWindow.
     send_selected_pixel = Signal()
-    # Sendet einen bemalten Pixel an MainWindow.
+    # Sendet den bemalten Pixel an MainWindow.
     send_painted_pixel = Signal()
 
     def __init__(self, preset="s"):
         super().__init__()
 
-        # Voreinstellungen für das Raster setzen
+        # Voreinstellungen für das Raster setzen.
         self.set_preset(preset)
-        # aktueller Farbindex
+        # aktueller Farbindex.
         self.current_color = standard_color
-        # Farbindex → (QColor, Farbname)
+        # Farbindex → (QColor, Farbname).
         self.color_index = color_index
-        # Mal- (paint) oder Auswähl-Modus (select)
+        # Mal- (paint) oder Auswähl-Modus (select).
         self.mode = "paint"
-        # aktuell ausgewählter Pixel
+        # aktuell ausgewählter Pixel.
         self.pixel_row_col = None
         # zugehörige Lauflänge vom aktuell ausgewählten Pixel.
         self.selected_pixels = []
-        # Stift für das Markieren des hervorgehobenen Pixels
+        # Stift für das Markieren des hervorgehobenen Pixels.
         self.select_pen = QPen()
         self.select_pen_width = 2 * self.gap
         self.select_pen.setWidth(self.select_pen_width)
@@ -96,7 +96,7 @@ class PixelEditor(QWidget):
         self.gap = editor_grid_size[preset]["pixel_gap"]
         self.pixel_size = editor_grid_size[preset]["pixel_size"]
         # Meta-Daten werden als jeweils ein Byte gespeichert -> (Höhe und Breite)
-        # (Höhe + Breite) + (Reihen * Spalten * 8 Bit * 3 RGB)
+        # (2 * 8 Bit) + (Reihen * Spalten * 8 Bit * 3 RGB)
         self.image_bits = (2 * 8) + (self.rows * self.cols * 8 * 3)
         if pixel_data:
             self.pixel_data = pixel_data
