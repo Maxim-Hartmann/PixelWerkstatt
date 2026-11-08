@@ -19,15 +19,22 @@ extensions = [
     "sphinx.ext.viewcode",
 ]
 
-# Simuliert PySide6 beim Erstellen der Dokumentation
-autodoc_mock_imports = ["PySide6"]
+# Simuliert PySide6 und alle Untermodule vollständig für Sphinx
+autodoc_mock_imports = [
+    "PySide6",
+    "PySide6.QtCore",
+    "PySide6.QtGui",
+    "PySide6.QtWidgets",
+]
 
-# Erzwingt das Rendern von Elementen und Methoden
+# Erzwingt das Rendern von Klassen, Methoden und gemockten Vererbungen
 autodoc_default_options = {
     "members": True,
     "undoc-members": True,
     "special-members": "__init__",
     "show-inheritance": True,
+    "imported-members": True,
+    "inherited-members": True,
 }
 
 templates_path = ["_templates"]
