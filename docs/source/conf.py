@@ -1,8 +1,10 @@
 import os
 import sys
 
-# Pfad zeigt von docs/conf.py aus direkt in den src/-Ordner
-sys.path.insert(0, os.path.abspath("../../src"))
+# Löst den Pfad dynamisch vom Speicherort dieser conf.py aus zu src/ auf
+sys.path.insert(
+    0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../../src"))
+)
 
 # -- Projekt-Informationen ---------------------------------------------------
 project = "PixelWerkstatt"
@@ -17,7 +19,7 @@ extensions = [
     "sphinx.ext.viewcode",
 ]
 
-# Simuliert PySide6 beim Erstellen der Sphinx-Dokumentation
+# Simuliert PySide6 beim Erstellen der Dokumentation
 autodoc_mock_imports = ["PySide6"]
 
 templates_path = ["_templates"]
@@ -28,3 +30,6 @@ language = "de"
 # -- HTML-Ausgabe ------------------------------------------------------------
 html_theme = "shibuya"
 html_static_path = ["_static"]
+html_css_files = [
+    "custom.css",
+]
