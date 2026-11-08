@@ -22,6 +22,14 @@ extensions = [
 # Simuliert PySide6 beim Erstellen der Dokumentation
 autodoc_mock_imports = ["PySide6"]
 
+# Erzwingt das Rendern von Elementen und Methoden
+autodoc_default_options = {
+    "members": True,
+    "undoc-members": True,
+    "special-members": "__init__",
+    "show-inheritance": True,
+}
+
 templates_path = ["_templates"]
 exclude_patterns = []
 

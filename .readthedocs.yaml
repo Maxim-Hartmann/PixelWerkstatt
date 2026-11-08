@@ -6,7 +6,7 @@ build:
     python: "3.11"
   jobs:
     pre_build:
-      - sphinx-apidoc -o docs/source/api src/
+      - sphinx-apidoc -f -o docs/source/api src/
 
 python:
   install:
