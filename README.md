@@ -41,7 +41,13 @@ Windows:
 
 ```
 python -m venv .venv
+```
+
+```
 .\.venv\Scripts\Activate.ps1    # Für PowerShell
+```
+
+```
 .\.venv\Scripts\activate.bat    # Für Eingabeaufforderung (CMD)
 ```
 
