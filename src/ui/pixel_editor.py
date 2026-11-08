@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """
 Erstellt das Pixel-Editor-Widget zur Bearbeitung von Bildern.
 """

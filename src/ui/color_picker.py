@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """
 Erstellt das Color-Picker-Widget zur Auswahl von Farben.
 """

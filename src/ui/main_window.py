@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """
 Führt alle Widgets im Hauptfenster zusammen.
 """
