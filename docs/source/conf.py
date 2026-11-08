@@ -1,37 +1,30 @@
 import os
 import sys
 
-sys.path.insert(0, os.path.abspath("../../src"))
+# Pfad zeigt von docs/conf.py aus direkt in den src/-Ordner
+sys.path.insert(0, os.path.abspath("../src"))
 
-# Configuration file for the Sphinx documentation builder.
-#
-# For the full list of built-in configuration values, see the documentation:
-# https://www.sphinx-doc.org/en/master/usage/configuration.html
-
-# -- Project information -----------------------------------------------------
-# https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
-
-project = "Komprimierung-Tool"
+# -- Projekt-Informationen ---------------------------------------------------
+project = "PixelWerkstatt"
 copyright = "2026, Maxim Hartmann"
 author = "Maxim Hartmann"
-release = "0.5"
+release = "1.0"
 
-# -- General configuration ---------------------------------------------------
-# https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
-
+# -- Allgemeine Konfiguration ------------------------------------------------
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.napoleon",
     "sphinx.ext.viewcode",
 ]
 
+# Simuliert PySide6 beim Erstellen der Sphinx-Dokumentation
+autodoc_mock_imports = ["PySide6"]
+
 templates_path = ["_templates"]
 exclude_patterns = []
 
 language = "de"
 
-# -- Options for HTML output -------------------------------------------------
-# https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
-
+# -- HTML-Ausgabe ------------------------------------------------------------
 html_theme = "shibuya"
 html_static_path = ["_static"]
