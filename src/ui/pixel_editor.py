@@ -3,7 +3,7 @@ Erstellt das Pixel-Editor-Widget zur Bearbeitung von Bildern.
 """
 
 from PySide6.QtCore import Signal
-from PySide6.QtGui import QMouseEvent, QPainter, QPaintEvent, QPen
+from PySide6.QtGui import QMouseEvent, QPaintEvent, QPainter, QPen
 from PySide6.QtWidgets import QWidget
 
 from config import COLOR_INDEX, EDITOR_GRID_SIZE, SELECT_COLOR, STANDARD_COLOR
@@ -17,9 +17,10 @@ class PixelEditor(QWidget):
     Beim Klicken ändert sich die Farbe der Kachel im Raster.
     """
 
-    # Sendet das Signal, dass ein Pixel ausgewählt wurde.
+    #: Sendet ein Signal, wenn im Auswahlmodus ein Pixel angeklickt wurde.
     send_selected_pixel = Signal()
-    # Sendet das Signal, dass ein Pixel bemalt wurde.
+
+    #: Sendet ein Signal, wenn im Malmodus ein Pixel eingefärbt wurde.
     send_painted_pixel = Signal()
 
     def __init__(self, preset: str = "s", parent: QWidget | None = None) -> None:
@@ -27,15 +28,20 @@ class PixelEditor(QWidget):
 
         # Voreinstellungen für das Raster setzen.
         self.set_preset(preset)
-        # Aktueller Farbindex.
+
+        #: Aktuell gewählter Farbindex zum Zeichnen.
         self.current_color = STANDARD_COLOR
-        # Mapping: Farbindex → (QColor, Farbname).
+
+        #: Mapping: Farbindex -> (QColor, Farbname).
         self.color_index = COLOR_INDEX
-        # Mal- ("paint") oder Auswähl-Modus ("select").
+
+        #: Betriebsmodus des Editors ('paint' für Zeichnen, 'select' für Auswahl).
         self.mode = "paint"
-        # Aktuell ausgewählter Pixel als Tuple (Zeile, Spalte).
+
+        #: Aktuell ausgewählter Pixel als Tupel (Zeile, Spalte) oder None.
         self.pixel_row_col: tuple[int, int] | None = None
-        # Zugehörige Lauflänge vom aktuell ausgewählten Pixel.
+
+        #: Liste von Koordinaten-Tupeln der aktuell hervorgehobenen Pixel.
         self.selected_pixels: list[tuple[int, int]] = []
 
         # Stift für das Markieren des hervorgehobenen Pixels.
@@ -48,7 +54,7 @@ class PixelEditor(QWidget):
         """
         Zeichnet und aktualisiert den Pixel-Editor.
 
-        Das Raster wird durch die Informationen in pixel_data gezeichnet.
+        Das Raster wird anhand der in ``pixel_data`` gespeicherten Farbindizes gerendert.
 
         Args:
             paint_event: Informationen über das aktuelle Zeichenereignis.
@@ -119,7 +125,7 @@ class PixelEditor(QWidget):
 
     def mousePressEvent(self, mouse_event: QMouseEvent) -> None:
         """
-        Ermittelt das angeklickte Feld und sendet das entsprechende Signal an MainWindow.
+        Ermittelt das angeklickte Feld und sendet das entsprechende Signal.
 
         Args:
             mouse_event: Informationen über das aktuelle Mausereignis.
@@ -139,7 +145,7 @@ class PixelEditor(QWidget):
 
     def set_selected_pixels(self, selected_pixels: list[tuple[int, int]]) -> None:
         """
-        Setzt die ausgewählten Pixel.
+        Setzt die ausgewählten Pixel für die Hervorhebung im Raster.
 
         Args:
             selected_pixels: Liste mit Koordinaten-Tupeln (Zeile, Spalte).

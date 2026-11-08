@@ -45,18 +45,19 @@ class MainWindow(QWidget):
     Hauptfenster der Anwendung.
 
     Koordiniert die UI-Komponenten und steuert die aktive Codierung
-    sowie Benutzerinteraktion.
+    sowie Benutzerinteraktionen.
     """
 
-    # Sendet alle Pixel einer ausgewählten Lauflänge an PixelEditor.
+    #: Sendet alle Pixel-Koordinaten einer ausgewählten Lauflänge an den PixelEditor.
     send_selected_pixels = Signal(list)
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
 
-        # Aktive Codierung: "rgb", "rle" oder "clr"
+        #: Aktive Codierungsansicht ("rgb", "rle" oder "clr").
         self.active_encode = "rgb"
-        # RLE zeilenübergreifend aktivieren/deaktivieren
+
+        #: RLE-Zeilenübergriff (True für zeilenübergreifend, False für zeilenweise Codierung).
         self.rle_lines_on = True
 
         # ------------------------------------------------------------------------------
@@ -65,8 +66,8 @@ class MainWindow(QWidget):
 
         self.setWindowTitle("PixelWerkstatt")
 
-        ASSETS_DIR = Path(__file__).resolve().parent.parent / "assets"
-        self.setWindowIcon(QIcon(str(ASSETS_DIR / "Icon_chess.png")))
+        assets_path = Path(__file__).resolve().parent.parent / "assets"
+        self.setWindowIcon(QIcon(str(assets_path / "Icon_chess.png")))
 
         # ------------------------------------------------------------------------------
         # Layouts
@@ -365,7 +366,7 @@ class MainWindow(QWidget):
 
     def save_image(self) -> None:
         """
-        Speichert das aktuelle Bild als PNG-Screenshot oder als .rgb-Datei.
+        Speichert das aktuelle Bild als PNG-Screenshot oder als ``*.rgb``-Datei.
         """
         path, _ = QFileDialog.getSaveFileName(
             self,
@@ -392,7 +393,7 @@ class MainWindow(QWidget):
 
     def load_image(self) -> None:
         """
-        Lädt eine PixelWerkstatt-Datei (*.rgb) und zeigt diese im Editor an.
+        Lädt eine PixelWerkstatt-Datei (``*.rgb``) und zeigt diese im Editor an.
         """
         path, _ = QFileDialog.getOpenFileName(
             self, "Datei öffnen", str(EXAMPLES_DIR), "PixelWerkstatt-Datei (*.rgb)"

@@ -24,10 +24,11 @@ def encode_rle(
 
     Args:
         pixel_data: 2D-Liste mit Farbindizes.
-        rle_lines_on: True für zeilenübergreifende, False für zeilenweise Codierung.
+        rle_lines_on: True für zeilenübergreifend, False für zeilenweise Codierung.
 
     Returns:
         Ein Tupel bestehend aus:
+
         - Liste mit Tupeln (Lauflänge, Farbindex).
         - Dictionary (Zeile, Spalte) -> Lauflängen-Nummer.
         - Dictionary Lauflängen-Nummer -> Liste von (Zeile, Spalte).
@@ -107,7 +108,8 @@ def encode_clr(
 
     Returns:
         Ein Tupel bestehend aus:
-        - 2D-Liste mit Binär-Farbcodes pro Pixel (list[list[str]]).
+
+        - 2D-Liste mit Binär-Farbcodes pro Pixel (``list[list[str]]``).
         - Dictionary mit Mapping (Farbindex -> Farbcode).
         - Anzahl benötigter Bits pro Pixel.
     """
@@ -158,12 +160,12 @@ def rgb_to_string(
     pixel_row_col: tuple[int, int] | None,
 ) -> str:
     """
-    Konvertiert rgb_data in einen HTML-formatierten Quelltext-String.
+    Konvertiert ``rgb_data`` in einen HTML-formatierten Quelltext-String.
 
     Args:
         rows: Anzahl der Zeilen.
         cols: Anzahl der Spalten.
-        rgb_data: 2D-Liste mit Farbindizes (pixel_data).
+        rgb_data: 2D-Liste mit Farbindizes (``pixel_data``).
         color_index: Mapping Farbindex -> (QColor, Farbname).
         pixel_row_col: Zeile und Spalte des ausgewählten Pixels oder None.
 
@@ -206,7 +208,7 @@ def rle_to_string(
     pos_to_number: dict[tuple[int, int], int],
 ) -> str:
     """
-    Konvertiert rle_data in einen HTML-formatierten Quelltext-String.
+    Konvertiert ``rle_data`` in einen HTML-formatierten Quelltext-String.
 
     Args:
         rows: Anzahl der Zeilen.
@@ -263,12 +265,12 @@ def clr_to_string(
     pixel_row_col: tuple[int, int] | None,
 ) -> str:
     """
-    Konvertiert clr_data in einen HTML-formatierten Quelltext-String.
+    Konvertiert ``clr_data`` in einen HTML-formatierten Quelltext-String.
 
     Args:
         rows: Anzahl der Zeilen.
         cols: Anzahl der Spalten.
-        clr_data: 2D-Liste mit Farbcodes (list[list[str]]).
+        clr_data: 2D-Liste mit Farbcodes (``list[list[str]]``).
         clr_codes: Mapping Farbindex -> Farbcode.
         color_index: Mapping Farbindex -> (QColor, Farbname).
         pixel_row_col: Zeile und Spalte des ausgewählten Pixels oder None.

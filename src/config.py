@@ -2,6 +2,7 @@
 Konfigurationsdatei.
 
 Enthält zentrale Konfigurationen für:
+
 - Farbauswahl
 - Pixelraster
 - HTML-Darstellung
@@ -13,10 +14,10 @@ from PySide6.QtGui import QColor
 # Color-Picker-Konfiguration
 # --------------------------------------------------------------------------------------
 
-# Größe des Farbwählers.
+#: Größe des Farbwählers (Pixelgröße und Pixelabstand).
 PICKER_GRID_SIZE = {"pixel_size": 40, "pixel_gap": 6}
 
-# Im System verfügbare Farben als QColor (RGB) und String (Farbname).
+#: Im System verfügbare Farben als Liste von Tupeln: (QColor, Farbname).
 COLORS = [
     (QColor(255, 255, 255), "weiß"),  # (0)
     (QColor(0, 0, 0), "schwarz"),  # (1)
@@ -36,10 +37,10 @@ COLORS = [
     (QColor(150, 140, 190), "lavendel"),  # (15)
 ]
 
-# Mapping: Farbindex → (QColor, Farbname)
+#: Mapping: Farbindex -> (QColor, Farbname).
 COLOR_INDEX = dict(enumerate(COLORS))
 
-# Mapping: RGB-Binär-String → Farbindex
+#: Mapping: 24-Bit-RGB-String -> Farbindex.
 BINARY_INDEX = {
     "111111111111111111111111": 0,
     "000000000000000000000000": 1,
@@ -63,23 +64,23 @@ BINARY_INDEX = {
 # Pixel-Editor-Konfiguration
 # --------------------------------------------------------------------------------------
 
-# Größen des Pixelrasters: Zeilen, Spalten, Pixelgröße, Pixelabstand.
+#: Verfügbare Rastergrößen ('s' für 6x8, 'l' für 9x12) mit Angaben zu Zeilen, Spalten und Pixelgeometrie.
 EDITOR_GRID_SIZE = {
     "s": {"rows": 6, "cols": 8, "pixel_size": 90, "pixel_gap": 2},
     "l": {"rows": 9, "cols": 12, "pixel_size": 60, "pixel_gap": 2},
 }
 
-# Standardfarbe, bevor eine Farbe gewählt wurde.
+#: Farbindex der Standardfarbe vor der Farbauswahl.
 STANDARD_COLOR = 1
 
-# Farbe für die Auswahl/Markierung: (QColor, HTML-RGB-String)
+#: Farbe für Auswahlen und Markierungen als Tupel: (QColor, HTML-RGB-String).
 SELECT_COLOR = (QColor(180, 180, 50), "rgb(180, 180, 50)")
 
 # --------------------------------------------------------------------------------------
 # HTML-Konfiguration
 # --------------------------------------------------------------------------------------
 
-# Standard-Textformatierung: Schriftart, Leerzeichen-Verhalten, Schriftgröße.
+#: Standard-CSS-Styling für Text- und Quellcodeanzeigen in der Benutzeroberfläche.
 TEXT_STYLE = """
 font-family: 'Cascadia Code', Consolas, monospace;
 white-space: pre;

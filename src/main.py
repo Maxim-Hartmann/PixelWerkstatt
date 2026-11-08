@@ -1,8 +1,5 @@
 """
-Startmodul.
-
-Initialisiert die PySide6-Anwendung, erstellt das Hauptfenster
-und startet die Ereignisschleife.
+Haupteinstiegspunkt der PixelWerkstatt-Anwendung.
 """
 
 import sys
@@ -13,18 +10,13 @@ from ui.main_window import MainWindow
 
 
 def main() -> None:
-    # Jede PySide6-Anwendung braucht genau eine QApplication-Instanz.
+    """
+    Startet die PySide6-Anwendung und öffnet das Hauptfenster.
+    """
+
     app = QApplication(sys.argv)
-
-    # Hauptfenster erzeugen und maximiert anzeigen.
     window = MainWindow()
-
-    # als Fenster
     window.show()
-    # als maximiertes Fenster
-    # window.showMaximized()
-
-    # Ereignisschleife (Event Loop) starten.
     sys.exit(app.exec())
 
 

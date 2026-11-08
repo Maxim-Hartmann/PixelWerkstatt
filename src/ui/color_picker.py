@@ -3,7 +3,7 @@ Erstellt das Color-Picker-Widget zur Auswahl von Farben.
 """
 
 from PySide6.QtCore import Signal
-from PySide6.QtGui import QMouseEvent, QPainter, QPaintEvent
+from PySide6.QtGui import QMouseEvent, QPaintEvent, QPainter
 from PySide6.QtWidgets import QWidget
 
 from config import COLORS, PICKER_GRID_SIZE
@@ -17,13 +17,16 @@ class ColorPicker(QWidget):
     Die ausgewählte Farbe wird als Signal emittiert.
     """
 
-    # Sendet einen ausgewählten Farbindex.
+    #: Sendet den Farbindex (Integer) der neu ausgewählten Farbe.
     send_new_color = Signal(int)
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
 
+        #: Kachelgröße der einzelnen Farbfelder in Pixeln.
         self.pixel_size = PICKER_GRID_SIZE["pixel_size"]
+
+        #: Abstand zwischen den einzelnen Farbfeldern in Pixeln.
         self.pixel_gap = PICKER_GRID_SIZE["pixel_gap"]
 
         self.setFixedSize(

@@ -20,6 +20,7 @@ def rgb_to_bit(
 
     Returns:
         Ein Tupel mit formatierten Strings für die UI-Labels:
+
         - Kompressionsanzeige (Fortschrittsbalken)
         - Prozentuale Datenersparnis
         - Kompressionsverhältnis
@@ -62,6 +63,7 @@ def rle_to_bit(
 
     Returns:
         Ein Tupel mit formatierten Strings für die UI-Labels:
+
         - Kompressionsanzeige (Fortschrittsbalken)
         - Prozentuale Datenersparnis
         - Kompressionsverhältnis
@@ -115,6 +117,7 @@ def clr_to_bit(
 
     Returns:
         Ein Tupel mit formatierten Strings für die UI-Labels:
+
         - Kompressionsanzeige (Fortschrittsbalken)
         - Prozentuale Datenersparnis
         - Kompressionsverhältnis
@@ -173,7 +176,7 @@ def bit_to_comp(comp: float, image_bits: int, comp_bits: int) -> str:
         comp_bits: Größe des komprimierten Bildes in Bits.
 
     Returns:
-        Formatierte Zeichenkette mit Kompressionsverhältnis (z. B. 1:2.5).
+        Formatierte Zeichenkette mit Kompressionsverhältnis (z. B. ``1:2.5``).
     """
     comp_help = round(image_bits / comp_bits, 1) if comp_bits > 0 else 0.0
     comp_val = round(comp, 4)

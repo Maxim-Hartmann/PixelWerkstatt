@@ -9,15 +9,16 @@ from config import BINARY_INDEX
 
 def read_file(path: str) -> tuple[str, list[list[int]]]:
     """
-    Liest und wertet eine ausgewählte RGB-Datei (*.rgb) aus.
+    Liest und wertet eine ausgewählte RGB-Datei (``*.rgb``) aus.
 
     Args:
         path: Pfad der zu ladenden Datei.
 
     Returns:
         Ein Tupel aus:
+
         - Preset-Bezeichnung ("s" für 6x8 oder "l" für 9x12).
-        - 2D-Liste mit den rekonstruierten Farbindizes (pixel_data).
+        - 2D-Liste mit den rekonstruierten Farbindizes (``pixel_data``).
     """
     with open(path, "r", encoding="utf-8") as file:
         text: str = file.read()
