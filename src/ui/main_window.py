@@ -7,7 +7,7 @@ Führt alle Widgets im Hauptfenster zusammen.
 from pathlib import Path
 
 from PySide6.QtCore import Qt, Signal
-from PySide6.QtGui import QAction, QIcon
+from PySide6.QtGui import QAction
 from PySide6.QtWidgets import (
     QButtonGroup,
     QFileDialog,
@@ -37,9 +37,7 @@ from ui.pixel_editor import PixelEditor
 # Pfad-Konstanten
 # --------------------------------------------------------------------------------------
 
-BASE_DIR = Path(__file__).resolve().parent.parent
-ASSETS_DIR = BASE_DIR / "assets"
-EXAMPLES_DIR = BASE_DIR.parent / "examples"
+EXAMPLES_DIR = Path(__file__).resolve().parent.parent.parent / "examples"
 
 
 class MainWindow(QWidget):
@@ -61,15 +59,6 @@ class MainWindow(QWidget):
 
         #: RLE-Zeilenübergriff (True für zeilenübergreifend, False für zeilenweise Codierung).
         self.rle_lines_on = True
-
-        # ------------------------------------------------------------------------------
-        # Fenstereinstellungen
-        # ------------------------------------------------------------------------------
-
-        self.setWindowTitle("PixelWerkstatt")
-
-        assets_path = Path(__file__).resolve().parent.parent / "assets"
-        self.setWindowIcon(QIcon(str(assets_path / "Icon_chess.png")))
 
         # ------------------------------------------------------------------------------
         # Layouts
